@@ -1,15 +1,15 @@
-import { createRouter, createWebHistory } from 'vue-router'
-import ToDoListView from "@/views/ToDoListView.vue";
+import { createRouter, createWebHistory } from "vue-router";
+import Login from "../components/auth/Login.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
-      path: '/todolist',
-      name: 'todolist',
-      component: ToDoListView
-    }
-  ]
-})
+      path: "/",
+      name: "login",
+      component: Login,
+    },
+  ],
+});
 
-export default router
+export default router;
