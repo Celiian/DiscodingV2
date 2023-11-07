@@ -32,7 +32,11 @@ export default {
       'black': '#000000',
       'blue': '#5865f2',
     },
-    extend: {},
+    extend: {
+      boxShadow: {
+        'customOne': '0 1px 1px rgba(0, 0, 0, 0.3)'
+      }
+    },
   },
   plugins: [],
 }
