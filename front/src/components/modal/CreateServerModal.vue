@@ -8,8 +8,7 @@ import { ref } from 'vue';
 const emit = defineEmits(["close-modal"]);
 const userStore = useUserStore();
 
-const currentUser = "titi"//userStore.currentUser
-console.log(userStore.currentUser)
+const userName = userStore.getUser().username;
 
 const target = ref(null)
 
@@ -43,7 +42,7 @@ onClickOutside(target, ()=> closeModal())
 
                 <div class="w-full flex flex-col mt-6">
                     <h3 class="mb-2 text-xs font-bold text-grey-500">NOM DU SERVEUR</h3>
-                    <input type="text" :placeholder="'Serveur de ' + currentUser " class="w-full h-[40px] bg-white-500 rounded p-[10px] placeholder:text-grey-300 focus:outline-0">
+                    <input type="text" :placeholder="'Serveur de ' + userName " class="w-full h-[40px] bg-white-500 rounded p-[10px] placeholder:text-grey-300 focus:outline-0">
                     <p class="mt-2 pb-1 text-[#5c5e66] text-xs font-normal">En créant un serveur, tu acceptes la <a href="" class="font-semibold text-[#00a8fc]">Charte d'Utilisation de mon c*l de Discord</a>.</p>
                 </div>
                 
