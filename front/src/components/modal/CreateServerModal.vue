@@ -3,7 +3,7 @@ import CloseIcon from "../svg/CloseIcon.vue";
 import AddPhotoIcon from "../svg/AddPhotoIcon.vue";
 //import { useUserStore } from "../../store/userstore";
 import { onClickOutside } from "@vueuse/core";
-import { onMounted, ref } from "vue";
+import { ref } from "vue";
 import { useServerStore } from "../../store/serverstore";
 
 const emit = defineEmits(["close-modal"]);
