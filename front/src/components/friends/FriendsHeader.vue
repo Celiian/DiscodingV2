@@ -6,28 +6,36 @@ import InfoIcon from '../svg/InfoIcon.vue';
 import FilterButton from './FilterButton.vue';
 import AddFriendsButton from './AddFriendsButton.vue';
 import { ref } from 'vue';
+import { computed } from '@vue/reactivity';
+
 
 const filteredButtons = ["En ligne","Tous","En attente", "Bloqué"]
 const buttonSelectedIndex = ref<number>()
+
+const isAddFriendsPageShown = computed(()=>{
+    return buttonSelectedIndex.value === -1 ? true : false
+})
+
+const emit = defineEmits(["show-add-or-list-friend-page"]);
+
 
 //METHOD
 function onClickFilterButton(index:number){
     buttonSelectedIndex.value = index
 
-    //action here
-    
+    //action here 
+    emit("show-add-or-list-friend-page",isAddFriendsPageShown.value) 
 }
 
 function onClickAddFriendsButton(){
     buttonSelectedIndex.value = -1
 
     //action here
+    emit("show-add-or-list-friend-page",isAddFriendsPageShown.value)
 }
 
-
-
-
 </script>
+
 
 <template>
     <div class="w-full flex justify-between" >
@@ -35,24 +43,17 @@ function onClickAddFriendsButton(){
         <div class="flex items-center">
             
             <FriendIcon class="text-white-100 mx-2"/> <!-- friend icon-->
-
-            <div class="mr-2"> <!-- friend text-->
+            <div class="mr-2 cursor-default"> <!-- friend text-->
                 <h1 class="text-[16px] leading-5 font-semibold text-white-600">Amis</h1>
             </div>
-
             <div class="h-[24px] w-[0.5px] bg-grey-600 mx-2"></div> <!-- divider-->
             
-
             <div class="flex">
-
                 <!--filtered buttons-->
                 <div v-for="(button, index) in filteredButtons">
                     <FilterButton :buttonTitle="button" :isSelected="buttonSelectedIndex === index" :key="index" @click="onClickFilterButton(index)"/>
                 </div>
-                
-
                 <AddFriendsButton @click="onClickAddFriendsButton" :isSelected="buttonSelectedIndex === -1"/>
-
             </div> 
 
         </div>
@@ -64,7 +65,7 @@ function onClickAddFriendsButton(){
                 <NewGroupIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150"/>
             </div>
 
-            <div class="group h-[24px] w-[0.5px] bg-grey-600 mx-2"></div>
+            <div class="group h-[24px] w-[0.5px] bg-grey-600 mx-2"></div><!--divider-->
 
             <div class="group h-[24px] w-[24px] mx-2 cursor-pointer">
                 <NotifInboxIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150"/>
@@ -74,7 +75,7 @@ function onClickAddFriendsButton(){
                 <InfoIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150"/>
             </div>
 
-        </div>  <!-- right icon -->
+        </div>
 
 
     </div>

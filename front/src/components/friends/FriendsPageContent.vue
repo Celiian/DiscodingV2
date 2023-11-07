@@ -1,12 +1,17 @@
 <script setup lang="ts">
 import AddFriendsPageContent from '../friends/AddFriendsPageContent.vue';
+import FriendListPageContent from './FriendListPageContent.vue';
 
+const props = defineProps({
+    isAddFriendsPageShown : Boolean
+})
 
 </script>
 
 <template>
 
-    <AddFriendsPageContent/>
+    <AddFriendsPageContent v-if="props.isAddFriendsPageShown"  />
+    <FriendListPageContent v-else/>
 
 </template>
 
