@@ -1,7 +1,5 @@
 <script setup lang="ts">
 import LeftNavBar from "./LeftNavBar.vue";
-import DetailNav from "./DetailNav.vue";
-import MainContent from "./MainContent.vue";
 import { useUserStore } from "../../store/userstore";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
@@ -20,8 +18,7 @@ onMounted(async () => {
 <template>
   <div class="w-screen h-screen flex bg-grey-300">
     <LeftNavBar />
-    <DetailNav />
-    <MainContent />
+    <router-view></router-view>
   </div>
 </template>
 

@@ -1,7 +1,10 @@
 import { createRouter, createWebHistory } from "vue-router";
 import Login from "../components/auth/Login.vue";
-import Home from "../components/Home/Home.vue";
+import Home from "../components/home/Home.vue";
 import Signup from "../components/auth/Signup.vue";
+import FriendsPageVue from "../components/friends/FriendsPage.vue";
+import PersonalPageVue from "../components/home/PersonalPage.vue";
+import MessagePageVue from "../components/Messages/MessagePage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -12,9 +15,27 @@ const router = createRouter({
       component: Login,
     },
     {
-      path: "/home",
+      path: "/",
       name: "home",
       component: Home,
+      children: [
+        {
+          path: "me",
+          name: "me",
+          component: PersonalPageVue,
+          children: [
+            {
+              path: "friends",
+              name: "friends",
+              component: FriendsPageVue,
+            },
+            {
+              path: "message",
+              component: MessagePageVue,
+            },
+          ],
+        },
+      ],
     },
     {
       path: "/signup",
