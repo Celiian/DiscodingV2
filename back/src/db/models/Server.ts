@@ -1,7 +1,4 @@
+import { Server } from "@/types/servers.types";
 import { db } from "../mongo";
 
-interface Server {
-  name: String;
-}
-
-export const Users = db!.collection<Server>("servers");
+export const Servers = db!.collection<Server>("servers");
