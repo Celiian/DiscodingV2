@@ -3,11 +3,6 @@ import MainContent from "../home/MainContent.vue";
 
 import FriendsHeader from "./FriendsHeader.vue";
 import FriendsPageContent from "./FriendsPageContent.vue";
-import { onMounted } from "vue";
-
-onMounted(() => {
-  console.log("eDFKSD");
-});
 </script>
 <template>
   <MainContent>

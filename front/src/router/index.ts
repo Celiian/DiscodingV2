@@ -5,6 +5,7 @@ import Signup from "../components/auth/Signup.vue";
 import FriendsPageVue from "../components/friends/FriendsPage.vue";
 import PersonalPageVue from "../components/home/PersonalPage.vue";
 import MessagePageVue from "../components/Messages/MessagePage.vue";
+import ServerPageVue from "../components/server/ServerPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -34,6 +35,11 @@ const router = createRouter({
               component: MessagePageVue,
             },
           ],
+        },
+        {
+          path: "/server/:serverId",
+          name: "server",
+          component: ServerPageVue,
         },
       ],
     },

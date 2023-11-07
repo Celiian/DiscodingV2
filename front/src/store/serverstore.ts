@@ -1,20 +1,34 @@
 // serverStore.ts
 import { defineStore } from "pinia";
-import { createServer, getServer } from "./utils/serverrequest";
+import { createServer, getServerByUser, getServerById } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
 export const useServerStore = defineStore("server", {
-  state: () => ({}),
+  state: () => ({
+    serverList: [],
+  }),
   actions: {
     async createServer({ serverName, icon }: { serverName: string; icon: ArrayBuffer }) {
-      const userStore = useUserStore(); // Access your user store instance
+      const userStore = useUserStore();
       let user = userStore.getUser();
-      console.log(user);
       await createServer({ serverName: serverName, icon: icon, owner: user._id });
+      await this.getServerByUser();
     },
 
-    async getServer({ serverName }: { serverName: string }) {
-      return (await getServer({ serverName: serverName })).data;
+    async getServerByUser() {
+      const userStore = useUserStore();
+      let user = userStore.getUser();
+      let res = await getServerByUser(user._id);
+      this.serverList = res.data;
+    },
+
+    async getServerById({ id }: { id: string }) {
+      let res = await getServerById(id);
+      return res.data;
+    },
+
+    getServerList() {
+      return this.serverList;
     },
   },
 });

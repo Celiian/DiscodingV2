@@ -33,9 +33,18 @@ function arrayBufferToBase64(buffer: ArrayBuffer): string {
   return btoa(binaryString);
 }
 
-export async function getServer({ serverName }: { serverName: string }) {
+export async function getServerByUser(user_id: { user_id: string }) {
   try {
-    let res = await axios.get(`${API_BASE_URL}/server/getByName/` + serverName, { withCredentials: true });
+    let res = await axios.get(`${API_BASE_URL}/server/byUser/` + user_id, { withCredentials: true });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
+
+export async function getServerById(id: string) {
+  try {
+    let res = await axios.get(`${API_BASE_URL}/server/byId/` + id, { withCredentials: true });
     return { success: true, data: res.data };
   } catch (error) {
     return { success: false, data: error };
