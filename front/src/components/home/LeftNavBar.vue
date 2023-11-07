@@ -7,7 +7,7 @@ import ServerCircleIcon from "../circle-components/ServerCircleIcon.vue";
 
 <template>
   <nav class="w-[72px] min-w-[72px] bg-grey-100 pt-3">
-    <router-link to="/me">
+    <router-link to="/me/friends">
       <PrivateMessageCircleIcon />
     </router-link>
 

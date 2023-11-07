@@ -11,6 +11,8 @@ onMounted(async () => {
   let res = await userStore.auth();
   if (!res) {
     router.push("/login");
+  } else {
+    router.push("/me");
   }
 });
 </script>
