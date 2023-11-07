@@ -6,7 +6,7 @@
     <div class="flex w-full justify-center relative mb-2 ">
         <div class="group">
             <!-- discord icon -->
-            <div class=" w-[48px] h-[48px] flex items-center justify-center cursor-pointer bg-grey-400 group-hover:bg-blue rounded-[50%] group-hover:rounded-2xl transition-all duration-300">
+            <div class=" w-[48px] h-[48px] flex items-center justify-center cursor-pointer bg-grey-400 group-hover:bg-blue-200 rounded-[50%] group-hover:rounded-2xl transition-all duration-300">
                 <img class="w-3/5" src="../../assets/discord-mark-white.svg" >
             </div>
             <!-- little white bar -->
