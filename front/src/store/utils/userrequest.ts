@@ -7,7 +7,7 @@ export async function login({ email, password }: { email: string; password: stri
     let res = await auth();
     return res;
   } catch (error) {
-    return { succes: false, data: error };
+    return { success: false, data: error };
   }
 }
 
@@ -17,7 +17,7 @@ export async function register({ email, username, password }: { email: string; u
     let res = await auth();
     return res;
   } catch (error) {
-    return { succes: false, data: error };
+    return { success: false, data: error };
   }
 }
 
@@ -25,8 +25,8 @@ export async function auth() {
   try {
     const response = await axios.get(`${API_BASE_URL}/auth/me`, { withCredentials: true });
     let user = response.data;
-    return { succes: true, data: user };
+    return { success: true, data: user };
   } catch (error) {
-    return { succes: false, data: error };
+    return { success: false, data: error };
   }
 }

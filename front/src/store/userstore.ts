@@ -1,6 +1,6 @@
 // userStore.ts
 import { defineStore } from "pinia";
-import { login, register } from "./utils/userrequest";
+import { login, register, auth } from "./utils/userrequest";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -10,7 +10,7 @@ export const useUserStore = defineStore("user", {
     async login({ email, password }: { email: string; password: string }) {
       let res = await login({ email, password });
       console.log(res);
-      if (res?.succes) {
+      if (res?.success) {
         this.currentUser = res.data;
       } else {
         console.error("Registration failed:", res?.data);
@@ -19,12 +19,27 @@ export const useUserStore = defineStore("user", {
     },
     async register({ email, username, password }: { email: string; username: string; password: string }) {
       let res = await register({ email, username, password });
-      if (res?.succes) {
+      if (res?.success) {
         this.currentUser = res.data;
       } else {
         console.error("Registration failed:", res?.data);
         throw res?.data;
       }
+    },
+    async auth() {
+      return this.currentUser !== null ? true : await this.handleAuth();
+    },
+    async handleAuth() {
+      let res = await auth();
+      console.log(res);
+      if (res.success) {
+        this.currentUser = res.data;
+      }
+      return res.success;
+    },
+
+    getUser() {
+      return this.currentUser;
     },
   },
 });
