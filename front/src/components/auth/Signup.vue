@@ -1,38 +1,72 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { useUserStore } from "../../store/userstore";
 import { useRouter } from "vue-router";
-
-const email = ref("");
-const password = ref("");
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const login = async () => {
-  const user = { email: email.value, password: password.value };
+const email = ref("");
+const username = ref("");
+const password = ref("");
 
+async function signup() {
+  const user = { email: email.value, username: username.value, password: password.value };
   try {
-    await userStore.login(user);
-    router.push("/home");
+    await userStore.register(user);
+    router.push("/login");
   } catch (error) {
     console.error("Login failed:", error);
   }
-};
+}
+
+const selectedDay = ref<string>("");
+const selectedMonth = ref<string>("");
+const selectedYear = ref<string>("");
+const tosCheckBox = ref<Boolean>(false);
+
+const days = [...Array(31).keys()].map((day) => (day + 1).toString());
+const months = [
+  "janvier",
+  "février",
+  "mars",
+  "avril",
+  "mai",
+  "juin",
+  "juillet",
+  "août",
+  "septembre",
+  "octobre",
+  "novembre",
+  "décembre",
+];
+
+const years = [...Array(100).keys()].map((year) => (new Date().getFullYear() - year).toString());
+
+const continueDisabled = computed(() => {
+  return !(
+    email.value &&
+    username.value &&
+    password.value &&
+    selectedDay.value &&
+    selectedMonth.value &&
+    selectedYear.value &&
+    tosCheckBox.value
+  );
+});
 </script>
 
 <template>
-  <div class="login"></div>
+  <div class="signup"></div>
   <div class="position body">
     <form class="container">
       <div class="centering-wrapper">
         <div class="section1 text-center">
-          <div class="primary-header">Ha, te revoilà !</div>
-          <div class="secondary-header">Nous sommes si heureux de te revoir !</div>
+          <div class="primary-header">Créer un compte</div>
           <div class="input-position">
             <div class="form-group">
               <h5 class="input-placeholder" id="email-txt">
-                E-mail ou numéro de téléphone<span class="error-message" id="email-error"></span>
+                E-mail <span class="error-message" id="email-error">*</span>
               </h5>
               <input
                 type="email"
@@ -47,8 +81,24 @@ const login = async () => {
               <i class="input-icon uil uil-at"></i>
             </div>
             <div class="form-group">
+              <h5 class="input-placeholder" id="username-txt">
+                Nom d'utilisateur <span class="error-message" id="username-error">*</span>
+              </h5>
+              <input
+                type="text"
+                required="true"
+                name="username"
+                class="form-style"
+                id="username"
+                autocomplete="off"
+                style="margin-bottom: 20px"
+                v-model="username"
+              />
+              <i class="input-icon uil uil-at"></i>
+            </div>
+            <div class="form-group">
               <h5 class="input-placeholder" id="pword-txt">
-                Mot de passe<span class="error-message" id="password-error"></span>
+                Mot de passe <span class="error-message" id="password-error">*</span>
               </h5>
               <input
                 type="password"
@@ -57,39 +107,68 @@ const login = async () => {
                 class="form-style"
                 id="logpass"
                 autocomplete="on"
+                style="margin-bottom: 20px"
                 v-model="password"
               />
               <i class="input-icon uil uil-lock-alt"></i>
             </div>
+            <div class="form-group">
+              <h5 class="input-placeholder" id="pword-txt">
+                Date de naissance <span class="error-message" id="password-error">*</span>
+              </h5>
+              <div class="birthdate">
+                <select class="form-style" id="day" v-model="selectedDay" required label="Jour">
+                  <option disabled selected value="">Jour</option>
+                  <option v-for="day in days" :value="day">{{ day }}</option>
+                </select>
+
+                <select class="form-style" id="month" v-model="selectedMonth" required label="Mois">
+                  <option disabled selected value="">Mois</option>
+                  <option v-for="month in months" :value="month">{{ month }}</option>
+                </select>
+
+                <select class="form-style" id="year" v-model="selectedYear" required label="Année">
+                  <option disabled selected value="">Année</option>
+                  <option v-for="year in years" :value="year">{{ year }}</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div class="password-container"><a href="#" class="link">Tu as oublié ton mot de passe ?</a></div>
+
+          <div class="checkbox-container">
+            <input type="checkbox" />
+            <label class="text-xs text-left" style="color: #a2a3a7">
+              (Facultatif) J'accepte volontiers de recevoir des pigeons voyageurs de temps à autre, porteur de nouvelles
+              peu interessantes. Tu peux te désinscrire à tout moment, mais pas vraiment en fait.
+            </label>
+          </div>
           <div class="btn-position">
-            <a href="#" class="btn" :onclick="login">Connexion</a>
+            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
           </div>
-          <div class="account-needed">Besoin d'un compte ?<a href="/signup" class="link"> S'inscrire</a></div>
-        </div>
-        <div class="horizontalSeparator"></div>
-        <div class="qr-login">
-          <div class="qr-container">
-            <img
-              class="logo"
-              src="https://cdn.discordapp.com/attachments/742854174324031528/771346778356318248/ChallengerCarl_2.png"
-            />
-            <canvas id="qr-code"></canvas>
+          <div class="checkbox-container">
+            <input type="checkbox" v-model="tosCheckBox" />
+            <label class="text-xs text-left" style="color: #a2a3a7">
+              J'ai lu et accepté les Conditions d'Utilisation et la Politique de Confidentialité de Discord. (on sait
+              tous que non)
+            </label>
           </div>
-          <div class="qr-pheader">Ne faites rien avec le QR Code</div>
-          <div class="qr-sheader">Scannez ce QR code pour ne rien faire.</div>
+          <div class="account-needed"><a href="/login" class="link">Tu as déjà un compte ?</a></div>
         </div>
       </div>
     </form>
   </div>
 </template>
 
-<style scoped>
+<style scoped lang="scss">
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}
+
+input[type="checkbox"] {
+  transform: scale(1.7);
+  cursor: pointer;
 }
 
 .body {
@@ -102,7 +181,36 @@ const login = async () => {
   display: none;
 }
 
-.login {
+.birthdate {
+  display: flex;
+  justify-content: space-between;
+
+  select {
+    width: 30%;
+  }
+}
+
+.checkbox-container {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+
+  max-width: 30vw;
+  margin-top: 20px;
+  margin-bottom: 20px;
+
+  input {
+    margin-right: 3%;
+  }
+}
+
+@media (max-width: 1024px) {
+  .checkbox-container {
+    max-width: 40vw;
+  }
+}
+
+.signup {
   position: fixed;
   top: 0;
   left: 0;
@@ -121,7 +229,7 @@ const login = async () => {
 }
 
 .container {
-  width: 784px;
+  width: fit-content;
   max-width: 90vw;
   padding: 32px;
   background-color: #2a2b38;
@@ -224,6 +332,8 @@ const login = async () => {
   -ms-flex: 1;
   flex: 1;
   cursor: default;
+
+  font-weight: 900;
 }
 
 .error-message {
@@ -273,8 +383,6 @@ const login = async () => {
 
 .btn-position {
   width: 100%;
-  display: grid;
-  place-items: center;
 }
 
 .btn {
