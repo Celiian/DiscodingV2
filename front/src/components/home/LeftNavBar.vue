@@ -5,36 +5,31 @@ import SearchServerIcon from "../circle-components/SearchServerIcon.vue";
 import ServerCircleIcon from "../circle-components/ServerCircleIcon.vue";
 </script>
 
-
 <template>
+  <nav class="w-[72px] min-w-[72px] bg-grey-100 pt-3">
+    <router-link to="/me/friends">
+      <PrivateMessageCircleIcon />
+    </router-link>
 
-    <nav class="w-[72px] min-w-[72px] bg-grey-100 pt-3">
-        <PrivateMessageCircleIcon/>
+    <div class="w-full flex justify-center mb-2">
+      <div class="w-[32px] h-[2px] bg-grey-400"></div>
+    </div>
 
-        <div class="w-full flex justify-center mb-2">
-            <div class="w-[32px] h-[2px] bg-grey-400"></div>
-        </div>
+    <!-- serveur icon list -->
+    <ServerCircleIcon />
 
-        <!-- serveur icon list -->
-        <ServerCircleIcon/>
-        
-
-        <AddServerIcon/>
-        <SearchServerIcon/>
-
-    </nav>
-
+    <AddServerIcon />
+    <SearchServerIcon />
+  </nav>
 </template>
 
 <style scoped>
-
-nav::-webkit-scrollbar{
-    display: none;
+nav::-webkit-scrollbar {
+  display: none;
 }
 
-nav{
-    overflow-y: scroll;
-    overflow-x: visible;
+nav {
+  overflow-y: scroll;
+  overflow-x: visible;
 }
-
 </style>
