@@ -1,16 +1,23 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
 import { useUserStore } from "../../store/userstore";
+import { useRouter } from "vue-router";
 
 const userStore = useUserStore();
+const router = useRouter();
 
 const email = ref("");
 const username = ref("");
 const password = ref("");
 
-function signup() {
+async function signup() {
   const user = { email: email.value, username: username.value, password: password.value };
-  userStore.register(user);
+  try {
+    await userStore.register(user);
+    router.push("/login");
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
 }
 
 const selectedDay = ref<string>("");
