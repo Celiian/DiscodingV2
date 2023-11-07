@@ -3,6 +3,29 @@ import FriendIcon from '../svg/FriendIcon.vue';
 import NewGroupIcon from '../svg/NewGroupIcon.vue';
 import NotifInboxIcon from '../svg/NotifInboxIcon.vue';
 import InfoIcon from '../svg/InfoIcon.vue';
+import FilterButton from './FilterButton.vue';
+import AddFriendsButton from './AddFriendsButton.vue';
+import { ref } from 'vue';
+
+const filteredButtons = ["En ligne","Tous","En attente", "Bloqué"]
+const buttonSelectedIndex = ref<number>()
+
+//METHOD
+function onClickFilterButton(index:number){
+    buttonSelectedIndex.value = index
+
+    //action here
+    
+}
+
+function onClickAddFriendsButton(){
+    buttonSelectedIndex.value = -1
+
+    //action here
+}
+
+
+
 
 </script>
 
@@ -21,18 +44,16 @@ import InfoIcon from '../svg/InfoIcon.vue';
             
 
             <div class="flex">
+
+                <!--filtered buttons-->
+                <div v-for="(button, index) in filteredButtons">
+                    <FilterButton :buttonTitle="button" :isSelected="buttonSelectedIndex === index" :key="index" @click="onClickFilterButton(index)"/>
+                </div>
                 
-                <div class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap">En ligne</div>
 
-                <div class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap">Tous</div>
+                <AddFriendsButton @click="onClickAddFriendsButton" :isSelected="buttonSelectedIndex === -1"/>
 
-                <div class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap">En Attente</div>
-
-                <div class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap">Bloqué</div>
-
-                <div class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-600 bg-green-buttonBg transition-all duration-150 whitespace-nowrap">Ajouter</div>
-
-            </div>  <!-- div filter -->
+            </div> 
 
         </div>
 
