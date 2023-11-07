@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from "vue";
+import axios from "axios";
 
 const email = ref("");
 const password = ref("");
@@ -7,6 +8,18 @@ const password = ref("");
 function connect() {
   console.log(email.value);
   console.log(password.value);
+
+  const user = { email: email.value, password: password.value };
+
+  axios
+    .post("http://localhost:3001/auth/login", user)
+    .then((res: any) => {
+      console.log("Logged in");
+      console.log(res.data);
+    })
+    .catch((error: any) => {
+      console.error("Error:", error);
+    });
 }
 </script>
 

@@ -1,18 +1,28 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
+import axios from "axios";
 
 const email = ref("");
 const username = ref("");
 const password = ref("");
 
-function connect() {
-  console.log(email.value);
-  console.log(password.value);
+function signup() {
+  const user = { email: email.value, username: username.value, password: password.value };
+
+  axios
+    .post("http://localhost:3001/auth/register", user)
+    .then(() => {
+      console.log("Registered");
+    })
+    .catch((error: any) => {
+      console.error("Error:", error);
+    });
 }
 
 const selectedDay = ref<string>("");
 const selectedMonth = ref<string>("");
 const selectedYear = ref<string>("");
+const tosCheckBox = ref<Boolean>(false);
 
 const days = [...Array(31).keys()].map((day) => (day + 1).toString());
 const months = [
@@ -32,14 +42,15 @@ const months = [
 
 const years = [...Array(100).keys()].map((year) => (new Date().getFullYear() - year).toString());
 
-const isButtonDisabled = computed(() => {
-  return (
-    !email.value ||
-    !username.value ||
-    !password.value ||
-    !selectedDay.value ||
-    !selectedMonth.value ||
-    !selectedYear.value
+const continueDisabled = computed(() => {
+  return !(
+    email.value &&
+    username.value &&
+    password.value &&
+    selectedDay.value &&
+    selectedMonth.value &&
+    selectedYear.value &&
+    tosCheckBox.value
   );
 });
 </script>
@@ -55,7 +66,7 @@ const isButtonDisabled = computed(() => {
           <div class="input-position">
             <div class="form-group">
               <h5 class="input-placeholder" id="email-txt">
-                E-mail <span class="error-message" id="email-error"></span>
+                E-mail <span class="error-message" id="email-error">*</span>
               </h5>
               <input
                 type="email"
@@ -71,7 +82,7 @@ const isButtonDisabled = computed(() => {
             </div>
             <div class="form-group">
               <h5 class="input-placeholder" id="username-txt">
-                Nom d'utilisateur <span class="error-message" id="username-error"></span>
+                Nom d'utilisateur <span class="error-message" id="username-error">*</span>
               </h5>
               <input
                 type="text"
@@ -87,7 +98,7 @@ const isButtonDisabled = computed(() => {
             </div>
             <div class="form-group">
               <h5 class="input-placeholder" id="pword-txt">
-                Mot de passe<span class="error-message" id="password-error"></span>
+                Mot de passe <span class="error-message" id="password-error">*</span>
               </h5>
               <input
                 type="password"
@@ -103,7 +114,7 @@ const isButtonDisabled = computed(() => {
             </div>
             <div class="form-group">
               <h5 class="input-placeholder" id="pword-txt">
-                Date de naissance<span class="error-message" id="password-error"></span>
+                Date de naissance <span class="error-message" id="password-error">*</span>
               </h5>
               <div class="birthdate">
                 <select class="form-style" id="day" v-model="selectedDay" required label="Jour">
@@ -132,10 +143,10 @@ const isButtonDisabled = computed(() => {
             </label>
           </div>
           <div class="btn-position">
-            <button class="btn disabled:opacity-50" @click="connect">Continuer</button>
+            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
           </div>
           <div class="checkbox-container">
-            <input type="checkbox" />
+            <input type="checkbox" v-model="tosCheckBox" />
             <label class="text-xs text-left" style="color: #a2a3a7">
               J'ai lu et accepté les Conditions d'Utilisation et la Politique de Confidentialité de Discord. (on sait
               tous que non)
@@ -181,7 +192,7 @@ input[type="checkbox"] {
 
 .checkbox-container {
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   align-items: center;
 
   max-width: 30vw;
@@ -321,6 +332,8 @@ input[type="checkbox"] {
   -ms-flex: 1;
   flex: 1;
   cursor: default;
+
+  font-weight: 900;
 }
 
 .error-message {
