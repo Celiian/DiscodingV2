@@ -9,24 +9,22 @@ export const useUserStore = defineStore("user", {
   actions: {
     async login({ email, password }: { email: string; password: string }) {
       let res = await login({ email, password });
-      if (res.succes) {
-        this.currentUser = res.user;
+      console.log(res);
+      if (res?.succes) {
+        this.currentUser = res.data;
       } else {
-        console.error("Registration failed:", res.error);
-        throw res.error;
+        console.error("Registration failed:", res?.data);
+        throw res?.data;
       }
     },
     async register({ email, username, password }: { email: string; username: string; password: string }) {
       let res = await register({ email, username, password });
-      if (res.succes) {
-        this.currentUser = res.user;
+      if (res?.succes) {
+        this.currentUser = res.data;
       } else {
-        console.error("Registration failed:", res.error);
-        throw res.error;
+        console.error("Registration failed:", res?.data);
+        throw res?.data;
       }
-    },
-    logout() {
-      this.currentUser = null;
     },
   },
 });

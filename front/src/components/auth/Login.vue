@@ -1,31 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
-import axios from "axios";
+import { useUserStore } from "../../store/userstore";
+import { useRouter } from "vue-router";
 
 const email = ref("");
 const password = ref("");
 
-function connect() {
-  console.log(email.value);
-  console.log(password.value);
+const userStore = useUserStore();
+const router = useRouter();
 
+const login = async () => {
   const user = { email: email.value, password: password.value };
 
-  axios
-    .post("http://localhost:3001/auth/login", user)
-    .then((res: any) => {
-      console.log("Logged in");
-      console.log(res.data);
-    })
-    .catch((error: any) => {
-      console.error("Error:", error);
-    });
-}
+  try {
+    await userStore.login(user);
+    router.push("/home");
+  } catch (error) {
+    console.error("Login failed:", error);
+  }
+};
 </script>
 
 <template>
   <div class="login"></div>
-
   <div class="position body">
     <form class="container">
       <div class="centering-wrapper">
@@ -67,7 +64,7 @@ function connect() {
           </div>
           <div class="password-container"><a href="#" class="link">Tu as oublié ton mot de passe ?</a></div>
           <div class="btn-position">
-            <a href="#" class="btn" :onclick="connect">Connexion</a>
+            <a href="#" class="btn" :onclick="login">Connexion</a>
           </div>
           <div class="account-needed">Besoin d'un compte ?<a href="/signup" class="link"> S'inscrire</a></div>
         </div>

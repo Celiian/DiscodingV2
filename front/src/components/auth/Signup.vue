@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import axios from "axios";
+import { useUserStore } from "../../store/userstore";
+
+const userStore = useUserStore();
 
 const email = ref("");
 const username = ref("");
@@ -8,15 +10,7 @@ const password = ref("");
 
 function signup() {
   const user = { email: email.value, username: username.value, password: password.value };
-
-  axios
-    .post("http://localhost:3001/auth/register", user)
-    .then(() => {
-      console.log("Registered");
-    })
-    .catch((error: any) => {
-      console.error("Error:", error);
-    });
+  userStore.register(user);
 }
 
 const selectedDay = ref<string>("");
@@ -56,8 +50,7 @@ const continueDisabled = computed(() => {
 </script>
 
 <template>
-  <div class="login"></div>
-
+  <div class="signup"></div>
   <div class="position body">
     <form class="container">
       <div class="centering-wrapper">
@@ -210,7 +203,7 @@ input[type="checkbox"] {
   }
 }
 
-.login {
+.signup {
   position: fixed;
   top: 0;
   left: 0;
