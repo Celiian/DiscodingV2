@@ -17,7 +17,7 @@ function closeModal(){
         <div class="bg-white-600 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative">
 
             <button :onclick="closeModal" class="absolute top-4 right-4 w-6 h-6">
-                <CloseIcon class="w-full h-full fill-white-200"/>  
+                <CloseIcon class="w-full h-full fill-white-200 hover:fill-black transition-all duration-300"/>  
             </button>
 
             <div class="pt-6 px-6 text-center">
