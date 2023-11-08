@@ -1,9 +1,7 @@
 <script setup lang="ts">
 import FriendIcon from "../svg/FriendIcon.vue";
 import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
-import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
-import CloseIcon from "../svg/CloseIcon.vue";
-import FriendListCard from "../Messages/FriendListCard.vue";
+import MessageListCard from "../Messages/MessageListCard.vue";
 </script>
 
 <template>
@@ -32,7 +30,7 @@ import FriendListCard from "../Messages/FriendListCard.vue";
   <div class="w-full h-[1200px] overflow-y-hidden mt-1">
     <ul>
       <!--friend card list-->
-      <FriendListCard/>
+      <MessageListCard/>
 
     </ul>
 
