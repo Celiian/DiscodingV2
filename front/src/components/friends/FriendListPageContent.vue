@@ -63,9 +63,9 @@ const friendList = computed(() => {
   <!-- filter title-->
   <div class="flex items-center justify-between">
     <h2
-      class="mt-4 mr-5 mb-2 ml-[30px] box-border text-ellipsis whitespace-nowrap overflow-hidden uppercase text-[12px] leading-4 tracking-[0.02em] grow shrink basis-auto font-semibold text-white-300"
+      class="mt-4 mr-5 mb-2 ml-[30px] box-border text-ellipsis whitespace-nowrap overflow-hidden uppercase text-[11px] leading-4 tracking-[0.02em] grow shrink basis-auto font-bold text-white-300"
     >
-      TITLE -- 3
+      TITLE ― 3
     </h2>
   </div>
 
