@@ -56,16 +56,18 @@ function sendMessage() {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col">
-    <!--message list content-->
-    <MessageComp
-      v-for="message in messages"
-      v-bind="{
-        userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
-        date: 'Aujourd\'hui à 22:20',
-        messageContent: message.content,
-      }"
-    />
+  <div class="w-full h-full flex flex-col max-h-[95%]">
+    <div class="overflow-y-scroll h-full flex-col">
+      <!--message list content-->
+      <MessageComp
+        v-for="message in messages"
+        v-bind="{
+          userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
+          date: 'Aujourd\'hui à 22:20',
+          messageContent: message.content,
+        }"
+      />
+    </div>
 
     <!--input message-->
     <div class="relative shrink-0 px-4 mt-2">
@@ -85,7 +87,7 @@ function sendMessage() {
               v-model="messageInput"
               class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
               type="text"
-              :placeholder="'Envoyer un message a ' + friend?.username"
+              placeholder="Envoyer un message a Titi"
             />
           </div>
         </div>

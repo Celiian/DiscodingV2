@@ -14,7 +14,7 @@ function onClickUserIconOrName() {
 </script>
 
 <template>
-  <div class="w-full h-full">
+  <div class="w-full h-fit">
     <ol class="w-full h-full">
       <li class="relative outline-none px-4 hover:bg-black/10">
         <div class="mt-[1.06rem] min-h-[2.75rem] flex items-center">

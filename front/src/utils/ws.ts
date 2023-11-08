@@ -20,7 +20,7 @@ socket.on("friend-add", () => {
 
 socket.on("mp-received", (data) => {
   const messageStore = useMessageStore();
-
+  console.log("mp-received");
   messageStore.getMessagesMp(data.channel);
 });
 
