@@ -1,6 +1,6 @@
 import { AuthRegisterBody } from "@/types/auth.types";
 import { Express, Request, Response } from "express";
-import { login, register } from "./auth.services";
+import { login, register, getUserById } from "./auth.services";
 import { requireLogin } from "./auth.middleware";
 
 export function registerAuthRoutes(app: Express) {
@@ -33,5 +33,19 @@ export function registerAuthRoutes(app: Express) {
 
   app.get("/auth/me", requireLogin, (req, res) => {
     res.json(req.user);
+  });
+
+  app.get("/user/:id", async (req: Request<{ id: string }, unknown, unknown>, res: Response) => {
+    try {
+      const id = req.params.id;
+      const user = await getUserById(id);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+      } else {
+        res.json(user);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
   });
 }
