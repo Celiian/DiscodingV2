@@ -18,6 +18,7 @@ const serverList = ref<Server[]>([]);
 
 watchEffect(() => {
   const server = serverStore.getServerList();
+  console.log(server);
 
   serverList.value = server;
 });
