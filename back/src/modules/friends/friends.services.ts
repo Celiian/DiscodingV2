@@ -10,12 +10,30 @@ export async function addFriend(body: FriendsCreateBody) {
   });
 
   if (receiver) {
-    const res = await Friends.insertOne({
+    const request = await Friends.findOne({
+      receiver: receiver?._id.toString(),
+      initiator: body.initiator_id,
+    });
+
+    if (request) {
+      return { success: false, data: "A request have already been done" };
+    } else {
+      const request_inversed = await Friends.findOne({
+        receiver: receiver?._id.toString(),
+        initiator: body.initiator_id,
+      });
+
+      if (request_inversed) {
+        return { success: false, data: "A request have already been done" };
+      }
+    }
+
+    await Friends.insertOne({
       initiator: body.initiator_id,
       receiver: receiver._id.toString(),
       status: "pending",
     });
-    return { success: true, data: res };
+    return { success: true, data: receiver._id };
   } else {
     return { success: false, data: "user not found" };
   }

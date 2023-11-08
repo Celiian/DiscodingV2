@@ -1,5 +1,7 @@
 import axios from "axios";
+import { emitEvent } from "../../utils/ws";
 
+// Titi#4565
 const API_BASE_URL = "http://localhost:3001";
 
 export async function addFriendRequest({
@@ -11,6 +13,9 @@ export async function addFriendRequest({
 }) {
   try {
     const res = await axios.post(`${API_BASE_URL}/friends/add`, { receiver_name, initiator_id });
+    if (res.data.success) {
+      emitEvent({ event: "friend-add", data: res.data.data });
+    }
     return res.data;
   } catch (error) {
     return { success: false, data: error };

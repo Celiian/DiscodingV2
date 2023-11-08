@@ -10,41 +10,39 @@ export function initSocketio(httpServer: HttpServer) {
     },
   });
 
-  // lorsqu'un client se connecte, le callback ci-dessous est appeler.
-  // la variable client correspond on client websocket (socket.io) de la personne connectée
+  const userConnections = new Map();
+
   io.on("connection", (client) => {
-    /**
-     * Lorsque le client, sur le front fait: socket.emit('kindof:event', { a: 1, b: 2})
-     * Le callback ci-dessous sera appeler, la variable data, contiendra { a: 1, b: 2 }
-     */
+    client.on("init-connect", (data) => {
+      const userId = data.userId;
+      const connectionId = client.id;
 
-    client.on("init connect", (data) => {
-      console.log("connected : ", data);
+      userConnections.set(userId, connectionId);
 
-      /**
-       * si vous souhaitez envoyer de la donnée au client, lisez la doc,
-       * il sera parfois nécessaire d'envoyer de la donnée a plus d'un client
-       * regardez au niveau des broadcast etc..
-       * Contrairement a une requete HTTP classique, il est n'est pas obligatoire de répondre
-       */
-      // il est possible d'envoyer le meme nom d'evenement, c'est le client qui doit l'ecouter cette fois.
+      console.log(`User ${userId} connected with connection ID ${connectionId}`);
     });
 
     client.on("event", (data) => {
-      console.log("kindof event", data);
+      console.log(data);
+    });
 
-      /**
-       * si vous souhaitez envoyer de la donnée au client, lisez la doc,
-       * il sera parfois nécessaire d'envoyer de la donnée a plus d'un client
-       * regardez au niveau des broadcast etc..
-       * Contrairement a une requete HTTP classique, il est n'est pas obligatoire de répondre
-       */
-      // il est possible d'envoyer le meme nom d'evenement, c'est le client qui doit l'ecouter cette fois.
-
-      client.broadcast.emit("event", { hello: "world" });
-      client.emit("event", { hello: "world" });
+    client.on("friend-add", (data) => {
+      sendMessageToUser(data, "friend-add", "");
     });
   });
+
+  function sendMessageToUser(userId: string, event: string, data: string) {
+    if (userId) {
+      const connectionId = userConnections.get(userId);
+      console.log(userConnections);
+
+      if (connectionId) {
+        io.to(connectionId).emit(event, data);
+      } else {
+        console.log(`User ${userId} is not connected.`);
+      }
+    }
+  }
 
   return io;
 }

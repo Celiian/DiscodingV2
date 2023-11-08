@@ -10,14 +10,14 @@ export const useServerStore = defineStore("server", {
   actions: {
     async createServer({ serverName, icon }: { serverName: string; icon: ArrayBuffer }) {
       const userStore = useUserStore();
-      let user = userStore.getUser();
+      let user = userStore.getCurrentUser();
       await createServer({ serverName: serverName, icon: icon, owner: user._id });
       await this.getServerByUser();
     },
 
     async getServerByUser() {
       const userStore = useUserStore();
-      let user = userStore.getUser();
+      let user = userStore.getCurrentUser();
       let res = await getServerByUser(user._id);
       this.serverList = res.data;
     },

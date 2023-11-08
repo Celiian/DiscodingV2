@@ -1,18 +1,17 @@
 <script setup lang="ts">
 import CloseIcon from "../svg/CloseIcon.vue";
 import AddPhotoIcon from "../svg/AddPhotoIcon.vue";
-//import { useUserStore } from "../../store/userstore";
+import { useUserStore } from "../../store/userstore";
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
 import { useServerStore } from "../../store/serverstore";
 
 const emit = defineEmits(["close-modal"]);
-//const userStore = useUserStore();
+const userStore = useUserStore();
 const serverStore = useServerStore();
 
-const userName = userStore.getUser().username;
 const uploadedImage = ref("");
-const currentUser = "titi"; //userStore.currentUser
+const currentUser = userStore.currentUser;
 const serverName = ref("");
 const target = ref(null);
 
