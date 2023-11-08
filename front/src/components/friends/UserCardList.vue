@@ -8,13 +8,24 @@ import UnblockUserIcon from "../svg/UnblockUserIcon.vue";
 import AcceptIcon from "../svg/AcceptIcon.vue";
 import CloseIcon from "../svg/CloseIcon.vue";
 
-const userStore = useUserStore();
-const friendStore = useFriendsStore()
-const props = defineProps({ id: String });
+const props = defineProps({ 
+  receiverId: String,
+  initiatorId: String
+ });
 const user = ref(null);
 
+const userStore = useUserStore();
+const friendStore = useFriendsStore()
+
+
+const currentUserId = userStore.getCurrentUser()._id.toString();
+const currentUserIsInitiator = currentUserId === props.initiatorId ? true : false;
+
+
+
+
 watch(
-  () => props.id,
+  () => props,
   () => {
     getUser();
   }
@@ -25,7 +36,7 @@ onMounted(async () => {
 });
 
 async function getUser() {
-  const res = await userStore.getUser({ id: props.id || "" });
+  const res = await userStore.getUser({ id: currentUserIsInitiator ? props.receiverId! : props.initiatorId! || "" });
 
   if (res && res?.success) {
     user.value = res?.data;
@@ -41,11 +52,11 @@ function onClickMore(){
 }
 
 function onClickAccept(){
-
+  friendStore.acceptFriend({receiver_id : props.receiverId! ,initiator_id : props.initiatorId!  })
 }
 
 function onClickRefuse(){
-
+  friendStore.rejectFriend({receiver_id : props.receiverId!})
 }
 
 function onClickUnblock(){
@@ -108,7 +119,7 @@ function onClickUnblock(){
         <!--accept request icon-->
         <div
           @click="onClickAccept"
-          v-if="friendStore.displayed === 2"
+          v-if="friendStore.displayed === 2 && !currentUserIsInitiator"
           class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200/40 group-hover/main:bg-grey-200"
           title="More"
         >

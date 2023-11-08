@@ -10,7 +10,7 @@ const { name, imageUrl, id } = defineProps(["name", "imageUrl", "id"]);
     <div class="group">
       <img
         :src="imageUrl"
-        class="w-[48px] h-[48px] flex items-center justify-center cursor-pointer rounded-[50%] group-hover:rounded-2xl transition-all duration-300"
+        class="w-[48px] h-[48px] object-cover flex items-center justify-center cursor-pointer rounded-[50%] group-hover:rounded-2xl transition-all duration-300"
       />
       <div class="absolute h-[48px] w-2 top-0 left-0 flex items-center justify-start">
         <div
