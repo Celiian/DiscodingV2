@@ -14,7 +14,7 @@ const login = async () => {
 
   try {
     await userStore.login(user);
-    router.push("/home");
+    router.push("/");
   } catch (error) {
     console.error("Login failed:", error);
   }
