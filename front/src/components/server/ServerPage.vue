@@ -41,3 +41,4 @@ watchEffect(() => {
 </template>
 
 <style scoped></style>
+../../store/serverStore

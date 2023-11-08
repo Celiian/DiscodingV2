@@ -6,18 +6,21 @@ import { useRouter } from "vue-router";
 import { emitEvent, connectToServer, disconnectFromServer } from "../../utils/ws";
 import { useFriendsStore } from "../../store/friendsstore";
 import { useServerStore } from "../../store/serverstore";
+import { useMessageStore } from "../../store/messagestore";
 
 const userStore = useUserStore();
 const serverStore = useServerStore();
-const router = useRouter();
-
+const messageStore = useMessageStore();
 const friendsStore = useFriendsStore();
+
+const router = useRouter();
 
 onMounted(async () => {
   let res = await userStore.auth();
   if (!res) {
     router.push("/login");
   }
+  await messageStore.getMpChannels();
   await serverStore.getServerByUser();
   await friendsStore.getFriends();
   await connectToServer();

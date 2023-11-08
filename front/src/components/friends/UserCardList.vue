@@ -3,13 +3,9 @@ import MessageIcon from "../svg/MessageIcon.vue";
 import MoreIcon from "../svg/MoreIcon.vue";
 import { useUserStore } from "../../store/userstore";
 import { onMounted, ref, watch } from "vue";
-import { useFriendsStore } from "../../store/friendsstore";
-import UnblockUserIcon from "../svg/UnblockUserIcon.vue";
-import AcceptIcon from "../svg/AcceptIcon.vue";
-import CloseIcon from "../svg/CloseIcon.vue";
+import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
 
 const userStore = useUserStore();
-const friendStore = useFriendsStore();
 const props = defineProps({ id: String });
 const user = ref(null);
 
@@ -31,16 +27,6 @@ async function getUser() {
     user.value = res?.data;
   }
 }
-
-function onClickSendMp() {}
-
-function onClickMore() {}
-
-function onClickAccept() {}
-
-function onClickRefuse() {}
-
-function onClickUnblock() {}
 </script>
 
 <template>
@@ -53,59 +39,36 @@ function onClickUnblock() {}
       <div class="flex overflow-hidden">
         <!--user logo-->
         <div class="w-8 h-8 relative rounded-full mr-3">
-          <img
-            src="../../assets/server_example.png"
-            class="w-full h-full shrink-0 relative rounded-full mr-3 object-cover"
-          />
+          <RoundedLogoIcon />
         </div>
+        <!-- user info-->
+        <div class="flex flex-col overflow-hidden">
+          <!--name-->
+          <div class="flex grow items-center justify-start whitespace-nowrap">
+            <span class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-500">{{
+              (user as any)?.username
+            }}</span>
+          </div>
+          <!--subtitle-->
+          <div class="text-[12px] text-white-300">
+            <span class="whitespace-nowrap text-ellipsis overflow-hidden text-[12px]">Status</span>
+          </div>
+        </div>
+      </div>
 
-        <!--button icon-->
-        <div class="flex ml-2">
-          <!--send message icon-->
-          <div
-            @click="onClickSendMp"
-            v-if="friendStore.displayed === 0 || friendStore.displayed === 1"
-            class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center bg-grey-200/40 group-hover/main:bg-grey-200"
-            title="Envoyer un MP"
-          >
-            <MessageIcon class="fill-white-300 w-5 h-5 group-hover:fill-white-500" />
-          </div>
-          <!--more action icon-->
-          <div
-            @click="onClickMore"
-            v-if="friendStore.displayed === 0 || friendStore.displayed === 1"
-            class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200/40 group-hover/main:bg-grey-200"
-            title="More"
-          >
-            <MoreIcon class="fill-white-300 w-4 h-4 group-hover:fill-white-500" />
-          </div>
-          <!--accept request icon-->
-          <div
-            @click="onClickAccept"
-            v-if="friendStore.displayed === 2"
-            class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200/40 group-hover/main:bg-grey-200"
-            title="More"
-          >
-            <AcceptIcon class="fill-white-300 w-5 h-5 group-hover:fill-green-circleIcon" />
-          </div>
-          <!-- refuse request icon-->
-          <div
-            @click="onClickRefuse"
-            v-if="friendStore.displayed === 2"
-            class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200/40 group-hover/main:bg-grey-200"
-            title="More"
-          >
-            <CloseIcon class="fill-white-300 w-5 h-5 group-hover:fill-red" />
-          </div>
-          <!--unblock friend icon-->
-          <div
-            @click="onClickUnblock"
-            v-if="friendStore.displayed === 3"
-            class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200/40 group-hover/main:bg-grey-200"
-            title="More"
-          >
-            <UnblockUserIcon class="fill-white-300 w-5 h-5 group-hover:fill-red" />
-          </div>
+      <!--button icon-->
+      <div class="flex ml-2">
+        <div
+          class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center bg-grey-200"
+          title="Envoyer un MP"
+        >
+          <MessageIcon class="fill-white-300 w-5 h-5 group-hover:fill-white-500" />
+        </div>
+        <div
+          class="group cursor-pointer w-9 h-9 rounded-full flex justify-center items-center ml-[10px] bg-grey-200"
+          title="More"
+        >
+          <MoreIcon class="fill-white-300 w-4 h-4 group-hover:fill-white-500" />
         </div>
       </div>
     </div>
@@ -113,3 +76,4 @@ function onClickUnblock() {}
 </template>
 
 <style scoped></style>
+../../store/userStore

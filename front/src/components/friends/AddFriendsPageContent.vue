@@ -62,3 +62,4 @@ function sendFriendRequest() {
 </template>
 
 <style scoped></style>
+../../store/friendsStore

@@ -18,7 +18,6 @@ const serverList = ref<Server[]>([]);
 
 watchEffect(() => {
   const server = serverStore.getServerList();
-  console.log(server);
 
   serverList.value = server;
 });
@@ -52,3 +51,4 @@ nav::-webkit-scrollbar {
   display: none;
 }
 </style>
+../../store/serverStore
