@@ -1,3 +1,4 @@
+import { Channels } from "@/db/models/Channel";
 import { Friends } from "@/db/models/Friends";
 
 import { Users } from "@/db/models/User";
@@ -50,6 +51,13 @@ export async function acceptFriend(body: FriendsAcceptBody) {
       { $set: { status: "accepted" } }
     );
 
+    await Channels.insertOne({
+      name: "",
+      type: "mp",
+      audio: false,
+      users: [body.receiver_id, body.initiator_id],
+    });
+
     return { success: true, data: res };
   } catch (error) {
     return { success: true, data: error };
@@ -100,8 +108,8 @@ export async function getFriends(user_id: string) {
       status: "pending",
     }).toArray();
 
-    pending.push(...initiated_pending.map((friend) => friend.receiver));
-    pending.push(...received_pending.map((friend) => friend.initiator));
+    pending.push(...initiated_pending);
+    pending.push(...received_pending);
 
     const rejected: any[] = [];
     const initiated_rejected = await Friends.find({

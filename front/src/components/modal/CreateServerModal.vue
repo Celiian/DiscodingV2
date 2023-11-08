@@ -137,3 +137,4 @@ async function createServer() {
 </template>
 
 <style scoped></style>
+../../store/userStore ../../store/serverStore

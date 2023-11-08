@@ -31,7 +31,7 @@ const router = createRouter({
               component: FriendsPageVue,
             },
             {
-              path: "message",
+              path: "message/:channelId/:friendId",
               component: MessagePageVue,
             },
           ],
