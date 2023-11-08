@@ -56,21 +56,21 @@ function sendMessage() {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col max-h-[95%]">
-    <div class="overflow-y-scroll h-full flex-col">
+  <div class="relative w-full message_height justify-stretch flex flex-col">
+    <div class="overflow-y-scroll">
       <!--message list content-->
-      <MessageComp
-        v-for="message in messages"
-        v-bind="{
+      <ul>
+        <MessageComp v-for="message in messages" v-bind="{
           userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
           date: 'Aujourd\'hui à 22:20',
           messageContent: message.content,
-        }"
-      />
+        }" />
+      </ul>
+
     </div>
 
     <!--input message-->
-    <div class="relative shrink-0 px-4 mt-2">
+    <div class="relative px-4 mt-2">
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">
         <div class="flex overflow-x-hidden overflow-y-scroll max-h-[50vh] rounded-lg pl-4">
           <!--upload icon-->
@@ -82,13 +82,9 @@ function sendMessage() {
 
           <!-- input message-->
           <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
-            <input
-              @keypress.enter="sendMessage"
-              v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
-              type="text"
-              placeholder="Envoyer un message a Titi"
-            />
+            <input @keypress.enter="sendMessage" v-model="messageInput"
+              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400" type="text"
+              placeholder="Envoyer un message a Titi" />
           </div>
         </div>
       </div>
