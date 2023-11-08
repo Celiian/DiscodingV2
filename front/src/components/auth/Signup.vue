@@ -30,41 +30,43 @@ async function verifForm() {
   if (!isEmailValid) {
     console.log('Adresse e-mail invalide');
     validateEmail.value = false;
-  }else{validateEmail.value=true}
-  if (password.value.length < 8) {
-    return false;
-  }
-  let characterTypes = 0;
-  if (/[A-Z]/.test(password.value)) {
-    characterTypes++;
-  }
-  if (/[a-z]/.test(password.value)) {
-    characterTypes++;
-  }
-  if (/\d/.test(password.value)) {
-    characterTypes++;
-  }
-  if (/[!@#$%^&*]/.test(password.value)) {
-    characterTypes++;
-  }
-  if(characterTypes>=3){
-    isPasswordValid=true
-    validatePsw.value=true
-    console.log('PSW valide boyu');
+} else {
+    validateEmail.value = true;
+}
 
-  }
-  if (!isPasswordValid) {
-    console.log('PSW invalide');    
-    console.log('Mot de passe invalide');
+if (password.value.length < 8) {
+    console.log('Mot de passe trop court');
     validatePsw.value = false;
-    console.log(validatePsw.value);
-    
-  }
+} else {
+    let characterTypes = 0;
+    if (/[A-Z]/.test(password.value)) {
+        characterTypes++;
+    }
+    if (/[a-z]/.test(password.value)) {
+        characterTypes++;
+    }
+    if (/\d/.test(password.value)) {
+        characterTypes++;
+    }
+    if (/[!@#$%^&*]/.test(password.value)) {
+        characterTypes++;
+    }
 
-  if (isEmailValid && isPasswordValid) {
+    if (characterTypes >= 3) {
+        isPasswordValid = true;
+        validatePsw.value = true;
+        console.log('Mot de passe valide');
+    } else {
+        console.log('Mot de passe invalide');
+        validatePsw.value = false;
+    }
+}
+
+if (isEmailValid && isPasswordValid) {
     console.log('Formulaire valide, inscription en cours...');
     await signup();
-  }
+}
+
 }
 
 
@@ -146,6 +148,7 @@ const continueDisabled = computed(() => {
                 autocomplete="off"
                 style="margin-bottom: 20px"
                 v-model="username"
+                maxlength="15"
               />
               <i class="input-icon uil uil-at"></i>
             </div>
