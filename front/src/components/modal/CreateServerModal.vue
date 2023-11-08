@@ -10,6 +10,7 @@ const emit = defineEmits(["close-modal"]);
 //const userStore = useUserStore();
 const serverStore = useServerStore();
 
+const userName = userStore.getUser().username;
 const uploadedImage = ref("");
 const currentUser = "titi"; //userStore.currentUser
 const serverName = ref("");
