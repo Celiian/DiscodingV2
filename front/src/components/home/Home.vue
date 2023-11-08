@@ -3,18 +3,23 @@ import LeftNavBar from "./LeftNavBar.vue";
 import { useUserStore } from "../../store/userstore";
 import { onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useServerStore } from "../../store/serverstore";
+import { emitEvent, connectToServer } from "../../utils/ws";
+import { useFriendsStore } from "../../store/friendsstore";
 
 const userStore = useUserStore();
-const serverStore = useServerStore();
 const router = useRouter();
+
+const friendsStore = useFriendsStore();
 
 onMounted(async () => {
   let res = await userStore.auth();
   if (!res) {
     router.push("/login");
   }
-  await serverStore.getServerByUser();
+
+  friendsStore.getFriends();
+  await connectToServer();
+  emitEvent({ event: "event", data: "test" });
 });
 </script>
 

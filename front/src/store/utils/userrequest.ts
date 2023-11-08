@@ -30,3 +30,13 @@ export async function auth() {
     return { success: false, data: error };
   }
 }
+
+export async function getUserByid({ user_id }: { user_id: string }) {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/user/` + user_id, { withCredentials: true });
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
