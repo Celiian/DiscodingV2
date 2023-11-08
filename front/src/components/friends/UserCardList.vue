@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
 import MessageIcon from "../svg/MessageIcon.vue"
 import MoreIcon from "../svg/MoreIcon.vue"
 
@@ -18,7 +19,7 @@ import MoreIcon from "../svg/MoreIcon.vue"
                     <div class="flex overflow-hidden">
                         <!--user logo-->
                         <div class="w-8 h-8 relative rounded-full mr-3 ">
-                            <img src="../../assets/server_example.png" class="w-full h-full shrink-0 relative rounded-full mr-3 object-cover">
+                            <RoundedLogoIcon/>
                         </div>
 
                         <!-- user info-->
