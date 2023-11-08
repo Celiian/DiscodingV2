@@ -22,6 +22,7 @@ const closeIconClass = computed(() => ({
 const friendList = computed(() => {
   switch (friendsStore.getDisplayed()) {
     case 0:
+      return friendsStore.getFriendsOnline();
     case 1:
       return friendsStore.getFriendsOnline();
     case 2:
@@ -64,7 +65,7 @@ const friendList = computed(() => {
     <h2
       class="mt-4 mr-5 mb-2 ml-[30px] box-border text-ellipsis whitespace-nowrap overflow-hidden uppercase text-[12px] leading-4 tracking-[0.02em] grow shrink basis-auto font-semibold text-white-300"
     >
-      TITLE -- QTY
+      TITLE -- 3
     </h2>
   </div>
 
