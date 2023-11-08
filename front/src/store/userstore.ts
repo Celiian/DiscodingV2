@@ -9,7 +9,7 @@ export const useUserStore = defineStore("user", {
   actions: {
     async login({ email, password }: { email: string; password: string }) {
       let res = await login({ email, password });
-      console.log(res);
+
       if (res?.success) {
         this.currentUser = res.data;
       } else {
@@ -31,7 +31,6 @@ export const useUserStore = defineStore("user", {
     },
     async handleAuth() {
       let res = await auth();
-      console.log(res);
       if (res.success) {
         this.currentUser = res.data;
       }
