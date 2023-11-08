@@ -100,8 +100,8 @@ export async function getFriends(user_id: string) {
       status: "pending",
     }).toArray();
 
-    pending.push(...initiated_pending.map((friend) => friend.receiver));
-    pending.push(...received_pending.map((friend) => friend.initiator));
+    pending.push(...initiated_pending);
+    pending.push(...received_pending);
 
     const rejected: any[] = [];
     const initiated_rejected = await Friends.find({
