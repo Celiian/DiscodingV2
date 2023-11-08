@@ -86,8 +86,8 @@ export async function getFriends(user_id: string) {
       status: "accepted",
     }).toArray();
 
-    friends.push(...initiated.map((friend) => friend.receiver));
-    friends.push(...received.map((friend) => friend.initiator));
+    friends.push(...initiated);
+    friends.push(...received);
 
     const pending: any[] = [];
     const initiated_pending = await Friends.find({
@@ -114,8 +114,8 @@ export async function getFriends(user_id: string) {
       status: "rejected",
     }).toArray();
 
-    pending.push(...initiated_rejected.map((friend) => friend.receiver));
-    pending.push(...received_rejected.map((friend) => friend.initiator));
+    pending.push(...initiated_rejected);
+    pending.push(...received_rejected);
 
     return { success: true, data: { friends: friends, pending: pending, rejected: rejected } };
   } catch (error) {
