@@ -46,8 +46,8 @@ export const useFriendsStore = defineStore("friends", {
     async addNewFriend({ receiver_name }: { receiver_name: string }) {
       const userstore = useUserStore();
       const user = userstore.getCurrentUser();
-      const res = await addFriendRequest({ receiver_name: receiver_name, initiator_id: user._id });
-      console.log(res);
+      await addFriendRequest({ receiver_name: receiver_name, initiator_id: user._id });
+      await this.getFriends();
     },
 
     async setDisplayed(displayed: number) {

@@ -2,21 +2,30 @@
 import MessageIcon from "../svg/MessageIcon.vue";
 import MoreIcon from "../svg/MoreIcon.vue";
 import { useUserStore } from "../../store/userstore";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 
 const userStore = useUserStore();
 const props = defineProps({ id: String });
 const user = ref(null);
 
+watch(
+  () => props.id,
+  () => {
+    getUser();
+  }
+);
+
 onMounted(async () => {
+  getUser();
+});
+
+async function getUser() {
   const res = await userStore.getUser({ id: props.id || "" });
 
   if (res && res?.success) {
     user.value = res?.data;
-
-    console.log(user.value);
   }
-});
+}
 </script>
 
 <template>

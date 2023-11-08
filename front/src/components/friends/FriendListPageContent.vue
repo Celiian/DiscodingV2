@@ -1,7 +1,7 @@
 <script setup lang="ts">
 //METHOD
 
-import { ref, watch } from "vue";
+import { ref } from "vue";
 import CloseIcon from "../svg/CloseIcon.vue";
 import SearchIcon from "../svg/SearchIcon.vue";
 import { computed } from "@vue/reactivity";
@@ -19,31 +19,18 @@ const closeIconClass = computed(() => ({
   "opacity-0": input.value.length === 0,
 }));
 
-const friendList = ref<any[]>([]);
-
-watch(
-  () => friendsStore.getDisplayed(),
-  (newValue) => {
-    switch (newValue) {
-      case 0:
-        friendList.value = friendsStore.getFriendsOnline();
-        break;
-      case 1:
-        friendList.value = friendsStore.getFriendsOnline();
-        break;
-      case 2:
-        friendList.value = friendsStore.getPending();
-        break;
-      case 3:
-        friendList.value = [];
-        break;
-      default:
-        break;
-    }
-
-    console.log(friendList.value);
+const friendList = computed(() => {
+  switch (friendsStore.getDisplayed()) {
+    case 0:
+    case 1:
+      return friendsStore.getFriendsOnline();
+    case 2:
+      return friendsStore.getPending();
+    case 3:
+    default:
+      return [];
   }
-);
+});
 </script>
 
 <template>
