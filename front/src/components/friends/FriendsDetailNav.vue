@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import FriendIcon from "../svg/FriendIcon.vue";
 import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
+import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
+import CloseIcon from "../svg/CloseIcon.vue";
+import FriendListCard from "../Messages/FriendListCard.vue";
 </script>
 
 <template>
@@ -25,4 +28,21 @@ import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
       </div>
     </div>
   </div>
+
+  <div class="w-full h-[1200px] overflow-y-hidden mt-1">
+    <ul>
+      <!--friend card list-->
+      <FriendListCard/>
+
+    </ul>
+
+  </div>
 </template>
+
+<style scoped>
+
+::-webkit-scrollbar{
+  width: 0;
+}
+</style>
+

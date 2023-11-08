@@ -1,7 +1,7 @@
 <script setup lang="ts"></script>
 
 <template>
-  <div class="w-[240px] h-full bg-grey-300 flex flex-col grow-0 shrink-0 basis-auto">
+  <div class="w-[240px] h-full bg-grey-300 flex flex-col grow-0 shrink-0 basis-auto overflow-y-scroll overflow-x-hidden relative ">
     <nav class="flex flex-col flex-1">
       <div class="flex grow-0 shrink-0 basis-auto px-2 h-12 items-center shadow-customOne">
         <slot name="header"></slot>
@@ -11,8 +11,12 @@
         <slot name="content"></slot>
       </div>
     </nav>
-    <div class="w-full h-[52px] min-h-[52px] bg-grey-200 flex grow-0 shrink-0 basis-auto"></div>
+    <div class=" h-[52px] min-h-[52px] bg-grey-200 flex grow-0 shrink-0 basis-auto w-[240px] fixed bottom-0">PUTE DEUX</div>
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+::-webkit-scrollbar{
+  width: 0;
+}
+</style>
