@@ -3,7 +3,7 @@ import AddFriendsPageContent from '../friends/AddFriendsPageContent.vue';
 import FriendListPageContent from './FriendListPageContent.vue';
 
 const props = defineProps({
-    isAddFriendsPageShown : Boolean
+    isAddFriendsPageShown : Boolean,
 })
 
 </script>
