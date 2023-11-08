@@ -1,19 +1,31 @@
 <script setup lang="ts">
 import LeftNavBar from "./LeftNavBar.vue";
 import { useUserStore } from "../../store/userstore";
-import { onMounted } from "vue";
+import { onBeforeUnmount, onMounted } from "vue";
 import { useRouter } from "vue-router";
+import { emitEvent, connectToServer, disconnectFromServer } from "../../utils/ws";
+import { useFriendsStore } from "../../store/friendsstore";
+import { useServerStore } from "../../store/serverstore";
 
 const userStore = useUserStore();
+const serverStore = useServerStore();
 const router = useRouter();
+
+const friendsStore = useFriendsStore();
 
 onMounted(async () => {
   let res = await userStore.auth();
   if (!res) {
     router.push("/login");
-  } else {
-    router.push("/me");
   }
+  await serverStore.getServerByUser();
+  await friendsStore.getFriends();
+  await connectToServer();
+  emitEvent({ event: "event", data: "test" });
+});
+
+onBeforeUnmount(async () => {
+  await disconnectFromServer();
 });
 </script>
 

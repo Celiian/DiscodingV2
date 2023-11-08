@@ -2,6 +2,7 @@ import { AuthRegisterBody, SimpleUser } from "@/types/auth.types";
 import { Users } from "@/db/models/User";
 import crypto from "crypto";
 import { WithId } from "mongodb";
+import { ObjectId } from "mongodb";
 
 async function generateTag() {
   let tag;
@@ -57,4 +58,15 @@ export async function login(body: AuthRegisterBody) {
 
 export function findByToken(token: string) {
   return Users.findOne<WithId<SimpleUser>>({ token }, { projection: { password: 0, token: 0 } });
+}
+
+export async function getUserById(id: string) {
+  try {
+    var oid = new ObjectId(id);
+    const user = await Users.findOne({ _id: oid });
+    return user;
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+    throw error;
+  }
 }
