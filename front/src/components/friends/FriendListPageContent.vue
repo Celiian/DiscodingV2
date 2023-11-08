@@ -1,48 +1,40 @@
 <script setup lang="ts">
+
+//METHOD
+
 import { ref } from 'vue';
-import AddFriendIllustration from '../svg/AddFriendIllustration.vue';
+import CloseIcon from '../svg/CloseIcon.vue';
+import SearchIcon from '../svg/SearchIcon.vue';
 import { computed } from '@vue/reactivity';
 
 const input = ref('');
-const isButtonDisabled = computed(()=> {
-    return input.value.length === 0 ? true: false;
-});
+const searchIconClass = computed(()=>({
+    'opacity-0' : input.value.length !== 0,
+    'opacity-100' : input.value.length === 0
+}))
+const closeIconClass = computed(()=>({
+    'opacity-100 rotate-0' : input.value.length !== 0,
+    'opacity-0' : input.value.length === 0
+}))
 
 
-//METHOD
-function sendFriendRequest(){
-
-}
 
 </script>
 
 <template>
 
-    <div class="flex flex-col overflow-y-scroll grow shrink basis-auto">
+    <div class="mt-4 mr-5 mb-2 ml-[30px] bg-grey-100 overflow-hidden rounded box-border flex">
+        <div class="relative flex shrink grow basis-auto flex-wrap p-[1px] items-center min-w-0">
+            <input type="text" v-model="input" placeholder="Rechercher" class="h-[30px] text-[16px] leading-8 px-2 flex-1 min-w-[48px] m-[1px] bg-black/0 box-border resize-none border-none outline-none placeholder:text-white-200 text-white-400 font-normal placeholder:font-normal">
 
-        <div class="py-[20px] px-[30px] border-b-[0.5px] border-grey-600">
-            <h2 class="text-[16px] leading-5 font-semibold mb-2 text-white-600">friend list</h2>
-
-            <div class="text-[14px] leading-5 font-normal text-white-200">Tu peux ajouter des amis grâce à leurs noms d'utilisateur Discord.</div>
-
-            <div class="flex relative items-center rounded-lg mt-4 bg-grey-200 px-3 focus-within:ring-[1px] focus-within:ring-[#03a1f1] ring-inset">
-                <div class="flex grow shrink basis-auto mr-4 py-1 text-[16px] font-medium leading-5 whitespace-pre">
-                    <input maxlength="37" v-model="input" placeholder="Tu peux ajouter des amis grâce à leurs noms d'utilisateur Discord." type="text" class="bg-black/0 text-white-600 h-[40px] outline-none placeholder:text-white-100 w-full placeholder:font-normal">
+            <div class="h-8 w-8 box-border flex justify-center items-center cursor-text">
+                <div class="w-5 h-5 relative">
+                    <SearchIcon :class="searchIconClass" class="w-full h-full fill-white-300 absolute top-0 left-0 transition-all duration-300"/>
+                    <CloseIcon :class="closeIconClass" class="w-full h-full fill-white-300 absolute top-0 left-0 rotate-90 duration-300 transition-all"/>
                 </div>
-
-                <button @click="sendFriendRequest" :disabled="isButtonDisabled" class="bg-blue-200 h-8 min-h-[32px] w-auto min-w-[50px] relative flex justify-center items-center rounded-[3px] text-[14px] leading-4 font-medium px-[16px] py-[2px] hover:bg-blue-100 transition-all duration-300 disabled:bg-blue-100/50 disabled:cursor-not-allowed group">
-                    <div class="group-disabled:text-white-200 text-white-600 my-0 mx-auto whitespace-nowrap text-ellipsis overflow-hidden transition-all duration-300">Envoyer une demande d'ami</div>
-                </button>
-
             </div>
 
         </div>
-
-        <div class="flex flex-col gap-10 w-full justify-center items-center mt-8">
-            <AddFriendIllustration/>
-            <p class="text-[16px] leading-5 text-center text-white-100">Wumpus attend des amis. Mais rien ne t'oblige à en ajouter !</p>
-        </div>
-
     </div>
 
 </template>
