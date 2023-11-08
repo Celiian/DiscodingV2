@@ -9,6 +9,8 @@ const router = useRouter();
 const email = ref("");
 const username = ref("");
 const password = ref("");
+const validatePsw = ref(true);
+const validateEmail = ref(true)
 
 async function signup() {
   const user = { email: email.value, username: username.value, password: password.value };
@@ -19,6 +21,52 @@ async function signup() {
     console.error("Login failed:", error);
   }
 }
+
+async function verifForm() {
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+  let isEmailValid = emailRegex.test(email.value);
+  let isPasswordValid = password.value.length >= 8 && /\d/.test(password.value) && /[!@#$%^&*]/.test(password.value);
+
+  if (!isEmailValid) {
+    console.log('Adresse e-mail invalide');
+    validateEmail.value = false;
+  }else{validateEmail.value=true}
+  if (password.value.length < 8) {
+    return false;
+  }
+  let characterTypes = 0;
+  if (/[A-Z]/.test(password.value)) {
+    characterTypes++;
+  }
+  if (/[a-z]/.test(password.value)) {
+    characterTypes++;
+  }
+  if (/\d/.test(password.value)) {
+    characterTypes++;
+  }
+  if (/[!@#$%^&*]/.test(password.value)) {
+    characterTypes++;
+  }
+  if(characterTypes>=3){
+    isPasswordValid=true
+    validatePsw.value=true
+    console.log('PSW valide boyu');
+
+  }
+  if (!isPasswordValid) {
+    console.log('PSW invalide');    
+    console.log('Mot de passe invalide');
+    validatePsw.value = false;
+    console.log(validatePsw.value);
+    
+  }
+
+  if (isEmailValid && isPasswordValid) {
+    console.log('Formulaire valide, inscription en cours...');
+    await signup();
+  }
+}
+
 
 const selectedDay = ref<string>("");
 const selectedMonth = ref<string>("");
@@ -59,15 +107,20 @@ const continueDisabled = computed(() => {
 <template>
   <div class="signup"></div>
   <div class="position body">
-    <form class="container">
+    <form class="container" @submit.prevent="verifForm">
       <div class="centering-wrapper">
         <div class="section1 text-center">
           <div class="primary-header">Créer un compte</div>
           <div class="input-position">
             <div class="form-group">
-              <h5 class="input-placeholder" id="email-txt">
-                E-mail <span class="error-message" id="email-error">*</span>
-              </h5>
+              <div>
+                <h5 class="input-placeholder" id="email-txt" :style="validateEmail ? 'display: flex;' : 'display: none;'">
+                  E-mail <span class="error-message" id="email-error">*</span>
+                </h5>
+                <h5  class="input-placeholder" id="email-txt-hidden" :style="!validateEmail ? 'display: flex; color:#ec4846;' : 'display: none;'">
+                  E-mail - Adresse e-mail mal formée
+                </h5>
+              </div>
               <input
                 type="email"
                 required="true"
@@ -97,8 +150,11 @@ const continueDisabled = computed(() => {
               <i class="input-icon uil uil-at"></i>
             </div>
             <div class="form-group">
-              <h5 class="input-placeholder" id="pword-txt">
-                Mot de passe <span class="error-message" id="password-error">*</span>
+              <h5 class="input-placeholder" id="pword-txt" :style="validatePsw ? 'display: flex;' : 'display: none;'">
+                Mot de passe <span class="error-message" id="password-error">*</span> 
+              </h5>
+              <h5 v-if="validatePsw === false" class="input-placeholder" id="pword-txt" :style="!validatePsw ? 'display: flex; width: 39vw; color:#ec4846;' : 'display: none;'" >
+                MOT DE PASSE - Doit comporter au moins 8 caractères et contenir trois des quatres types de caractère suivant : majuscules, minuscules, chiffres et symboles
               </h5>
               <input
                 type="password"
@@ -143,7 +199,7 @@ const continueDisabled = computed(() => {
             </label>
           </div>
           <div class="btn-position">
-            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
+            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="continueDisabled ? null : verifForm">Continuer</button>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="tosCheckBox" />
