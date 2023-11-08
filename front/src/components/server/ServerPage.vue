@@ -36,7 +36,7 @@ watchEffect(() => {
 });
 
 const menuItems = ['Inviter des gens','Paramètres du serveur', 'Quitter le serveur'];
-const menuColor = ['#959cf7', "#b5bac1", "#f24042"];
+const menuClass = ['blue', "grey", "red"];
 const menuSVG = [AddFriend, Parameter, Modified];
 
 </script>
@@ -53,7 +53,7 @@ const menuSVG = [AddFriend, Parameter, Modified];
         <div v-else><CloseIcon /></div>
         <div v-show="isDropdownOpen" class="dropdown-content">
 
-          <a v-for="(menuItem, index) in menuItems" :key="index" :style="{ color: menuColor[index] }">
+          <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]'>
             {{ menuItem }}
             <component :is="menuSVG[index]"/>
           </a>
@@ -80,6 +80,7 @@ const menuSVG = [AddFriend, Parameter, Modified];
   justify-content: space-between;
 }
 .dropdown-content {
+  padding: 10px;
   flex-direction: column;
   position: absolute;
   background-color: #f9f9f9;
@@ -94,12 +95,25 @@ const menuSVG = [AddFriend, Parameter, Modified];
 }
 .dropdown-content a {
   box-sizing: border-box;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    min-height: 32px;
-    padding: 6px 8px;
-  color: rgb(181 186 193);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 8px;
+  border-radius: 4px;
 }
 
+.blue{
+  color:#959cf7;
+}
+.grey{
+  color:#b5bac1;
+}
+.red{
+  color:#f24042;
+}
+.dropdown-content a:hover{
+  background-color: #4751c4;
+  color: #ffffff;
+}
 </style>
