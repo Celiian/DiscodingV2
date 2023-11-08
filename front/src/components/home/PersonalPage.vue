@@ -7,7 +7,7 @@ import FriendsDetailNav from "../friends/FriendsDetailNav.vue";
   <DetailNav>
     <template v-slot:header>
       <div
-        class="w-full h-7 bg-grey-100 rounded text-sm overflow-hidden whitespace-nowrap leading-7 text-ellipsis text-white-100 px-2"
+        class=" fixed w-[220px] h-7 bg-grey-100 rounded text-sm overflow-hidden whitespace-nowrap leading-7 text-ellipsis text-white-100 px-2"
       >
         Rechercher/lancer une conversation
       </div>
