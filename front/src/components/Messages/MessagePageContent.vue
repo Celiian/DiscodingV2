@@ -96,6 +96,7 @@ function scrollToElement() {
           userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
+          icon: userStore.getCurrentUser()?.icon || '/src/assets/discord.neutral.png',
         }"
         :class="index == messages.length - 1 ? 'last' : undefined"
       />

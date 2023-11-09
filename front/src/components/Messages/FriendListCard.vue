@@ -43,7 +43,7 @@ function onClickCloseButton() {
     >
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
-        <RoundedLogoIcon />
+        <RoundedLogoIcon :icon="'/src/assets/discord.neutral.png'" />
       </div>
 
       <!-- user info-->

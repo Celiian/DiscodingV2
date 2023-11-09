@@ -50,7 +50,7 @@ watchEffect(async () => {
     <ServerCircleIcon
       v-for="notif in mp_notif"
       :name="userList.get(notif.sender)?.username || ''"
-      :image-url="userList.get(notif.sender)?.icon || '/src/assets/discord-mark-white.svg'"
+      :image-url="userList.get(notif.sender)?.icon || '/src/assets/discord.neutral.png'"
       :link="'/me/message/' + notif.source_id + '/' + notif.sender"
       :notif="true"
       :count="notif.count"

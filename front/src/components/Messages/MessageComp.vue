@@ -5,6 +5,7 @@ const props = defineProps({
   userName: String,
   date: String,
   messageContent: String,
+  icon: String,
 });
 
 //METHOD
@@ -19,7 +20,7 @@ function onClickUserIconOrName() {
       <div class="relative outline-none px-4 hover:bg-black/10">
         <div class="mt-[1.06rem] min-h-[2.75rem] flex items-center">
           <div @click="onClickUserIconOrName" class="min-w-[40px] min-h-[40px] w-[40px] h-[40px] cursor-pointer">
-            <RoundedLogoIcon />
+            <RoundedLogoIcon :icon="icon" />
           </div>
 
           <div class="w-full h-full flex flex-col mx-5">
