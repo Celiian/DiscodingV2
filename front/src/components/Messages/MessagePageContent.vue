@@ -1,26 +1,31 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import UploadIcon from "../svg/UploadIcon.vue";
 import MessageComp from "./MessageComp.vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { emitEvent } from "../../utils/ws";
 import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
+import { useNotifStore } from "../../store/notifstore";
 
+const notifStore = useNotifStore();
 const userStore = useUserStore();
-const messageStore = useMessageStore();
+const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
 
-export interface Message {
+interface Message {
   channel: string;
   sender: string;
   content: string;
   date: Date;
 }
-
 const messages = computed<Message[]>(() => {
-  return messageStore.getMessages();
+  return messagestore.getMessages();
+});
+
+watch(messages, () => {
+  setTimeout(() => scrollToElement(), 100);
 });
 
 const friend = ref();
@@ -30,10 +35,19 @@ const channelId = computed(() => {
 });
 
 watchEffect(async () => {
+  const mp_notifs = notifStore.getCurrentMpNotifs();
+
+  const foundNotif: any = mp_notifs.find((notif: any) => {
+    return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
+  });
+
+  if (foundNotif) {
+    notifStore.deleteNotif(foundNotif._id.toString());
+  }
+
   friend.value = (await userStore.getUser({ id: routes.params.friendId as string })).data;
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
   await messageStore.getMessagesByChannel(channelId.value);
-  console.log(messages);
 });
 
 onBeforeRouteLeave(() => {
@@ -46,12 +60,27 @@ function onClickUploadButton() {
 }
 
 function sendMessage() {
-  messageStore.mp({
+  messagestore.mp({
     sender: userStore.getCurrentUser()._id.toString(),
     content: messageInput.value,
     channel: channelId.value,
+    friend: friend.value._id.toString(),
   });
   messageInput.value = "";
+}
+function formatDateToFrench(dateString: string) {
+  const date = new Date(dateString);
+  const locale = "fr-FR";
+  return date.toLocaleDateString(locale);
+}
+
+function scrollToElement() {
+  console.log("scroll");
+  const el = document.getElementsByClassName("last")[0];
+
+  if (el) {
+    el.scrollIntoView();
+  }
 }
 </script>
 
@@ -59,16 +88,17 @@ function sendMessage() {
   <div class="relative w-full message_height flex flex-col">
     <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
-      <ul class="">
-        <MessageComp
-          v-for="message in messages"
-          v-bind="{
-            userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
-            date: 'Aujourd\'hui à 22:20',
-            messageContent: message.content,
-          }"
-        />
-      </ul>
+      <MessageComp
+        v-for="(message, index) in messages"
+        :key="index"
+        v-bind="{
+          userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
+          date: formatDateToFrench(message.date.toString()),
+          messageContent: message.content,
+          icon: userStore.getCurrentUser()?.icon || '/src/assets/discord.neutral.png',
+        }"
+        :class="index == messages.length - 1 ? 'last' : undefined"
+      />
     </div>
 
     <!--input message-->
