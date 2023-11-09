@@ -15,7 +15,8 @@ const messageInput = ref("");
 const routes = useRoute();
 
 import { defineProps } from "vue";
-//import { uploadImage } from "../../store/utils/imageupload";
+import BinIcon from "../svg/BinIcon.vue";
+import { uploadImage } from "../../store/utils/imageupload";
 
 const props = defineProps({
   friend: null,
@@ -26,6 +27,7 @@ interface Message {
   sender: string;
   content: string;
   date: Date;
+  file: string;
 }
 const messages = computed<Message[]>(() => {
   return messagestore.getMessages();
@@ -52,6 +54,7 @@ watchEffect(async () => {
 
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
   await messagestore.getMessagesByChannel(channelId.value);
+  console.log(messages.value);
 });
 
 onBeforeRouteLeave(() => {
@@ -68,21 +71,35 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    selectedFile.value = event.target?.files[0];
-    selectedFileUrl.value = URL.createObjectURL(selectedFile.value);
+    selectedFile.value = event.target?.files;
+    selectedFileUrl.value = URL.createObjectURL(selectedFile.value[0]);
     console.log(selectedFile.value);
   });
 }
 
-function sendMessage() {
-  messagestore.mp({
-    sender: userStore.getCurrentUser()._id.toString(),
-    content: messageInput.value,
-    channel: channelId.value,
-    friend: props.friend?._id.toString(),
-    type: "text",
-  });
+async function sendMessage() {
+  if (selectedFileUrl.value != "") {
+    const res = await uploadImage(selectedFile.value);
+
+    messagestore.mp({
+      sender: userStore.getCurrentUser()._id.toString(),
+      content: messageInput.value,
+      channel: channelId.value,
+      friend: props.friend?._id.toString(),
+      file_url: res[0].url,
+    });
+  } else {
+    messagestore.mp({
+      sender: userStore.getCurrentUser()._id.toString(),
+      content: messageInput.value,
+      channel: channelId.value,
+      friend: props.friend?._id.toString(),
+      file_url: "",
+    });
+  }
+
   messageInput.value = "";
+  selectedFileUrl.value = "";
 }
 function formatDateToFrench(dateString: string) {
   const date = new Date(dateString);
@@ -97,6 +114,10 @@ function scrollToElement() {
     el.scrollIntoView();
   }
 }
+
+function removeFile() {
+  selectedFileUrl.value = "";
+}
 </script>
 
 <template>
@@ -110,6 +131,7 @@ function scrollToElement() {
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
           icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
+          file: message.file,
         }"
         :class="index == messages.length - 1 ? 'last' : undefined"
       />
@@ -118,9 +140,12 @@ function scrollToElement() {
     <!--input message-->
     <div class="relative px-4 mt-2">
       <div v-if="selectedFileUrl" class="bg-white-100/10 w-full pl-4">
-        <div class="w-fit bg_custom flex-col justify-center text-white-400 text-center rounded-sm">
-          <img :src="selectedFileUrl" alt="Selected Image" class="max-w-[200px] max-h-[200px] border_custom" />
-          <p class="">{{ selectedFile.name }}</p>
+        <div class="pt-2">
+          <div class="w-fit relative bg_custom flex-col justify-center text-white-400 text-center rounded-sm">
+            <img :src="selectedFileUrl" alt="Selected Image" class="max-w-[200px] max-h-[200px] border_custom" />
+            <p class="">{{ selectedFile.name }}</p>
+            <BinIcon class="absolute top-0 right-0" @click="removeFile" />
+          </div>
         </div>
       </div>
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">

@@ -10,7 +10,7 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import CreateChannelModal from "../modal/CreateChannel.vue"
+import CreateChannelModal from "../modal/CreateChannel.vue";
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
@@ -26,8 +26,6 @@ const isDropdownOpen = ref(false);
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
-
-  
 };
 const modalOpened = ref(true);
 watchEffect(() => {
@@ -38,15 +36,19 @@ watchEffect(() => {
   });
 });
 const handleClickOutside = (event: Event) => {
-  if (dropdownRef.value && 'contains' in dropdownRef.value && !((dropdownRef.value as any).contains(event.target as Node))) {
+  if (
+    dropdownRef.value &&
+    "contains" in dropdownRef.value &&
+    !(dropdownRef.value as any).contains(event.target as Node)
+  ) {
     isDropdownOpen.value = false;
   }
 };
-function closeModal(){
-    modalOpened.value = false
+function closeModal() {
+  modalOpened.value = false;
 }
-function openModal(){
-  modalOpened.value=true;
+function openModal() {
+  modalOpened.value = true;
 }
 // Ajoute cet écouteur d'événements lorsque le composant est monté
 onMounted(() => {
@@ -57,34 +59,32 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
-const menuItems = ['Inviter des gens','Paramètres du serveur', 'Créer un salon', 'Quitter le serveur'];
-const menuClass = ['blue', 'grey', "grey", "red"];
-const menuSVG = [AddFriend, Parameter,AddChannel, Modified];
+const menuItems = ["Inviter des gens", "Paramètres du serveur", "Créer un salon", "Quitter le serveur"];
+const menuClass = ["blue", "grey", "grey", "red"];
+const menuSVG = [AddFriend, Parameter, AddChannel, Modified];
 
-
-function fnctTest(index:number){
-  if(index===2){
+function fnctTest(index: number) {
+  if (index === 2) {
     openModal();
   }
 }
 </script>
 
-
 <template>
   <DetailNav>
     <template v-slot:header>
-      <CreateChannelModal v-if="modalOpened" @open-modal="openModal"  @close-modal="closeModal"/> 
-      <div class="dropdown" ref="dropdownRef"  @click="toggleDropdown">
-        <p style="color:rgb(181 186 193);">
+      <CreateChannelModal v-if="modalOpened" @open-modal="openModal" @close-modal="closeModal" />
+      <div class="dropdown" ref="dropdownRef" @click="toggleDropdown">
+        <p style="color: rgb(181 186 193)">
           {{ server?.name }}
         </p>
-        <div v-if="isDropdownOpen===false" style="align-self: center;"><DropdownMenu /></div>
+        <div v-if="isDropdownOpen === false" style="align-self: center"><DropdownMenu /></div>
         <div v-else><CloseIcon /></div>
         <div v-show="isDropdownOpen" class="dropdown-content">
-  <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="fnctTest(index)">
-    {{ menuItem }}
-    <component :is="menuSVG[index]"  />
-  </a>
+          <a v-for="(menuItem, index) in menuItems" :key="index" :class="menuClass[index]" @click="fnctTest(index)">
+            {{ menuItem }}
+            <component :is="menuSVG[index]" />
+          </a>
         </div>
       </div>
     </template>
@@ -96,7 +96,6 @@ function fnctTest(index:number){
     <template v-slot:content> </template>
   </MainContent>
 </template>
-
 
 <style scoped>
 .dropdown {
@@ -118,7 +117,6 @@ function fnctTest(index:number){
   width: 100%;
   background-color: #000000;
   border-radius: 4px;
-
 }
 .dropdown-content a {
   box-sizing: border-box;
@@ -131,18 +129,17 @@ function fnctTest(index:number){
   font-size: 13px;
 }
 
-.blue{
-  color:#959cf7;
+.blue {
+  color: #959cf7;
 }
-.grey{
-  color:#b5bac1;
+.grey {
+  color: #b5bac1;
 }
-.red{
-  color:#f24042;
+.red {
+  color: #f24042;
 }
-.dropdown-content a:hover{
+.dropdown-content a:hover {
   background-color: #4751c4;
   color: #ffffff;
 }
 </style>
-

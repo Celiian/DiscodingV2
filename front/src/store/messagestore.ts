@@ -38,14 +38,14 @@ export const useMessageStore = defineStore("message", {
       sender,
       content,
       channel,
-      type,
+      file_url,
     }: {
       sender: string;
       content: string;
       channel: string;
-      type: string;
+      file_url: string;
     }) {
-      const res = await sendMessage(sender, content, channel, type);
+      const res = await sendMessage(sender, content, channel, file_url);
       return res;
     },
 
@@ -54,15 +54,15 @@ export const useMessageStore = defineStore("message", {
       content,
       channel,
       friend,
-      type,
+      file_url,
     }: {
       sender: string;
       content: string;
       channel: string;
       friend: string;
-      type: string;
+      file_url: string;
     }) {
-      const res = await sendMessage(sender, content, channel, type);
+      const res = await sendMessage(sender, content, channel, file_url);
       emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
 
       return res;
