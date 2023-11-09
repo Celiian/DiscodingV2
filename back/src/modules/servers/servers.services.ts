@@ -2,13 +2,20 @@ import { ServerCreateBody } from "@/types/servers.types";
 import { Servers } from "@/db/models/Server";
 import { ObjectId } from "mongodb";
 import { Members } from "@/db/models/Members";
+import { Category } from "@/types/categories.types";
+import { Categories } from "@/db/models/Category";
+import { Channels } from "@/db/models/Channel";
 
 export async function createServer(body: ServerCreateBody) {
-  await Servers.insertOne({
-    name: body.name,
-    icon: body.icon,
-    owner: body.owner,
-  });
+  try {
+    await Servers.insertOne({
+      name: body.name,
+      icon: body.icon,
+      owner: body.owner,
+    });
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+  }
 }
 export async function getServersByUser(user_id: string): Promise<any[]> {
   try {
@@ -42,6 +49,43 @@ export async function getServerById(id: string) {
     var oid = new ObjectId(id);
     const servers = await Servers.findOne({ _id: oid });
     return servers;
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+    throw error;
+  }
+}
+
+export async function createCategory(body: Category) {
+  try {
+    await Categories.insertOne({
+      server: body.server,
+      name: body.name,
+    });
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+  }
+}
+
+export async function getChannelsByServer(id: string) {
+  try {
+    const channels: Array<any> = [];
+    const categoriesMap: Record<string, any> = {};
+
+    const channelsRes = await Channels.find({ type: id }).toArray();
+    channels.push(...channelsRes);
+
+    const categoriesRes = await Categories.find({ server: id }).toArray();
+
+    for (const category of categoriesRes) {
+      const channel = await Channels.find({ type: category._id.toString() }).toArray();
+      categoriesMap[category._id.toString()] = {
+        _id: category._id,
+        name: category.name,
+        channels: channel,
+      };
+    }
+
+    return { channels, categories: categoriesMap };
   } catch (error) {
     console.error("Error fetching server data:", error);
     throw error;

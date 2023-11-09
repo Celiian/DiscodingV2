@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import FriendIcon from "../svg/FriendIcon.vue";
 import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
+import FriendListCard from "../Messages/FriendListCard.vue";
+import { useMessageStore } from "../../store/messagestore";
+import { ref, watchEffect } from "vue";
+const messagestore = useMessageStore();
+
+const channelList = ref<any[]>([]);
+
+watchEffect(() => {
+  channelList.value = messagestore.getCurrentChannels();
+});
 </script>
 
 <template>
@@ -25,4 +35,17 @@ import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
       </div>
     </div>
   </div>
+
+  <div class="w-full h-[1200px] overflow-y-hidden mt-1">
+    <div>
+      <!--friend card list-->
+      <FriendListCard v-for="channel in channelList" :channel="channel" />
+    </div>
+  </div>
 </template>
+
+<style scoped>
+::-webkit-scrollbar {
+  width: 0;
+}
+</style>

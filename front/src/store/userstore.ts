@@ -1,6 +1,6 @@
 // userStore.ts
 import { defineStore } from "pinia";
-import { login, register, auth, getUserByid } from "./utils/userrequest";
+import { login, register, auth, getUserByid, edit } from "./utils/userrequest";
 
 export const useUserStore = defineStore("user", {
   state: () => ({
@@ -36,13 +36,17 @@ export const useUserStore = defineStore("user", {
       }
       return res.success;
     },
-
     getCurrentUser() {
       return this.currentUser;
     },
     async getUser({ id }: { id: string }) {
       const res = await getUserByid({ user_id: id });
       return { success: res.success, data: res.data };
+    },
+
+    async editUser({ id, icon, username, password }: { id: string; icon: string; username: string; password: string }) {
+      edit({ id, icon, username, password });
+      await this.handleAuth();
     },
   },
 });

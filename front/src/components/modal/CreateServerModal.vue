@@ -16,6 +16,7 @@ const serverName = ref("");
 const target = ref(null);
 
 //METHOD
+
 function closeModal() {
   emit("close-modal");
 }
@@ -137,3 +138,4 @@ async function createServer() {
 </template>
 
 <style scoped></style>
+../../store/userStore ../../store/serverStore

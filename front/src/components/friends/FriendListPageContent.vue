@@ -84,3 +84,4 @@ const friendList = computed(() => {
   width: 0;
 }
 </style>
+../../store/friendsStore

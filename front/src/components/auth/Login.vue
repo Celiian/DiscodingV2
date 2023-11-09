@@ -14,7 +14,7 @@ const login = async () => {
 
   try {
     await userStore.login(user);
-    router.push("/");
+    router.push("/me/friends");
   } catch (error) {
     console.error("Login failed:", error);
   }
@@ -440,3 +440,4 @@ const login = async () => {
   }
 }
 </style>
+../../store/userStore

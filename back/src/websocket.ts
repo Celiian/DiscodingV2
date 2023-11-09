@@ -22,19 +22,38 @@ export function initSocketio(httpServer: HttpServer) {
       console.log(`User ${userId} connected with connection ID ${connectionId}`);
     });
 
-    client.on("event", (data) => {
-      console.log(data);
-    });
-
     client.on("friend-add", (data) => {
       sendMessageToUser(data, "friend-add", "");
+    });
+
+    client.on("notif", (data) => {
+      sendMessageToUser(data.destined_user, "notif", data);
+    });
+
+    client.on("mp-join", (data) => {
+      client.join(data.channel);
+    });
+
+    client.on("mp-leave", (data) => {
+      client.leave(data.channel);
+    });
+
+    client.on("mp-sent", async (data) => {
+      const room = data.channel;
+      const socketsInRoom = await io.in(room).allSockets();
+
+      if (socketsInRoom.size === 1) {
+        io.to(data.channel).emit("mp-received", { channel: data.channel });
+        sendMessageToUser(data.user, "mp-ofline", data);
+      } else {
+        io.to(data.channel).emit("mp-received", { channel: data.channel });
+      }
     });
   });
 
   function sendMessageToUser(userId: string, event: string, data: string) {
     if (userId) {
       const connectionId = userConnections.get(userId);
-      console.log(userConnections);
 
       if (connectionId) {
         io.to(connectionId).emit(event, data);

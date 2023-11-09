@@ -11,3 +11,26 @@ export async function getChannelsByUser(id: string) {
     return { success: false, data: error };
   }
 }
+
+export async function getMessagesByChannel(id: string) {
+  try {
+    const res = await axios.get(`${API_BASE_URL}/channel/${id}/messages`);
+
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
+
+export async function sendMessage(sender: string, content: string, channel: string) {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/message/send`, {
+      sender: sender,
+      content: content,
+      channel: channel,
+    });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
