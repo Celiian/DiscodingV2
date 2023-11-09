@@ -9,8 +9,9 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import CreateChannelModal from "../modal/CreateChannel.vue";
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
+import CreateChannelModal from "../modal/CreateChannel.vue"
+import AddCategory from "../svg/AddCategory.vue";
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
@@ -57,9 +58,9 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
-const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Quitter le serveur'];
-const menuClass = ['blue', 'grey', "grey", "red"];
-const menuSVG = [AddFriend, Parameter, AddChannel, Modified];
+const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon','Créer une catégorie', 'Quitter le serveur'];
+const menuClass = ['blue', 'grey','grey', "grey", "red"];
+const menuSVG = [AddFriend, Parameter, AddChannel,AddCategory, Modified];
 
 
 function fnctTest(index: number) {
@@ -157,4 +158,5 @@ function fnctTest(index: number) {
   color: #ffffff;
 }
 </style>
+
 
