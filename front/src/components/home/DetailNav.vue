@@ -1,13 +1,17 @@
 <script setup lang="ts">
+
 import RoundedLogoIcon from '../circle-components/RoundedLogoIcon.vue';
 import SettingIcon from "../svg/SettingIcon.vue"
 import { useUserStore } from '../../store/userstore';
-
+import TextualChan from "../svg/TextualChann.vue"
+import VocalChannel from "../svg/VocalChannel.vue"
 import ProfilSettingModal from "../modal/ProfilSettingModal.vue";
 import { ref } from 'vue';
 import { computed } from '@vue/reactivity';
 
 
+let textualChan = true;
+let vocalChan = true
 const userStore = useUserStore();
 const currentUser = computed(() => {
   return userStore.getCurrentUser()
@@ -26,6 +30,8 @@ function openSettingModal() {
   settingModalOpenend.value = true;
 
 }
+
+
 </script>
 
 
@@ -38,7 +44,12 @@ function openSettingModal() {
       </div>
 
       <div class="flex-col grow-1 shrink-1 basis-auto w-full h-full">
-        <slot name="content"></slot>
+        <slot name="content">
+
+            <div v-if="textualChan===true" class="channel"><TextualChan class="channelSvg"/>  textutal chan Title </div>
+            <div v-if="vocalChan===true" class="channel"> <VocalChannel class="channelSvg"/>  vocal chan Title </div>
+        </slot>
+
       </div>
     </nav>
     <div
@@ -77,6 +88,7 @@ function openSettingModal() {
 </template>
 
 <style scoped>
+
 ::-webkit-scrollbar {
   display: block;
   opacity: 0;
@@ -101,5 +113,15 @@ function openSettingModal() {
 ::-webkit-scrollbar-thumb {
   background: #1e1f2200;
   border-radius: 20px;
+  }
+
+.channel{
+  position: relative;
+    display: flex;
+    align-items: center;
+    color: #8e959e;;
+}
+.channelSvg{
+  margin-right: 6px;
 }
 </style>
