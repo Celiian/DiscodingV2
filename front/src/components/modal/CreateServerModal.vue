@@ -16,6 +16,7 @@ const serverName = ref("");
 const target = ref(null);
 
 //METHOD
+
 function closeModal() {
   emit("close-modal");
 }
