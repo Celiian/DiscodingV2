@@ -1,14 +1,22 @@
+import { createServer } from "node:http";
 import express from "express";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { registerAuthRoutes } from "./modules/auth/auth.controller";
 import { registerServerRoutes } from "./modules/servers/servers.controller";
 import { registerInvitationsRoutes } from "./modules/invitations/invitations.controller";
+import { registerFriendsRoutes } from "./modules/friends/friends.controller";
 import { isLogin } from "./modules/auth/auth.middleware";
+import { initSocketio } from "./websocket";
+import { registerChannelssRoutes } from "./modules/channels/channels.controller";
+import { registerUsersRoutes } from "./modules/users/users.controller";
 
 export function initWebServer() {
   // Creation du serveur http
   const app = express();
+  const server = createServer(app);
+
+  initSocketio(server);
 
   // Utilise le plugin CORS
   app.use(
@@ -31,12 +39,15 @@ export function initWebServer() {
 
   // On enregistre nos controllers
   registerAuthRoutes(app);
+  registerUsersRoutes(app);
   registerServerRoutes(app);
   registerInvitationsRoutes(app);
+  registerFriendsRoutes(app);
+  registerChannelssRoutes(app);
   // On ecoute sur le port configuré avec le .env
-  app.listen(process.env.NODE_PORT, () => {
+  server.listen(process.env.NODE_PORT, () => {
     console.log(`Listening on http://localhost:${process.env.NODE_PORT}`);
   });
 
-  return app;
+  return { server, app };
 }

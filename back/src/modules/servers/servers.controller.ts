@@ -1,6 +1,7 @@
 import { ServerCreateBody } from "@/types/servers.types";
 import { Express, Request, Response } from "express";
-import { createServer, getServersByUser, getServerById } from "./servers.services";
+import { createServer, getServersByUser, getServerById, createCategory, getChannelsByServer } from "./servers.services";
+import { Category } from "@/types/categories.types";
 
 export function registerServerRoutes(app: Express) {
   app.post("/server/create", async (req: Request<unknown, unknown, ServerCreateBody>, res: Response) => {
@@ -33,6 +34,29 @@ export function registerServerRoutes(app: Express) {
         res.status(404).json({ error: "Server not found" });
       } else {
         res.json(server);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/server/category", async (req: Request<unknown, unknown, Category>, res: Response) => {
+    try {
+      await createCategory(req.body);
+      res.json({ success: true });
+    } catch (error) {
+      res.json({ success: false, data: error });
+    }
+  });
+
+  app.get("/server/:id/channels/", async (req: Request<{ id: string }, unknown, unknown>, res: Response) => {
+    try {
+      const id = req.params.id;
+      const channels = await getChannelsByServer(id);
+      if (!channels) {
+        res.status(404).json({ error: "Server not found" });
+      } else {
+        res.json(channels);
       }
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });

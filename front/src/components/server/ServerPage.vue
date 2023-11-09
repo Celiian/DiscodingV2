@@ -102,6 +102,7 @@ function fnctTest(index: number) {
   </MainContent>
 </template>
 
+
 <style scoped>
 .dropdown {
   position: relative;
@@ -153,3 +154,4 @@ function fnctTest(index: number) {
   color: #ffffff;
 }
 </style>
+

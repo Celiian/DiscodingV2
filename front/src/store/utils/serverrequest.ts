@@ -50,3 +50,46 @@ export async function getServerById(id: string) {
     return { success: false, data: error };
   }
 }
+
+export async function createChannel(name: string, audio: boolean, source: string) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/channel/create`,
+      { name: name, audio: audio, source: source },
+      { withCredentials: true }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function editChannel(id: string, name: string, source: string) {
+  try {
+    await axios.put(`${API_BASE_URL}/channel`, { name: name, id: id, source: source }, { withCredentials: true });
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function createCategory(name: string, server: string) {
+  try {
+    await axios.post(`${API_BASE_URL}/server/category`, { name: name, server: server }, { withCredentials: true });
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function getChannelsByServer(id: string) {
+  try {
+    let res = await axios.get(`${API_BASE_URL}/server/${id}/channels`, { withCredentials: true });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}

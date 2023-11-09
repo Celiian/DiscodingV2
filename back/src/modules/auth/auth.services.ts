@@ -33,6 +33,7 @@ export async function register(body: AuthRegisterBody) {
     password: hashedPassword,
     token: token,
     createdAt: new Date(),
+    icon: "/src/assets/discord.neutral.png",
   });
 
   return { success: true, token };
