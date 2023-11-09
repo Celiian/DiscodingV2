@@ -4,12 +4,12 @@ import PlusMessageIcon from "../svg/PlusMessageIcon.vue";
 import FriendListCard from "../Messages/FriendListCard.vue";
 import { useMessageStore } from "../../store/messagestore";
 import { ref, watchEffect } from "vue";
-const messageStore = useMessageStore();
+const messagestore = useMessageStore();
 
 const channelList = ref<any[]>([]);
 
 watchEffect(() => {
-  channelList.value = messageStore.getCurrentChannels();
+  channelList.value = messagestore.getCurrentChannels();
 });
 </script>
 
@@ -37,10 +37,10 @@ watchEffect(() => {
   </div>
 
   <div class="w-full h-[1200px] overflow-y-hidden mt-1">
-    <ul>
+    <div>
       <!--friend card list-->
       <FriendListCard v-for="channel in channelList" :channel="channel" />
-    </ul>
+    </div>
   </div>
 </template>
 

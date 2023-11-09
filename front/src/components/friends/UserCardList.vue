@@ -39,7 +39,7 @@ async function getUser() {
       <div class="flex overflow-hidden">
         <!--user logo-->
         <div class="w-8 h-8 relative rounded-full mr-3">
-          <RoundedLogoIcon />
+          <RoundedLogoIcon :icon="(user as any)?.icon" />
         </div>
         <!-- user info-->
         <div class="flex flex-col overflow-hidden">

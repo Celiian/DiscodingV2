@@ -19,8 +19,6 @@ watchEffect(async () => {
   if (res) {
     friend.value = res.data;
   }
-
-  console.log(friend.value);
 });
 
 //METHOD
@@ -33,7 +31,7 @@ function onClickCloseButton() {
 </script>
 
 <template>
-  <li
+  <div
     @click="onClickOnCard"
     class="group relative max-w-[224px] ml-2 box-border block px-2 py-[1px] rounded hover:bg-white-100/10 transition-all duration-150"
   >
@@ -43,7 +41,7 @@ function onClickCloseButton() {
     >
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
-        <RoundedLogoIcon />
+        <RoundedLogoIcon :icon="(friend as any)?.icon" />
       </div>
 
       <!-- user info-->
@@ -66,7 +64,7 @@ function onClickCloseButton() {
         <CloseIcon @click="onClickCloseButton" class="fill-white-300 w-2/3 hover:fill-white-500" />
       </div>
     </router-link>
-  </li>
+  </div>
 </template>
 
 <style scoped></style>

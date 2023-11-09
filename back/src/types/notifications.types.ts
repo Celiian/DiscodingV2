@@ -1,6 +1,14 @@
+export interface CreateNotificationBody {
+  type: string;
+  destined_user: string;
+  source_id: string;
+  sender: string;
+}
+
 export interface Notification {
   type: string;
-  for: string;
-  sound_played: boolean;
+  destined_user: string;
   source_id: string;
+  sender: string;
+  count: number;
 }

@@ -1,15 +1,21 @@
 import { io, Socket } from "socket.io-client";
 import { useFriendsStore } from "../store/friendsstore";
 import { useUserStore } from "../store/userstore";
-import { useMessageStore } from "../store/messageStore";
+import { useMessageStore } from "../store/messagestore";
+import { useNotifStore } from "../store/notifstore";
 const socket: Socket = io("http://localhost:3001");
+
+const notificationSound = new Audio("/src/assets/notif.mp3");
 
 export function emitEvent({ event, data }: { event: string; data: any }) {
   socket.emit(event, data);
 }
 
-socket.on("event", (data: any) => {
-  console.log(data);
+socket.on("notif", async () => {
+  const notifstore = useNotifStore();
+  notifstore.getNotifs();
+
+  notificationSound.play();
 });
 
 socket.on("friend-add", () => {
@@ -18,10 +24,16 @@ socket.on("friend-add", () => {
   friendsStore.getFriends();
 });
 
+socket.on("mp-ofline", (data) => {
+  const notifstore = useNotifStore();
+  notifstore.createNotif(data.friend, "mp", data.channel).then(() => {
+    socket.emit("notif", { destined_user: data.friend, channel: data.channel });
+  });
+});
+
 socket.on("mp-received", (data) => {
-  const messageStore = useMessageStore();
-  console.log("mp-received");
-  messageStore.getMessagesMp(data.channel);
+  const messagestore = useMessageStore();
+  messagestore.getMessagesByChannel(data.channel);
 });
 
 export async function connectToServer() {

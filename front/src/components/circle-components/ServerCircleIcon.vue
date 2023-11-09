@@ -1,12 +1,12 @@
 <script setup lang="ts">
-//import NotificationCircle from "./NotificationCircle.vue";
+import NotificationCircle from "./NotificationCircle.vue";
 import { defineProps } from "vue";
 
-const { name, imageUrl, id } = defineProps(["name", "imageUrl", "id"]);
+const { name, imageUrl, link, notif, count } = defineProps(["name", "imageUrl", "link", "notif", "count"]);
 </script>
 
 <template>
-  <router-link class="flex w-full justify-center relative mb-2 overflow-x-clip" :to="'/server/' + id">
+  <router-link class="flex w-full justify-center relative mb-2 overflow-x-clip" :to="link">
     <div class="group">
       <img :src="imageUrl"
         class="w-[48px] h-[48px] flex items-center justify-center cursor-pointer rounded-[50%] group-hover:rounded-2xl transition-all duration-300 object-cover" />
@@ -22,7 +22,7 @@ const { name, imageUrl, id } = defineProps(["name", "imageUrl", "id"]);
         {{ name }}
       </div>
 
-      <!-- <NotificationCircle /> -->
+      <NotificationCircle v-if="notif" :number="count" />
     </div>
   </router-link>
 </template>
