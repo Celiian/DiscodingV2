@@ -3,17 +3,31 @@ import RoundedLogoIcon from '../circle-components/RoundedLogoIcon.vue';
 import SettingIcon from "../svg/SettingIcon.vue"
 import { useUserStore } from '../../store/userstore';
 
+import ProfilSettingModal from "../modal/ProfilSettingModal.vue";
+import { ref } from 'vue';
+import { computed } from '@vue/reactivity';
+
 
 const userStore = useUserStore();
-const currentUser = userStore.getCurrentUser()
-console.log('wesh', currentUser.username)
+const currentUser = computed(() => {
+  return userStore.getCurrentUser()
+})
+
+
+const settingModalOpenend = ref(false)
 
 
 //METHOD
-function onClickSettingButton() {
-  console.log("setting clicked")
+function closeSettingModal() {
+  settingModalOpenend.value = false;
+}
+
+function openSettingModal() {
+  settingModalOpenend.value = true;
+
 }
 </script>
+
 
 <template>
   <div
@@ -36,21 +50,21 @@ function onClickSettingButton() {
         </div>
 
         <div class="py-1 pl-2 flex flex-col mr-1 h-full items-start justify-start">
-          <div class="text-white-300 text-[13px] font-medium "> {{ currentUser.username }} </div>
+          <div class="text-white-300 text-[13px] font-medium "> {{ currentUser?.username }} </div>
           <div class="relative text-white-200 text-[12px] whitespace-nowrap ">
             <span
               class="absolute -top-1 group-hover:opacity-0 opacity-100  translate-y-0 group-hover:-translate-y-3 transition-all duration-150">En
               ligne</span>
             <span
               class="absolute -top-1  opacity-0 translate-y-3 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-150">
-              {{ currentUser.username }}{{ currentUser.tag }}
+              {{ currentUser?.username }}{{ currentUser?.tag }}
             </span>
           </div>
 
         </div>
       </div>
       <div class="flex justify-end items-end pr-2">
-        <div @click="onClickSettingButton"
+        <div @click="openSettingModal"
           class="p-1 rounded hover:bg-white-200/50 transition-all duration-150 cursor-pointer">
           <SettingIcon class="fill-white-300" />
         </div>
@@ -58,6 +72,8 @@ function onClickSettingButton() {
 
     </div>
   </div>
+
+  <ProfilSettingModal v-if="settingModalOpenend" @close-modal="closeSettingModal" />
 </template>
 
 <style scoped>
