@@ -19,8 +19,6 @@ watchEffect(async () => {
   if (res) {
     friend.value = res.data;
   }
-
-  console.log(friend.value);
 });
 
 //METHOD
@@ -43,7 +41,7 @@ function onClickCloseButton() {
     >
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
-        <RoundedLogoIcon :icon="'/src/assets/discord.neutral.png'" />
+        <RoundedLogoIcon :icon="(friend as any)?.icon" />
       </div>
 
       <!-- user info-->

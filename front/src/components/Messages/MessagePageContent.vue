@@ -14,6 +14,12 @@ const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
 
+import { defineProps } from "vue";
+
+const props = defineProps({
+  friend: null,
+});
+
 interface Message {
   channel: string;
   sender: string;
@@ -27,8 +33,6 @@ const messages = computed<Message[]>(() => {
 watch(messages, () => {
   setTimeout(() => scrollToElement(), 100);
 });
-
-const friend = ref();
 
 const channelId = computed(() => {
   return routes.params.channelId as string;
@@ -45,9 +49,8 @@ watchEffect(async () => {
     notifStore.deleteNotif(foundNotif._id.toString());
   }
 
-  friend.value = (await userStore.getUser({ id: routes.params.friendId as string })).data;
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
-  await messageStore.getMessagesByChannel(channelId.value);
+  await messagestore.getMessagesByChannel(channelId.value);
 });
 
 onBeforeRouteLeave(() => {
@@ -64,7 +67,7 @@ function sendMessage() {
     sender: userStore.getCurrentUser()._id.toString(),
     content: messageInput.value,
     channel: channelId.value,
-    friend: friend.value._id.toString(),
+    friend: props.friend?._id.toString(),
   });
   messageInput.value = "";
 }
@@ -75,7 +78,6 @@ function formatDateToFrench(dateString: string) {
 }
 
 function scrollToElement() {
-  console.log("scroll");
   const el = document.getElementsByClassName("last")[0];
 
   if (el) {
@@ -92,10 +94,10 @@ function scrollToElement() {
         v-for="(message, index) in messages"
         :key="index"
         v-bind="{
-          userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
+          userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
-          icon: userStore.getCurrentUser()?.icon || '/src/assets/discord.neutral.png',
+          icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
         }"
         :class="index == messages.length - 1 ? 'last' : undefined"
       />

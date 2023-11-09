@@ -4,7 +4,6 @@ import { ObjectId } from "mongodb";
 
 export async function getNotifs(id: string) {
   const res = await Notifications.find({ destined_user: id }).toArray();
-  console.log(res);
   return res;
 }
 

@@ -27,6 +27,12 @@ onMounted(async () => {
     await friendsStore.getFriends();
     await connectToServer();
   }
+
+  if (router.currentRoute.value.path == "/") {
+    router.push("/me/friends");
+  } else if (router.currentRoute.value.path == "/me") {
+    router.push("/me/friends");
+  }
 });
 
 onBeforeUnmount(async () => {
