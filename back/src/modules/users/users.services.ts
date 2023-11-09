@@ -1,5 +1,6 @@
 import { Users } from "@/db/models/User";
 import { ObjectId } from "mongodb";
+import crypto from "crypto";
 
 export async function getUserById(id: string) {
   try {
@@ -23,8 +24,13 @@ export async function editUser({
   password: string;
   id: string;
 }) {
+  let hashedPassword = password;
+  if (password != "no-change-&@#1%") {
+    hashedPassword = crypto.createHash("sha256").update(password).digest("hex");
+  }
+
   var oid = new ObjectId(id as string);
-  const updatedUser = await Users.findOneAndUpdate({ _id: oid }, { $set: { username, icon, password } });
+  const updatedUser = await Users.findOneAndUpdate({ _id: oid }, { $set: { username, icon, hashedPassword } });
 
   if (!updatedUser) {
     return { succes: false };
