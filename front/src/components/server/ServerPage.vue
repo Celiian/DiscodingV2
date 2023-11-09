@@ -1,20 +1,36 @@
 <script setup lang="ts">
+import { onClickOutside } from "@vueuse/core";
 import { useRoute } from "vue-router";
 import DetailNav from "../home/DetailNav.vue";
 import { useServerStore } from "../../store/serverstore";
-import { onMounted, onUnmounted, ref, watchEffect } from "vue";
+import { onMounted, onUnmounted, ref, watchEffect, computed } from "vue";
 import AddFriend from "../svg/AddFriendIcon.vue";
 import DropdownMenu from "../svg/DropdownIcon.vue";
 import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import CreateChannelModal from "../modal/CreateChannel.vue";
+import AddCategory from "../circle-components/addCategory.vue"
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
+import CreateChannelModal from "../modal/CreateChannel.vue"
+import CreateCategoryModal from "../modal/CreateCategory.vue"
+import { useUserStore } from "../../store/userstore";
+
+const userStore = useUserStore()
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
 const dropdownRef = ref(null);
+
+const currentUser = computed(() => {
+  return userStore.getCurrentUser();
+});
+const serverId = computed(() => {
+  return route.params.serverId as string;
+});
+const isCurrentUserIsAdmin = computed(() => {
+  return currentUser.value?._id.toString() === serverId
+})
 
 interface Server {
   name: string;
@@ -23,14 +39,15 @@ interface Server {
 }
 
 const isDropdownOpen = ref(false);
+const currentModal = ref('');
+const target = ref(null)
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
-
-
 };
 const modalOpened = ref(false);
 watchEffect(() => {
+  console.log(isCurrentUserIsAdmin.value)
   const newServerId = route.params.serverId as string;
   server.value = null;
   serverStore.getServerById({ id: newServerId }).then((data) => {
@@ -42,12 +59,18 @@ const handleClickOutside = (event: Event) => {
     isDropdownOpen.value = false;
   }
 };
+
+
+
 function closeModal() {
   modalOpened.value = false
 }
 function openModal() {
   modalOpened.value = true;
 }
+
+onClickOutside(target, () => isDropdownOpen.value = false);
+
 // Ajoute cet écouteur d'événements lorsque le composant est monté
 onMounted(() => {
   window.addEventListener("click", handleClickOutside);
@@ -57,39 +80,94 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
-const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Quitter le serveur'];
-const menuClass = ['blue', 'grey', "grey", "red"];
-const menuSVG = [AddFriend, Parameter, AddChannel, Modified];
+
+const dropDownItem = {
+  0: {
+    item: 'Inviter des gens',
+    class: 'blue',
+    svg: AddFriend,
+    show: false
+  },
+  1: {
+    item: 'Paramètres du serveur',
+    class: 'grey',
+    svg: Parameter,
+    show: true
+  },
+  2: {
+    item: 'Créer un salon',
+    class: 'grey',
+    svg: AddChannel,
+    show: true
+  },
+  3: {
+    item: 'Créer une catégorie',
+    class: 'grey',
+    svg: AddCategory,
+    show: true
+  },
+  4: {
+    item: 'Quitter le serveur',
+    class: 'red',
+    svg: Modified,
+    show: false
+  },
+}
+// const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Créer une catégorie', 'Quitter le serveur'];
+// const menuClass = ['blue', 'grey', 'grey', "grey", "red"];
+// const menuSVG = [AddFriend, Parameter, AddChannel, AddCategory, Modified];
+// const menuToHideIfNotAdmin = [false, true, true, true, false]
 
 
-function fnctTest(index: number) {
+function callModal(index: number) {
   if (index === 2) {
-    openModal();
+    openChannelModal();
+  }
+  if (index === 3) {
+    openCategoryModal();
   }
 }
+
+function openChannelModal() {
+  modalOpened.value = true;
+  currentModal.value = 'channel';
+}
+
+function openCategoryModal() {
+  modalOpened.value = true;
+  currentModal.value = 'category';
+}
+
 </script>
 
 
 <template>
-  <CreateChannelModal v-if="modalOpened" @open-modal="openModal" @close-modal="closeModal" />
+  <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
+    @close-modal="closeModal" />
+  <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
+    @close-modal="closeModal" />
+
   <DetailNav>
     <template v-slot:header>
-      <div class="dropdown cursor-default">
+      <div class="dropdown cursor-pointer" @click="toggleDropdown">
         <p style="color:rgb(181 186 193);">
           {{ server?.name }}
         </p>
-        <div class="cursor-pointer" ref="dropdownRef" @click="toggleDropdown" v-if="isDropdownOpen === false"
-          style="align-self: center;">
-          <DropdownMenu />
+        <div class="cursor-pointer" ref="dropdownRef" v-if="isDropdownOpen === false" style="align-self: center;">
+          <DropdownMenu class="fill-white-500/80" />
         </div>
         <div v-else @click="toggleDropdown">
           <CloseIcon />
         </div>
-        <div v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
-          <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="fnctTest(index)">
-            {{ menuItem }}
-            <component :is="menuSVG[index]" />
-          </a>
+        <div ref="target" v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
+          <div v-for="(menuItem, index) in dropDownItem">
+            <a v-if="(isCurrentUserIsAdmin === menuItem.show) || isCurrentUserIsAdmin" :key="index"
+              :class='menuItem.class' @click="callModal(index)">
+              {{ menuItem.item }}
+              <component :is="menuItem.svg" />
+            </a>
+          </div>
+
         </div>
       </div>
     </template>
@@ -112,6 +190,7 @@ function fnctTest(index: number) {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
+  z-index: 100;
 }
 
 .dropdown-content {
@@ -157,4 +236,5 @@ function fnctTest(index: number) {
   color: #ffffff;
 }
 </style>
+
 

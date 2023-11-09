@@ -14,7 +14,6 @@ const userStore = useUserStore();
 const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
-
 const props = defineProps({
   friend: null,
 });
@@ -138,13 +137,9 @@ function scrollToElement(className: string, blink: boolean) {
 
           <!-- input message-->
           <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
-            <input
-              @keypress.enter="sendMessage"
-              v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
-              type="text"
-              placeholder="Envoyer un message a Titi"
-            />
+            <input @keypress.enter="sendMessage" v-model="messageInput"
+              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400" type="text"
+              placeholder="Envoyer un message a Titi" />
           </div>
         </div>
       </div>
