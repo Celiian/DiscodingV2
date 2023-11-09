@@ -12,9 +12,9 @@ export async function getChannelsByUser(id: string) {
   }
 }
 
-export async function getMessagesByMp(id: string) {
+export async function getMessagesByChannel(id: string) {
   try {
-    const res = await axios.get(`${API_BASE_URL}/mp/${id}/messages`);
+    const res = await axios.get(`${API_BASE_URL}/channel/${id}/messages`);
 
     return { success: true, data: res.data };
   } catch (error) {
@@ -22,9 +22,9 @@ export async function getMessagesByMp(id: string) {
   }
 }
 
-export async function sendMp(sender: string, content: string, channel: string) {
+export async function sendMessage(sender: string, content: string, channel: string) {
   try {
-    const res = await axios.post(`${API_BASE_URL}/mp/send`, {
+    const res = await axios.post(`${API_BASE_URL}/message/send`, {
       sender: sender,
       content: content,
       channel: channel,

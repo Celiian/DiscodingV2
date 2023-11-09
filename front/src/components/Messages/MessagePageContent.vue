@@ -47,7 +47,7 @@ watchEffect(async () => {
 
   friend.value = (await userStore.getUser({ id: routes.params.friendId as string })).data;
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
-  await messagestore.getMessagesMp(channelId.value);
+  await messageStore.getMessagesByChannel(channelId.value);
 });
 
 onBeforeRouteLeave(() => {
@@ -85,10 +85,9 @@ function scrollToElement() {
 </script>
 
 <template>
-  <div class="w-full h-full flex flex-col max-h-[95%]">
-    <div class="overflow-y-scroll h-full flex-col">
+  <div class="relative w-full message_height flex flex-col">
+    <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
-
       <MessageComp
         v-for="(message, index) in messages"
         :key="index"
@@ -103,7 +102,7 @@ function scrollToElement() {
     </div>
 
     <!--input message-->
-    <div class="relative shrink-0 px-4 mt-2">
+    <div class="relative px-4 mt-2">
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">
         <div class="flex overflow-x-hidden overflow-y-scroll max-h-[50vh] rounded-lg pl-4">
           <!--upload icon-->
@@ -130,7 +129,20 @@ function scrollToElement() {
 </template>
 
 <style scoped>
+/* width */
 ::-webkit-scrollbar {
-  width: 0;
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #1e1f22;
+  border-radius: 20px;
 }
 </style>

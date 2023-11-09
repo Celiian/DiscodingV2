@@ -71,6 +71,7 @@ watchEffect(async () => {
       :count="0"
     />
 
+
     <AddServerIcon />
     <SearchServerIcon />
   </nav>
