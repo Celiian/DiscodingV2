@@ -37,7 +37,6 @@ watchEffect(async () => {
   serverList.value = server;
 
   mp_notif.value = notifStore.getCurrentMpNotifs();
-  console.log(mp_notif.value);
   await getUserList();
 });
 </script>
@@ -70,7 +69,6 @@ watchEffect(async () => {
       :notif="false"
       :count="0"
     />
-
 
     <AddServerIcon />
     <SearchServerIcon />

@@ -9,6 +9,10 @@ import InfoIcon from "../svg/InfoIcon.vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
 import { ref, computed } from "vue";
 
+const props = defineProps({
+  friend: null,
+});
+
 const input = ref("");
 const searchIconClass = computed(() => ({
   "opacity-0": input.value.length !== 0,
@@ -55,7 +59,7 @@ function ToggleProfilPressed() {
         <h1
           class="text-[16px] leading-5 font-semibold flex justify-start items-center overflow-hidden whitespace-nowrap box-border text-white-500"
         >
-          Titi
+          {{ props.friend?.username }}
         </h1>
       </div>
     </div>

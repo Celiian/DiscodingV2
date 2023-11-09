@@ -46,6 +46,7 @@ export const useUserStore = defineStore("user", {
 
     async editUser({ id, icon, username, password }: { id: string; icon: string; username: string; password: string }) {
       edit({ id, icon, username, password });
+      await this.handleAuth();
     },
   },
 });
