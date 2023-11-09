@@ -13,6 +13,7 @@ export const useFriendsStore = defineStore("friends", {
 
   actions: {
     getFriendsOnline(): any[] {
+      console.log(this.friends);
       return this.friends;
     },
     getPending(): any[] {
