@@ -14,25 +14,34 @@ const userStore = useUserStore();
 const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
-
-
-
 const props = defineProps({
   friend: null,
 });
 
 interface Message {
+  _id: string;
   channel: string;
   sender: string;
   content: string;
   date: Date;
 }
+
+const searchedMessage = computed(() => {
+  return messagestore.getSearchedMessage();
+});
+
+watch(searchedMessage, () => {
+  scrollToElement(searchedMessage.value, true);
+
+  messagestore.setSearchedMessage("");
+});
+
 const messages = computed<Message[]>(() => {
   return messagestore.getMessages();
 });
 
 watch(messages, () => {
-  setTimeout(() => scrollToElement(), 100);
+  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 100);
 });
 
 const channelId = computed(() => {
@@ -72,17 +81,28 @@ function sendMessage() {
   });
   messageInput.value = "";
 }
+
 function formatDateToFrench(dateString: string) {
   const date = new Date(dateString);
   const locale = "fr-FR";
   return date.toLocaleDateString(locale);
 }
 
-function scrollToElement() {
-  const el = document.getElementsByClassName("last")[0];
+function scrollToElement(className: string, blink: boolean) {
+  const el = document.getElementsByClassName(className.toString())[0];
 
   if (el) {
+    // Add the 'blink-blue' class to make it blink in blue
+
     el.scrollIntoView();
+    if (blink) {
+      el.classList.add("blink-blue");
+
+      // Remove the 'blink-blue' class after 2 seconds
+      setTimeout(() => {
+        el.classList.remove("blink-blue");
+      }, 700);
+    }
   }
 }
 </script>
@@ -91,12 +111,17 @@ function scrollToElement() {
   <div class="relative w-full message_height flex flex-col">
     <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
-      <MessageComp v-for="(message, index) in messages" :key="index" v-bind="{
-        userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
-        date: formatDateToFrench(message.date.toString()),
-        messageContent: message.content,
-        icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
-      }" :class="index == messages.length - 1 ? 'last' : undefined" />
+      <MessageComp
+        v-for="(message, index) in messages"
+        :key="index"
+        v-bind="{
+          userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
+          date: formatDateToFrench(message.date.toString()),
+          messageContent: message.content,
+          icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
+        }"
+        :class="message._id.toString()"
+      />
     </div>
 
     <!--input message-->
@@ -138,5 +163,19 @@ function scrollToElement() {
 ::-webkit-scrollbar-thumb {
   background: #1e1f22;
   border-radius: 20px;
+}
+
+@keyframes blink-blue {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(70, 70, 212, 0.263);
+  }
+}
+
+.blink-blue {
+  animation: blink-blue 0.7s infinite;
 }
 </style>

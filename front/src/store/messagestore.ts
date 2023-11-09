@@ -8,9 +8,16 @@ export const useMessageStore = defineStore("message", {
   state: () => ({
     mp_channels: [],
     messages: [],
+    searched_message: "",
   }),
 
   actions: {
+    getSearchedMessage() {
+      return this.searched_message;
+    },
+    setSearchedMessage(message: any) {
+      this.searched_message = message;
+    },
     async getMpChannels() {
       const userStore = useUserStore();
       const user = userStore.getCurrentUser();
@@ -39,7 +46,6 @@ export const useMessageStore = defineStore("message", {
       return res;
     },
 
-
     async mp({
       sender,
       content,
@@ -53,7 +59,6 @@ export const useMessageStore = defineStore("message", {
     }) {
       const res = await sendMessage(sender, content, channel);
       emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
-
 
       return res;
     },

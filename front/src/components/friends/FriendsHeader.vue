@@ -85,4 +85,3 @@ function onClickAddFriendsButton() {
 </template>
 
 <style scoped></style>
-../../store/friendsStore
