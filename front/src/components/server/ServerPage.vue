@@ -1,10 +1,9 @@
 <script setup lang="ts">
-
 import { onClickOutside } from "@vueuse/core";
 import { useRoute } from "vue-router";
 import DetailNav from "../home/DetailNav.vue";
 import { useServerStore } from "../../store/serverstore";
-import { onMounted, onUnmounted, ref, watchEffect } from "vue";
+import { onMounted, onUnmounted, ref, watchEffect, computed } from "vue";
 import AddFriend from "../svg/AddFriendIcon.vue";
 import DropdownMenu from "../svg/DropdownIcon.vue";
 import Parameter from "../svg/ParameterIcon.vue";
@@ -15,10 +14,23 @@ import AddCategory from "../circle-components/addCategory.vue"
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
 import CreateChannelModal from "../modal/CreateChannel.vue"
 import CreateCategoryModal from "../modal/CreateCategory.vue"
+import { useUserStore } from "../../store/userstore";
+
+const userStore = useUserStore()
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
 const dropdownRef = ref(null);
+
+const currentUser = computed(() => {
+  return userStore.getCurrentUser();
+});
+const serverId = computed(() => {
+  return route.params.serverId as string;
+});
+const isCurrentUserIsAdmin = computed(() => {
+  return currentUser.value?._id.toString() === serverId
+})
 
 interface Server {
   name: string;
@@ -35,6 +47,7 @@ const toggleDropdown = () => {
 };
 const modalOpened = ref(false);
 watchEffect(() => {
+  console.log(isCurrentUserIsAdmin.value)
   const newServerId = route.params.serverId as string;
   server.value = null;
   serverStore.getServerById({ id: newServerId }).then((data) => {
@@ -67,9 +80,43 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
-const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Créer une catégorie', 'Quitter le serveur'];
-const menuClass = ['blue', 'grey', 'grey', "grey", "red"];
-const menuSVG = [AddFriend, Parameter, AddChannel, AddCategory, Modified];
+
+const dropDownItem = {
+  0: {
+    item: 'Inviter des gens',
+    class: 'blue',
+    svg: AddFriend,
+    show: false
+  },
+  1: {
+    item: 'Paramètres du serveur',
+    class: 'grey',
+    svg: Parameter,
+    show: true
+  },
+  2: {
+    item: 'Créer un salon',
+    class: 'grey',
+    svg: AddChannel,
+    show: true
+  },
+  3: {
+    item: 'Créer une catégorie',
+    class: 'grey',
+    svg: AddCategory,
+    show: true
+  },
+  4: {
+    item: 'Quitter le serveur',
+    class: 'red',
+    svg: Modified,
+    show: false
+  },
+}
+// const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Créer une catégorie', 'Quitter le serveur'];
+// const menuClass = ['blue', 'grey', 'grey', "grey", "red"];
+// const menuSVG = [AddFriend, Parameter, AddChannel, AddCategory, Modified];
+// const menuToHideIfNotAdmin = [false, true, true, true, false]
 
 
 function callModal(index: number) {
@@ -113,10 +160,14 @@ function openCategoryModal() {
           <CloseIcon />
         </div>
         <div ref="target" v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
-          <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="callModal(index)">
-            {{ menuItem }}
-            <component :is="menuSVG[index]" />
-          </a>
+          <div v-for="(menuItem, index) in dropDownItem">
+            <a v-if="(isCurrentUserIsAdmin === menuItem.show) || isCurrentUserIsAdmin" :key="index"
+              :class='menuItem.class' @click="callModal(index)">
+              {{ menuItem.item }}
+              <component :is="menuItem.svg" />
+            </a>
+          </div>
+
         </div>
       </div>
     </template>
