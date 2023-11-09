@@ -40,3 +40,22 @@ export async function getUserByid({ user_id }: { user_id: string }) {
     return { success: false, data: error };
   }
 }
+
+export async function edit({
+  id,
+  icon,
+  username,
+  password,
+}: {
+  id: string;
+  icon: string;
+  username: string;
+  password: string;
+}) {
+  try {
+    await axios.put(`${API_BASE_URL}/user`, { id, icon, username, password }, { withCredentials: true });
+    return { success: true };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}

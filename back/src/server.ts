@@ -9,6 +9,7 @@ import { registerFriendsRoutes } from "./modules/friends/friends.controller";
 import { isLogin } from "./modules/auth/auth.middleware";
 import { initSocketio } from "./websocket";
 import { registerChannelssRoutes } from "./modules/channels/channels.controller";
+import { registerUsersRoutes } from "./modules/users/users.controller";
 
 export function initWebServer() {
   // Creation du serveur http
@@ -38,6 +39,7 @@ export function initWebServer() {
 
   // On enregistre nos controllers
   registerAuthRoutes(app);
+  registerUsersRoutes(app);
   registerServerRoutes(app);
   registerInvitationsRoutes(app);
   registerFriendsRoutes(app);
