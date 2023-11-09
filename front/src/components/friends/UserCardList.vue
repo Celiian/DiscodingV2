@@ -2,13 +2,15 @@
 import MessageIcon from "../svg/MessageIcon.vue";
 import MoreIcon from "../svg/MoreIcon.vue";
 import { useUserStore } from "../../store/userstore";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, watchEffect } from "vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
+import { useMessageStore } from "../../store/messagestore";
 
 const userStore = useUserStore();
+const messageStore = useMessageStore();
 const props = defineProps({ id: String });
 const user = ref(null);
-
+const channel = ref();
 watch(
   () => props.id,
   () => {
@@ -27,6 +29,14 @@ async function getUser() {
     user.value = res?.data;
   }
 }
+
+watchEffect(() => {
+  for (let channelStored of messageStore.getCurrentChannels()) {
+    if (channelStored?.users.includes(props.id)) {
+      channel.value = channelStored;
+    }
+  }
+});
 </script>
 
 <template>
@@ -34,7 +44,10 @@ async function getUser() {
   <div
     class="h-[62px] flex ml-[30px] mr-5 font-medium text-[16px] leading-5 overflow-hidden box-border cursor-pointer border-t-[1px] border-white-100/20 hover:bg-white-100/10 hover:border-white-100/0 rounded group/main"
   >
-    <div class="flex grow items-center justify-between max-w-full px-2">
+    <router-link
+      :to="'/me/message/' + channel._id.toString() + '/' + props.id"
+      class="flex grow items-center justify-between max-w-full px-2"
+    >
       <!-- user info -->
       <div class="flex overflow-hidden">
         <!--user logo-->
@@ -71,9 +84,8 @@ async function getUser() {
           <MoreIcon class="fill-white-300 w-4 h-4 group-hover:fill-white-500" />
         </div>
       </div>
-    </div>
+    </router-link>
   </div>
 </template>
 
 <style scoped></style>
-../../store/userStore

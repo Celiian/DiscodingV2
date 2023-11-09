@@ -34,6 +34,7 @@ socket.on("mp-ofline", (data) => {
 socket.on("mp-received", (data) => {
   const messagestore = useMessageStore();
   messagestore.getMessagesByChannel(data.channel);
+  messagestore.getMpChannels();
 });
 
 export async function connectToServer() {
