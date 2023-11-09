@@ -33,13 +33,8 @@ watchEffect(() => {
     </div>
 
     <!-- Conditional rendering of ServerCircleIcon -->
-    <ServerCircleIcon
-      v-if="serverList.length > 0"
-      v-for="server in serverList"
-      :name="server.name"
-      :image-url="server.icon"
-      :id="server._id"
-    />
+    <ServerCircleIcon v-if="serverList.length > 0" v-for="server in serverList" :name="server.name"
+      :image-url="server.icon" :id="server._id" />
 
     <AddServerIcon />
     <SearchServerIcon />
@@ -51,3 +46,4 @@ nav::-webkit-scrollbar {
   display: none;
 }
 </style>
+../../store/serverStore
