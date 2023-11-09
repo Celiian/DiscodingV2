@@ -107,7 +107,7 @@ function openCategoryModal() {
           {{ server?.name }}
         </p>
         <div class="cursor-pointer" ref="dropdownRef" v-if="isDropdownOpen === false" style="align-self: center;">
-          <DropdownMenu />
+          <DropdownMenu class="fill-white-500/80" />
         </div>
         <div v-else @click="toggleDropdown">
           <CloseIcon />
