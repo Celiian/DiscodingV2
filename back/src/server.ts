@@ -9,6 +9,7 @@ import { registerFriendsRoutes } from "./modules/friends/friends.controller";
 import { isLogin } from "./modules/auth/auth.middleware";
 import { initSocketio } from "./websocket";
 import { registerChannelssRoutes } from "./modules/channels/channels.controller";
+import { registerNotificationsRoutes } from "./modules/notifications/notifications.controller";
 
 export function initWebServer() {
   // Creation du serveur http
@@ -42,6 +43,7 @@ export function initWebServer() {
   registerInvitationsRoutes(app);
   registerFriendsRoutes(app);
   registerChannelssRoutes(app);
+  registerNotificationsRoutes(app);
   // On ecoute sur le port configuré avec le .env
   server.listen(process.env.NODE_PORT, () => {
     console.log(`Listening on http://localhost:${process.env.NODE_PORT}`);

@@ -1,4 +1,4 @@
-// messageStore.ts
+// messagestore.ts
 import { defineStore } from "pinia";
 import { useUserStore } from "./userstore";
 import { getChannelsByUser, sendMp, getMessagesByMp } from "./utils/messagerequest";
@@ -34,9 +34,19 @@ export const useMessageStore = defineStore("message", {
       return this.channels;
     },
 
-    async mp({ sender, content, channel }: { sender: string; content: string; channel: string }) {
+    async mp({
+      sender,
+      content,
+      channel,
+      friend,
+    }: {
+      sender: string;
+      content: string;
+      channel: string;
+      friend: string;
+    }) {
       const res = await sendMp(sender, content, channel);
-      emitEvent({ event: "mp-sent", data: { channel: channel } });
+      emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
       return res;
     },
   },

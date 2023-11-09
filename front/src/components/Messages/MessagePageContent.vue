@@ -6,21 +6,22 @@ import { onBeforeRouteLeave, useRoute } from "vue-router";
 import { emitEvent } from "../../utils/ws";
 import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
+import { useNotifStore } from "../../store/notifstore";
 
+const notifStore = useNotifStore();
 const userStore = useUserStore();
-const messageStore = useMessageStore();
+const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
 
-export interface Message {
+interface Message {
   channel: string;
   sender: string;
   content: string;
   date: Date;
 }
-
 const messages = computed<Message[]>(() => {
-  return messageStore.getMessages();
+  return messagestore.getMessages();
 });
 
 const friend = ref();
@@ -30,10 +31,19 @@ const channelId = computed(() => {
 });
 
 watchEffect(async () => {
+  const mp_notifs = notifStore.getCurrentMpNotifs();
+
+  const foundNotif = mp_notifs.find((notif: any) => {
+    return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
+  });
+
+  if (foundNotif) {
+    notifStore.deleteNotif(foundNotif._id.toString());
+  }
+
   friend.value = (await userStore.getUser({ id: routes.params.friendId as string })).data;
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
-  await messageStore.getMessagesMp(channelId.value);
-  console.log(messages);
+  await messagestore.getMessagesMp(channelId.value);
 });
 
 onBeforeRouteLeave(() => {
@@ -46,12 +56,18 @@ function onClickUploadButton() {
 }
 
 function sendMessage() {
-  messageStore.mp({
+  messagestore.mp({
     sender: userStore.getCurrentUser()._id.toString(),
     content: messageInput.value,
     channel: channelId.value,
+    friend: friend.value._id.toString(),
   });
   messageInput.value = "";
+}
+function formatDateToFrench(dateString: string) {
+  const date = new Date(dateString);
+  const locale = "fr-FR";
+  return date.toLocaleDateString(locale);
 }
 </script>
 
@@ -63,7 +79,7 @@ function sendMessage() {
         v-for="message in messages"
         v-bind="{
           userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
-          date: 'Aujourd\'hui à 22:20',
+          date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
         }"
       />
