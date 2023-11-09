@@ -9,7 +9,8 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import CreateChannelModal from "../modal/CreateChannel.vue"
+import CreateChannelModal from "../modal/CreateChannel.vue";
+import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
@@ -95,9 +96,7 @@ function fnctTest(index: number) {
 
 
     <template v-slot:content>
-
-
-
+      <ServerDetailNavContent />
     </template>
 
   </DetailNav>

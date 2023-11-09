@@ -87,7 +87,6 @@ function inputSearchValidation() {
             </div>
 
 
-
             <!--icon-->
             <a href="https://support.discord.com/hc/fr" target="_blank" class="group h-[24px] w-[24px] mx-2 cursor-pointer">
                 <InfoIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150" />

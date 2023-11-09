@@ -3,15 +3,10 @@
 import RoundedLogoIcon from '../circle-components/RoundedLogoIcon.vue';
 import SettingIcon from "../svg/SettingIcon.vue"
 import { useUserStore } from '../../store/userstore';
-import TextualChan from "../svg/TextualChann.vue"
-import VocalChannel from "../svg/VocalChannel.vue"
 import ProfilSettingModal from "../modal/ProfilSettingModal.vue";
 import { ref } from 'vue';
 import { computed } from '@vue/reactivity';
 
-
-let textualChan = true;
-let vocalChan = true
 const userStore = useUserStore();
 const currentUser = computed(() => {
   return userStore.getCurrentUser()
@@ -38,13 +33,13 @@ function openSettingModal() {
 <template>
   <div
     class="main -mt-0 w-[240px] h-full bg-grey-300 flex flex-col grow-0 shrink-0 basis-auto overflow-y-scroll overflow-x-hidden relative ">
-    <nav class="flex flex-col flex-1">
-      <div class="flex grow-0 shrink-0 basis-auto px-2 h-12 items-center shadow-customOne">
+    <nav class="flex flex-col flex-1 ">
+      <div class="flex grow-0 shrink-0 basis-auto px-2 h-12 items-center shadow-customOne fixed bg-grey-300 w-[240px]">
         <slot name="header">
         </slot>
       </div>
 
-      <div class="flex-col grow-1 shrink-1 basis-auto w-full h-full">
+      <div class="flex-col grow-1 shrink-1 basis-auto w-full h-full mt-[48px]">
         <slot name="content">
         </slot>
 
