@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import MainContent from "../home/MainContent.vue";
 import { useRoute } from "vue-router";
 import DetailNav from "../home/DetailNav.vue";
 import { useServerStore } from "../../store/serverstore";
@@ -29,7 +28,7 @@ const toggleDropdown = () => {
 
 
 };
-const modalOpened = ref(true);
+const modalOpened = ref(false);
 watchEffect(() => {
   const newServerId = route.params.serverId as string;
   server.value = null;
@@ -71,9 +70,9 @@ function fnctTest(index: number) {
 
 
 <template>
+  <CreateChannelModal v-if="modalOpened" @open-modal="openModal" @close-modal="closeModal" />
   <DetailNav>
     <template v-slot:header>
-      <CreateChannelModal v-if="modalOpened" @open-modal="openModal" @close-modal="closeModal" />
       <div class="dropdown cursor-default">
         <p style="color:rgb(181 186 193);">
           {{ server?.name }}
@@ -94,12 +93,17 @@ function fnctTest(index: number) {
       </div>
     </template>
 
-    <template v-slot:content></template>
+
+    <template v-slot:content>
+
+
+
+    </template>
+
   </DetailNav>
-  <MainContent>
-    <template v-slot:header> header</template>
-    <template v-slot:content> </template>
-  </MainContent>
+
+
+  <router-view></router-view>
 </template>
 
 
