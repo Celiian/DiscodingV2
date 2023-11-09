@@ -148,3 +148,20 @@ export async function acceptInvite({
     return { success: false, data: error };
   }
 }
+
+export async function leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/server/leave`,
+      {
+        member_id: member_id,
+        server_id: server_id,
+      },
+      { withCredentials: true }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}

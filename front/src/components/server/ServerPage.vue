@@ -19,7 +19,7 @@ import { useUserStore } from "../../store/userstore";
 const userStore = useUserStore();
 const serverStore = useServerStore();
 const route = useRoute();
-const server = ref<Server | null>(null); // Initialize as null
+const server = ref<Server | null>(null);
 const dropdownRef = ref(null);
 
 const currentUser = computed(() => {
@@ -28,9 +28,7 @@ const currentUser = computed(() => {
 const serverId = computed(() => {
   return route.params.serverId as string;
 });
-const isCurrentUserIsAdmin = computed(async () => {
-  return currentUser.value?._id.toString() === (await serverStore.getServerById({ id: serverId.value }));
-});
+const isCurrentUserIsAdmin = ref(false);
 
 interface Server {
   name: string;
@@ -46,8 +44,9 @@ const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 const modalOpened = ref(false);
-watchEffect(() => {
-  console.log(isCurrentUserIsAdmin.value);
+watchEffect(async () => {
+  isCurrentUserIsAdmin.value =
+    currentUser.value?._id.toString() === (await serverStore.getServerById({ id: serverId.value })).owner;
   const newServerId = route.params.serverId as string;
   server.value = null;
   serverStore.getServerById({ id: newServerId }).then((data) => {
@@ -115,10 +114,6 @@ const dropDownItem = {
     show: false,
   },
 };
-// const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Créer une catégorie', 'Quitter le serveur'];
-// const menuClass = ['blue', 'grey', 'grey', "grey", "red"];
-// const menuSVG = [AddFriend, Parameter, AddChannel, AddCategory, Modified];
-// const menuToHideIfNotAdmin = [false, true, true, true, false]
 
 function callModal(index: number) {
   if (index === 2) {

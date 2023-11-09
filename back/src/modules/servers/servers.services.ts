@@ -5,6 +5,7 @@ import { Members } from "@/db/models/Members";
 import { Category } from "@/types/categories.types";
 import { Categories } from "@/db/models/Category";
 import { Channels } from "@/db/models/Channel";
+import { MemberCreateBody } from "@/types/members.types";
 
 export async function createServer(body: ServerCreateBody) {
   try {
@@ -89,5 +90,16 @@ export async function getChannelsByServer(id: string) {
   } catch (error) {
     console.error("Error fetching server data:", error);
     throw error;
+  }
+}
+
+export async function leaveServer(body: MemberCreateBody) {
+  try {
+    await Members.findOneAndDelete({
+      member_id: body.member_id,
+      server_id: body.server_id,
+    });
+  } catch (error) {
+    console.error("Error fetching server data:", error);
   }
 }
