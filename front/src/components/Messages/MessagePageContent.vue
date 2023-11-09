@@ -56,10 +56,10 @@ function sendMessage() {
 </script>
 
 <template>
-  <div class="relative w-full message_height justify-stretch flex flex-col">
-    <div class="overflow-y-scroll">
+  <div class="relative w-full message_height flex flex-col">
+    <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
-      <ul>
+      <ul class="">
         <MessageComp v-for="message in messages" v-bind="{
           userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
           date: 'Aujourd\'hui à 22:20',
@@ -93,7 +93,20 @@ function sendMessage() {
 </template>
 
 <style scoped>
+/* width */
 ::-webkit-scrollbar {
-  width: 0;
+  width: 8px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.1);
+  border-radius: 20px;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background: #1e1f22;
+  border-radius: 20px;
 }
 </style>

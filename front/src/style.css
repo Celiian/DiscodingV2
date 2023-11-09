@@ -5,6 +5,12 @@
 @layer components {
     .message_height {
         height: calc(100% - 48px);
+        min-height: calc(100% - 48px);
+    }
+
+    .message_height_2 {
+        height: calc(100% - 48px);
+        min-height: calc(100% - 68px);
     }
 }
 
