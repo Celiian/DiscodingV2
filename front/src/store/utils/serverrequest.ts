@@ -106,7 +106,7 @@ export async function createInvite({
   creator: String;
 }) {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${API_BASE_URL}/invite/create`,
       {
         server_id: server_id,
@@ -116,7 +116,7 @@ export async function createInvite({
       },
       { withCredentials: true }
     );
-    return { success: true };
+    return { success: true, data: res };
   } catch (error) {
     console.log(error);
     return { success: false, data: error };
