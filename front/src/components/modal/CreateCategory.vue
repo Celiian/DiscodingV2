@@ -16,6 +16,10 @@ const serverId = computed(() => {
   return routes.params.serverId as string;
 });
 
+const isButtonDisabled = computed(() => {
+  return categoryInput.value === ''
+})
+
 function closeModal() {
   emit("close-modal");
 }
@@ -23,39 +27,40 @@ function closeModal() {
 onClickOutside(target, () => closeModal());
 
 function createCategory() {
-
-  console.log('server id :', serverId.value)
-  console.log('input :', categoryInput.value)
-  serverStore.createCategory({ name: categoryInput.value, server: serverId.value })
-
-  // storeIsTextChannel.value = isTextChannel.value;
-  // storeChannelName.value = storeChannelName.value;
+  if (categoryInput.value !== '') {
+    serverStore.createCategory({ name: categoryInput.value, server: serverId.value })
+    closeModal()
+  }
 }
 
-const isTextChannel = ref(true);
 </script>
 
 
 <template>
   <div class="absolute top-0 left-0 w-screen h-screen bg-black/70 z-10 flex justify-center items-center">
-    <div ref="target" class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative">
+    <div ref="target" class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4">
       <div class="p-4">
         <h2 class="text-white-500 text-2xl font-bold">Créer une catégorie</h2>
         <button @click="closeModal" class="absolute top-4 right-4 w-6 h-6">
           <div>
-            <CloseIcon class="w-full h-full fill-white-200 hover:fill-black transition-all duration-300" />
+            <CloseIcon class="w-full h-full fill-white-200 hover:fill-white-500 transition-all duration-300" />
           </div>
         </button>
       </div>
       <div class="text-white-300">
-        <span>Nom de la catégorie</span>
+        <span class="salonName uppercase text-[14px]">Nom de la catégorie</span>
       </div>
       <div>
-        <input type="text" v-model="categoryInput">
+        <input type="text" v-model="categoryInput" required
+          class="placeholder:text-black px-2 rounded bg-white-300/80 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500">
       </div>
-      <button class="text-grey-400 bg-white-500" @click="createCategory">
-        Créer
-      </button>
+
+      <div class="pt-6 px-6 text-center">
+        <button :disabled="isButtonDisabled" @click="createCategory"
+          class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 disabled:bg-white-300/80">
+          Créer
+        </button>
+      </div>
     </div>
   </div>
 </template>
