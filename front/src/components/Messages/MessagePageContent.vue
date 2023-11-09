@@ -15,6 +15,7 @@ const messageInput = ref("");
 const routes = useRoute();
 
 import { defineProps } from "vue";
+//import { uploadImage } from "../../store/utils/imageupload";
 
 const props = defineProps({
   friend: null,
@@ -58,8 +59,19 @@ onBeforeRouteLeave(() => {
 });
 
 //METHOD
-function onClickUploadButton() {
-  console.log("upload button click");
+
+const selectedFile = ref();
+const selectedFileUrl = ref();
+
+function openFileInput() {
+  const fileInput = document.getElementById("fileInput");
+  fileInput?.click();
+
+  fileInput?.addEventListener("change", async (event) => {
+    selectedFile.value = event.target?.files[0];
+    selectedFileUrl.value = URL.createObjectURL(selectedFile.value);
+    console.log(selectedFile.value);
+  });
 }
 
 function sendMessage() {
@@ -68,6 +80,7 @@ function sendMessage() {
     content: messageInput.value,
     channel: channelId.value,
     friend: props.friend?._id.toString(),
+    type: "text",
   });
   messageInput.value = "";
 }
@@ -88,8 +101,7 @@ function scrollToElement() {
 
 <template>
   <div class="relative w-full message_height flex flex-col">
-    <div class="message-view overflow-y-scroll message_height_2">
-      <!--message list content-->
+    <div :class="'message-view overflow-y-scroll ' + (selectedFileUrl ? 'message_height_3' : 'message_height_2')">
       <MessageComp
         v-for="(message, index) in messages"
         :key="index"
@@ -105,21 +117,29 @@ function scrollToElement() {
 
     <!--input message-->
     <div class="relative px-4 mt-2">
+      <div v-if="selectedFileUrl" class="bg-white-100/10 w-full pl-4">
+        <div class="w-fit bg_custom flex-col justify-center text-white-400 text-center rounded-sm">
+          <img :src="selectedFileUrl" alt="Selected Image" class="max-w-[200px] max-h-[200px] border_custom" />
+          <p class="">{{ selectedFile.name }}</p>
+        </div>
+      </div>
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">
-        <div class="flex overflow-x-hidden overflow-y-scroll max-h-[50vh] rounded-lg pl-4">
+        <div class="flex overflow-x-hidden overflow-y-scroll max-h-[50vh] rounded-lg pl-4 items-center">
           <!--upload icon-->
           <div class="h-[44px] w-auto py-[10px] px-[16px] -ml-4">
-            <div class="group" @click="onClickUploadButton">
+            <input type="file" id="fileInput" style="display: none" accept="image/*" />
+
+            <div class="group" @click="openFileInput">
               <UploadIcon class="fill-white-300 group-hover:fill-white-400 cursor-pointer" />
             </div>
           </div>
 
           <!-- input message-->
-          <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
+          <div class="h-fit flex-1 py-[11px] flex items-center">
             <input
               @keypress.enter="sendMessage"
               v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
+              class="bg-black/0 placeholder:text-white-100/50 outline-none text-white-400"
               type="text"
               placeholder="Envoyer un message a Titi"
             />
@@ -146,5 +166,20 @@ function scrollToElement() {
 ::-webkit-scrollbar-thumb {
   background: #1e1f22;
   border-radius: 20px;
+}
+
+.bg_custom {
+  background-color: #2b2d31;
+}
+
+.border_custom {
+  border-width: 8px;
+  border-style: solid;
+  border-radius: 4px;
+  border-color: #2b2d31;
+  background-color: #414145;
+
+  padding-left: 5px;
+  padding-right: 5px;
 }
 </style>

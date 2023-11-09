@@ -22,12 +22,13 @@ export async function getMessagesByChannel(id: string) {
   }
 }
 
-export async function sendMessage(sender: string, content: string, channel: string) {
+export async function sendMessage(sender: string, content: string, channel: string, type: string) {
   try {
     const res = await axios.post(`${API_BASE_URL}/message/send`, {
       sender: sender,
       content: content,
       channel: channel,
+      type: type,
     });
     return { success: true, data: res.data };
   } catch (error) {

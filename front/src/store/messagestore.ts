@@ -34,26 +34,36 @@ export const useMessageStore = defineStore("message", {
       return this.mp_channels;
     },
 
-    async messageServer({ sender, content, channel }: { sender: string; content: string; channel: string }) {
-      const res = await sendMessage(sender, content, channel);
+    async messageServer({
+      sender,
+      content,
+      channel,
+      type,
+    }: {
+      sender: string;
+      content: string;
+      channel: string;
+      type: string;
+    }) {
+      const res = await sendMessage(sender, content, channel, type);
       return res;
     },
-
 
     async mp({
       sender,
       content,
       channel,
       friend,
+      type,
     }: {
       sender: string;
       content: string;
       channel: string;
       friend: string;
+      type: string;
     }) {
-      const res = await sendMessage(sender, content, channel);
+      const res = await sendMessage(sender, content, channel, type);
       emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
-
 
       return res;
     },
