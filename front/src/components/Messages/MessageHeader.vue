@@ -7,7 +7,7 @@ import ToggleProfil from "../svg/ToggleProfil.vue";
 import NotifInboxIcon from "../svg/NotifInboxIcon.vue";
 import InfoIcon from "../svg/InfoIcon.vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
 
@@ -49,14 +49,46 @@ function cleanInputValue() {
 }
 
 const result = ref<Array<any>>([]);
+const displayed_result = ref<Array<any>>([]);
+const index = ref<number>(0);
 
 async function inputSearchValidation() {
-  showModal.value = true;
-  await getUserList();
+  if (input.value != "") {
+    showModal.value = true;
+    await getUserList();
 
-  result.value = messages.value.filter((message: any) => {
-    return message.content.includes(input.value);
-  });
+    result.value = messages.value.filter((message: any) => {
+      return message.content.includes(input.value);
+    });
+
+    displayed_result.value = result.value.slice(index.value, index.value + 5);
+  } else {
+    showModal.value = false;
+  }
+}
+
+watch(input, () => {
+  if (input.value == "") {
+    showModal.value = false;
+  }
+});
+
+function prevPage() {
+  if (index.value > 0) {
+    index.value -= 5;
+    updateDisplayedResults();
+  }
+}
+
+function nextPage() {
+  if (index.value / 5 < Math.floor((result.value.length - 1) / 5)) {
+    index.value += 5;
+    updateDisplayedResults();
+  }
+}
+
+function updateDisplayedResults() {
+  displayed_result.value = result.value.slice(index.value, index.value + 5);
 }
 
 function formatDateToFrench(dateString: string) {
@@ -145,12 +177,11 @@ function jump(id: string) {
                 class="h-[24px] text-[16px] leading-8 px-2 flex-1 min-w-[24px] bg-black/0 box-border resize-none border-none outline-none placeholder:text-white-200 text-white-400 font-normal placeholder:font-normal"
               />
 
-              <div class="absolute top-6 min-w-fit h-24 z-10" :class="{ block: showModal, hidden: !showModal }">
-                <!-- Modal content -->
+              <div class="absolute top-6 min-w-fit z-10" :class="{ block: showModal, hidden: !showModal }">
                 <div class="bg-grey-400 text-white-500 mx-auto rounded shadow-lg w-full">
-                  <h2 class="text-lg font-semibold mb-4">Recherche :</h2>
+                  <h2 class="text-lg font-semibold mb-4 text-center pt-1">Recherche :</h2>
 
-                  <div v-for="message in result" class="p-4 relative" @click="jump(message._id.toString())">
+                  <div v-for="message in displayed_result" class="p-4 relative" @click="jump(message._id.toString())">
                     <div class="w-full h-fit text-sm">
                       <div class="w-full h-full">
                         <div class="relative outline-none px-1 hover:bg-black/10">
@@ -184,7 +215,15 @@ function jump(id: string) {
 
                     <div class="absolute bottom-4 right-5 jump-button">Jump</div>
                   </div>
-                  <!-- Close button -->
+
+                  <div class="flex justify-center mt-4 items-center">
+                    <button @click="prevPage" class="text-white px-2 py-1 rounded hover:bg-grey-200">Précédent</button>
+                    <p class="m-2">{{ index / 5 + " / " + Math.floor((result.length - 1) / 5) }}</p>
+                    <button @click="nextPage" class="ml-2 text-white px-2 py-1 rounded hover:bg-grey-200">
+                      Suivant
+                    </button>
+                  </div>
+
                   <button @click="hideModal" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
                     Close
                   </button>
