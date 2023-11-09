@@ -69,21 +69,21 @@ export async function createCategory(body: Category) {
 export async function getChannelsByServer(id: string) {
   try {
     const channels: Array<any> = [];
-    const categoriesMap: Record<string, string[]> = {};
+    const categoriesMap: Record<string, any> = {};
 
-    const res1 = await Channels.find({ type: id }).toArray();
-    channels.push(...res1);
+    const channelsRes = await Channels.find({ type: id }).toArray();
+    channels.push(...channelsRes);
 
-    const res2 = await Categories.find({ server: id }).toArray();
+    const categoriesRes = await Categories.find({ server: id }).toArray();
 
-    const fetchCategoryChannels = async (categoryId: any) => {
-      const channel = await Channels.find({ type: categoryId.toString() }).toArray();
-      channels.push(...channel);
-      categoriesMap[categoryId.toString()] = channel.map((c) => c.name);
-    };
-
-    const fetchPromises = res2.map((category) => fetchCategoryChannels(category._id));
-    await Promise.all(fetchPromises);
+    for (const category of categoriesRes) {
+      const channel = await Channels.find({ type: category._id.toString() }).toArray();
+      categoriesMap[category._id.toString()] = {
+        _id: category._id,
+        name: category.name,
+        channels: channel,
+      };
+    }
 
     return { channels, categories: categoriesMap };
   } catch (error) {
