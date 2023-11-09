@@ -32,7 +32,7 @@ const channelId = computed(() => {
 watchEffect(async () => {
   friend.value = (await userStore.getUser({ id: routes.params.friendId as string })).data;
   emitEvent({ event: "mp-join", data: { channel: channelId.value } });
-  await messageStore.getMessagesMp(channelId.value);
+  await messageStore.getMessagesByChannel(channelId.value);
   console.log(messages);
 });
 
@@ -60,13 +60,15 @@ function sendMessage() {
     <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
       <ul class="">
-        <MessageComp v-for="message in messages" v-bind="{
-          userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
-          date: 'Aujourd\'hui à 22:20',
-          messageContent: message.content,
-        }" />
+        <MessageComp
+          v-for="message in messages"
+          v-bind="{
+            userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
+            date: 'Aujourd\'hui à 22:20',
+            messageContent: message.content,
+          }"
+        />
       </ul>
-
     </div>
 
     <!--input message-->
@@ -82,9 +84,13 @@ function sendMessage() {
 
           <!-- input message-->
           <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
-            <input @keypress.enter="sendMessage" v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400" type="text"
-              placeholder="Envoyer un message a Titi" />
+            <input
+              @keypress.enter="sendMessage"
+              v-model="messageInput"
+              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
+              type="text"
+              placeholder="Envoyer un message a Titi"
+            />
           </div>
         </div>
       </div>
