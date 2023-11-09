@@ -93,7 +93,7 @@ function openFileInput() {
 
 <template>
   <div class="absolute top-0 left-0 w-screen h-screen bg-grey-100/70 z-10 flex justify-center items-center">
-    <div class=" relative w-[660px]  bg-[#1e1f22] rounded flex flex-col">
+    <div ref="target" class=" relative w-[660px]  bg-[#1e1f22] rounded flex flex-col">
 
       <div class="min-h-[100px] bg-blue-200 rounded-t"></div><!--banniere-->
 
@@ -160,7 +160,7 @@ function openFileInput() {
 
         </div>
       </div>
-      <div ref="target" class="absolute right-4 top-4 cursor-pointer">
+      <div class="absolute right-4 top-4 cursor-pointer">
         <CloseIcon @click="closeModal" class="fill-white-400" />
       </div>
     </div>
