@@ -43,6 +43,7 @@ export function initSocketio(httpServer: HttpServer) {
       const socketsInRoom = await io.in(room).allSockets();
 
       if (socketsInRoom.size === 1) {
+        io.to(data.channel).emit("mp-received", { channel: data.channel });
         sendMessageToUser(data.user, "mp-ofline", data);
       } else {
         io.to(data.channel).emit("mp-received", { channel: data.channel });

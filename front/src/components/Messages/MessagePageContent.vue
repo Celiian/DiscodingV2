@@ -21,6 +21,7 @@ interface Message {
   date: Date;
 }
 const messages = computed<Message[]>(() => {
+  scrollToElement();
   return messagestore.getMessages();
 });
 
@@ -33,7 +34,7 @@ const channelId = computed(() => {
 watchEffect(async () => {
   const mp_notifs = notifStore.getCurrentMpNotifs();
 
-  const foundNotif = mp_notifs.find((notif: any) => {
+  const foundNotif: any = mp_notifs.find((notif: any) => {
     return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
   });
 
@@ -69,6 +70,15 @@ function formatDateToFrench(dateString: string) {
   const locale = "fr-FR";
   return date.toLocaleDateString(locale);
 }
+
+function scrollToElement() {
+  console.log("scroll");
+  const el = document.getElementsByClassName("last")[0];
+
+  if (el) {
+    el.scrollIntoView();
+  }
+}
 </script>
 
 <template>
@@ -76,12 +86,14 @@ function formatDateToFrench(dateString: string) {
     <div class="overflow-y-scroll h-full flex-col">
       <!--message list content-->
       <MessageComp
-        v-for="message in messages"
+        v-for="(message, index) in messages"
+        :key="index"
         v-bind="{
           userName: message.sender == friend._id ? friend.username : userStore.getCurrentUser().username,
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
         }"
+        :class="index == messages.length - 1 ? 'last' : undefined"
       />
     </div>
 

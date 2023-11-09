@@ -47,6 +47,7 @@ export const useMessageStore = defineStore("message", {
     }) {
       const res = await sendMp(sender, content, channel);
       emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
+
       return res;
     },
   },
