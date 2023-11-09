@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import UploadIcon from "../svg/UploadIcon.vue";
 import MessageComp from "./MessageComp.vue";
 import { onBeforeRouteLeave, useRoute } from "vue-router";
@@ -21,8 +21,11 @@ interface Message {
   date: Date;
 }
 const messages = computed<Message[]>(() => {
-  scrollToElement();
   return messagestore.getMessages();
+});
+
+watch(messages, () => {
+  setTimeout(() => scrollToElement(), 100);
 });
 
 const friend = ref();
@@ -85,6 +88,7 @@ function scrollToElement() {
   <div class="w-full h-full flex flex-col max-h-[95%]">
     <div class="overflow-y-scroll h-full flex-col">
       <!--message list content-->
+
       <MessageComp
         v-for="(message, index) in messages"
         :key="index"
