@@ -9,9 +9,10 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
+import AddCategory from "../circle-components/addCategory.vue"
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
 import CreateChannelModal from "../modal/CreateChannel.vue"
-import AddCategory from "../svg/AddCategory.vue";
+import CreateCategoryModal from "../modal/CreateCategory.vue"
 const serverStore = useServerStore();
 const route = useRoute();
 const server = ref<Server | null>(null); // Initialize as null
@@ -24,11 +25,10 @@ interface Server {
 }
 
 const isDropdownOpen = ref(false);
+const currentModal = ref('');
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
-
-
 };
 const modalOpened = ref(false);
 watchEffect(() => {
@@ -63,16 +63,32 @@ const menuClass = ['blue', 'grey','grey', "grey", "red"];
 const menuSVG = [AddFriend, Parameter, AddChannel,AddCategory, Modified];
 
 
-function fnctTest(index: number) {
+function callModal(index: number) {
   if (index === 2) {
-    openModal();
+    openChannelModal();
+  }
+  if(index === 3){
+    openCategoryModal();
   }
 }
+
+function openChannelModal() {
+  modalOpened.value = true;
+  currentModal.value = 'channel';
+}
+
+function openCategoryModal() {
+  modalOpened.value = true;
+  currentModal.value = 'category';
+}
+
 </script>
 
 
 <template>
-  <CreateChannelModal v-if="modalOpened" @open-modal="openModal" @close-modal="closeModal" />
+    <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal" @close-modal="closeModal" />
+    <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal" @close-modal="closeModal" />
+    
   <DetailNav>
     <template v-slot:header>
       <div class="dropdown cursor-default">
@@ -87,7 +103,7 @@ function fnctTest(index: number) {
           <CloseIcon />
         </div>
         <div v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
-          <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="fnctTest(index)">
+          <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="callModal(index)">
             {{ menuItem }}
             <component :is="menuSVG[index]" />
           </a>
