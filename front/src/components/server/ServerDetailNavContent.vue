@@ -9,7 +9,8 @@ const serverStore = useServerStore()
 
 onMounted(async () => {
     const test = await serverStore.getChannelsServer(serverId.value)
-    console.log(test.channels.length)
+    console.log(test.channels)
+    console.log(test)
 })
 
 const routes = useRoute();

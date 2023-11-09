@@ -7,6 +7,7 @@ import { emitEvent } from "../../utils/ws";
 import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
 import { useNotifStore } from "../../store/notifstore";
+import { defineProps } from "vue";
 
 const notifStore = useNotifStore();
 const userStore = useUserStore();
@@ -14,7 +15,7 @@ const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
 
-import { defineProps } from "vue";
+
 
 const props = defineProps({
   friend: null,
@@ -90,17 +91,12 @@ function scrollToElement() {
   <div class="relative w-full message_height flex flex-col">
     <div class="message-view overflow-y-scroll message_height_2">
       <!--message list content-->
-      <MessageComp
-        v-for="(message, index) in messages"
-        :key="index"
-        v-bind="{
-          userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
-          date: formatDateToFrench(message.date.toString()),
-          messageContent: message.content,
-          icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
-        }"
-        :class="index == messages.length - 1 ? 'last' : undefined"
-      />
+      <MessageComp v-for="(message, index) in messages" :key="index" v-bind="{
+        userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
+        date: formatDateToFrench(message.date.toString()),
+        messageContent: message.content,
+        icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
+      }" :class="index == messages.length - 1 ? 'last' : undefined" />
     </div>
 
     <!--input message-->
@@ -116,13 +112,9 @@ function scrollToElement() {
 
           <!-- input message-->
           <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
-            <input
-              @keypress.enter="sendMessage"
-              v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
-              type="text"
-              placeholder="Envoyer un message a Titi"
-            />
+            <input @keypress.enter="sendMessage" v-model="messageInput"
+              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400" type="text"
+              placeholder="Envoyer un message a Titi" />
           </div>
         </div>
       </div>
