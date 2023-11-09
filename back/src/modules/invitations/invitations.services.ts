@@ -18,7 +18,7 @@ export async function acceptInvite(body: InvitationsAcceptBody) {
     const oid = new ObjectId(body.invite_id);
     const invite = await Invitations.findOne({ _id: oid });
 
-    if (invite && invite.limit > 0 && invite.expiration > new Date()) {
+    if (invite && (invite.limit > 0 || invite.limit == -1) && invite.expiration > new Date()) {
       await Invitations.findOneAndUpdate({ _id: oid }, { limit: invite.limit - 1 });
       const res = await Members.insertOne({
         member_id: body.member_id,
