@@ -8,11 +8,31 @@ import NotifInboxIcon from "../svg/NotifInboxIcon.vue";
 import InfoIcon from "../svg/InfoIcon.vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
 import { ref, computed } from "vue";
+import { useMessageStore } from "../../store/messagestore";
+import { useUserStore } from "../../store/userstore";
+
+const userStore = useUserStore();
+const messageStore = useMessageStore();
+const messages = computed(() => {
+  return messageStore.getMessages();
+});
+
+const userList = ref(new Map<string, any>());
+
+async function getUserList() {
+  for (const message of messages.value) {
+    if (!userList.value.has(message.sender)) {
+      const user = (await userStore.getUser({ id: message.sender })).data;
+      userList.value.set(user._id, user);
+    }
+  }
+}
 
 const props = defineProps({
   friend: null,
 });
 
+const showModal = ref(false);
 const input = ref("");
 const searchIconClass = computed(() => ({
   "opacity-0": input.value.length !== 0,
@@ -28,8 +48,21 @@ function cleanInputValue() {
   input.value = "";
 }
 
-function inputSearchValidation() {
-  console.log(input.value);
+const result = ref<Array<any>>([]);
+
+async function inputSearchValidation() {
+  showModal.value = true;
+  await getUserList();
+
+  result.value = messages.value.filter((message: any) => {
+    return message.content.includes(input.value);
+  });
+}
+
+function formatDateToFrench(dateString: string) {
+  const date = new Date(dateString);
+  const locale = "fr-FR";
+  return date.toLocaleDateString(locale);
 }
 
 function vocalCallPressed() {
@@ -43,12 +76,20 @@ function videoCallPressed() {
 function ToggleProfilPressed() {
   console.log("toggle clicked");
 }
+
+function hideModal() {
+  showModal.value = false;
+}
+
+function jump(id: string) {
+  messageStore.setSearchedMessage(id);
+}
 </script>
 
 <template>
   <div class="w-full flex justify-between">
     <!-- speudo et logo-->
-    <div class="relative flex items-center min-w-0 overflow-hidden grow shrink basis-auto box-border">
+    <div class="relative flex items-center min-w-0 grow shrink basis-auto box-border">
       <div>
         <div class="w-[24px] h-[24px] ml-2 mr-3 box-border relative rounded-full">
           <RoundedLogoIcon :icon="'/src/assets/discord.neutral.png'" />
@@ -93,7 +134,7 @@ function ToggleProfilPressed() {
       <div class="mx-2 box-border">
         <div class="relative overflow-visible box-border">
           <div
-            class="flex justify-between h-[24px] w-[144px] focus-within:w-[250px] rounded cursor-text overflow-hidden px-[2px] bg-grey-100 transition-all duration-300"
+            class="flex justify-between h-[24px] w-[144px] focus-within:w-[250px] rounded cursor-text px-[2px] bg-grey-100 transition-all duration-300"
           >
             <div class="relative flex shrink grow basis-auto flex-wrap justify-center items-center min-w-0">
               <input
@@ -103,6 +144,52 @@ function ToggleProfilPressed() {
                 placeholder="Rechercher"
                 class="h-[24px] text-[16px] leading-8 px-2 flex-1 min-w-[24px] bg-black/0 box-border resize-none border-none outline-none placeholder:text-white-200 text-white-400 font-normal placeholder:font-normal"
               />
+
+              <div class="absolute top-6 min-w-fit h-24 z-10" :class="{ block: showModal, hidden: !showModal }">
+                <!-- Modal content -->
+                <div class="bg-grey-400 text-white-500 mx-auto rounded shadow-lg w-full">
+                  <h2 class="text-lg font-semibold mb-4">Recherche :</h2>
+
+                  <div v-for="message in result" class="p-4 relative" @click="jump(message._id.toString())">
+                    <div class="w-full h-fit text-sm">
+                      <div class="w-full h-full">
+                        <div class="relative outline-none px-1 hover:bg-black/10">
+                          <div class="min-h-[2.75rem] flex items-center">
+                            <div @click="" class="min-w-[30px] min-h-[30px] w-[30px] h-[30px] cursor-pointer">
+                              <RoundedLogoIcon :icon="userList.get(message.sender)?.icon" />
+                            </div>
+
+                            <div class="w-full h-full flex flex-col mx-5">
+                              <!--message sender-->
+                              <div class="flex items-center">
+                                <span @click="" class="text-white-500 font-semibold cursor-pointer hover:underline">{{
+                                  userList.get(message.sender)?.username
+                                }}</span>
+                                <span class="ml-2 text-[10px] text-white-100 font-semibold">
+                                  {{ formatDateToFrench(message.date) }}</span
+                                >
+                              </div>
+
+                              <!--message content-->
+                              <div class="w-[95%]">
+                                <span class="text-white-500 whitespace-break-spaces overflow-x-hidden break-words">{{
+                                  message.content
+                                }}</span>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="absolute bottom-4 right-5 jump-button">Jump</div>
+                  </div>
+                  <!-- Close button -->
+                  <button @click="hideModal" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                    Close
+                  </button>
+                </div>
+              </div>
 
               <div class="h-full w-auto box-border flex justify-center items-center cursor-text">
                 <div class="w-4 h-4 relative flex justify-center items-center">
@@ -135,4 +222,11 @@ function ToggleProfilPressed() {
   </div>
 </template>
 
-<style scoped></style>
+<style scoped>
+.jump-button {
+  color: #fff; /* Text color */
+  font-size: 12px; /* Small font size */
+  padding: 2px 6px; /* Adjust padding as needed */
+  cursor: pointer;
+}
+</style>
