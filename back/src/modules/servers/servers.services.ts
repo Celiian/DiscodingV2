@@ -2,13 +2,20 @@ import { ServerCreateBody } from "@/types/servers.types";
 import { Servers } from "@/db/models/Server";
 import { ObjectId } from "mongodb";
 import { Members } from "@/db/models/Members";
+import { Category } from "@/types/categories.types";
+import { Categories } from "@/db/models/Category";
+import { Channels } from "@/db/models/Channel";
 
 export async function createServer(body: ServerCreateBody) {
-  await Servers.insertOne({
-    name: body.name,
-    icon: body.icon,
-    owner: body.owner,
-  });
+  try {
+    await Servers.insertOne({
+      name: body.name,
+      icon: body.icon,
+      owner: body.owner,
+    });
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+  }
 }
 export async function getServersByUser(user_id: string): Promise<any[]> {
   try {
@@ -42,6 +49,43 @@ export async function getServerById(id: string) {
     var oid = new ObjectId(id);
     const servers = await Servers.findOne({ _id: oid });
     return servers;
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+    throw error;
+  }
+}
+
+export async function createCategory(body: Category) {
+  try {
+    await Categories.insertOne({
+      server: body.server,
+      name: body.name,
+    });
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+  }
+}
+
+export async function getChannelsByServer(id: string) {
+  try {
+    const channels: Array<any> = [];
+    const categoriesMap: Record<string, string[]> = {};
+
+    const res1 = await Channels.find({ type: id }).toArray();
+    channels.push(...res1);
+
+    const res2 = await Categories.find({ server: id }).toArray();
+
+    const fetchCategoryChannels = async (categoryId: any) => {
+      const channel = await Channels.find({ type: categoryId.toString() }).toArray();
+      channels.push(...channel);
+      categoriesMap[categoryId.toString()] = channel.map((c) => c.name);
+    };
+
+    const fetchPromises = res2.map((category) => fetchCategoryChannels(category._id));
+    await Promise.all(fetchPromises);
+
+    return { channels, categories: categoriesMap };
   } catch (error) {
     console.error("Error fetching server data:", error);
     throw error;
