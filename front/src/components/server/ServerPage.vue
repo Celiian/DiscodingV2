@@ -1,4 +1,6 @@
 <script setup lang="ts">
+
+import { onClickOutside } from "@vueuse/core";
 import { useRoute } from "vue-router";
 import DetailNav from "../home/DetailNav.vue";
 import { useServerStore } from "../../store/serverstore";
@@ -26,6 +28,7 @@ interface Server {
 
 const isDropdownOpen = ref(false);
 const currentModal = ref('');
+const target = ref(null)
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
@@ -43,12 +46,18 @@ const handleClickOutside = (event: Event) => {
     isDropdownOpen.value = false;
   }
 };
+
+
+
 function closeModal() {
   modalOpened.value = false
 }
 function openModal() {
   modalOpened.value = true;
 }
+
+onClickOutside(target, () => isDropdownOpen.value = false);
+
 // Ajoute cet écouteur d'événements lorsque le composant est monté
 onMounted(() => {
   window.addEventListener("click", handleClickOutside);
@@ -58,16 +67,16 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("click", handleClickOutside);
 });
-const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon','Créer une catégorie', 'Quitter le serveur'];
-const menuClass = ['blue', 'grey','grey', "grey", "red"];
-const menuSVG = [AddFriend, Parameter, AddChannel,AddCategory, Modified];
+const menuItems = ['Inviter des gens', 'Paramètres du serveur', 'Créer un salon', 'Créer une catégorie', 'Quitter le serveur'];
+const menuClass = ['blue', 'grey', 'grey', "grey", "red"];
+const menuSVG = [AddFriend, Parameter, AddChannel, AddCategory, Modified];
 
 
 function callModal(index: number) {
   if (index === 2) {
     openChannelModal();
   }
-  if(index === 3){
+  if (index === 3) {
     openCategoryModal();
   }
 }
@@ -86,23 +95,24 @@ function openCategoryModal() {
 
 
 <template>
-    <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal" @close-modal="closeModal" />
-    <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal" @close-modal="closeModal" />
-    
+  <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
+    @close-modal="closeModal" />
+  <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
+    @close-modal="closeModal" />
+
   <DetailNav>
     <template v-slot:header>
-      <div class="dropdown cursor-default">
+      <div class="dropdown cursor-pointer" @click="toggleDropdown">
         <p style="color:rgb(181 186 193);">
           {{ server?.name }}
         </p>
-        <div class="cursor-pointer" ref="dropdownRef" @click="toggleDropdown" v-if="isDropdownOpen === false"
-          style="align-self: center;">
+        <div class="cursor-pointer" ref="dropdownRef" v-if="isDropdownOpen === false" style="align-self: center;">
           <DropdownMenu />
         </div>
         <div v-else @click="toggleDropdown">
           <CloseIcon />
         </div>
-        <div v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
+        <div ref="target" v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
           <a v-for="(menuItem, index) in menuItems" :key="index" :class='menuClass[index]' @click="callModal(index)">
             {{ menuItem }}
             <component :is="menuSVG[index]" />
@@ -129,6 +139,7 @@ function openCategoryModal() {
   display: flex;
   flex-grow: 1;
   justify-content: space-between;
+  z-index: 100;
 }
 
 .dropdown-content {
