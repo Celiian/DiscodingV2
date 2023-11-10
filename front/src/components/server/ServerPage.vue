@@ -96,7 +96,6 @@ const dropDownItem = {
     index: 1,
     item: 'Paramètres du serveur',
     class: 'grey',
-
     svg: Parameter,
     show: true,
   },
@@ -117,6 +116,7 @@ const dropDownItem = {
   4: {
     index: 4,
     item: 'Quitter le serveur',
+    class: 'red',
     svg: Modified,
     show: false,
   },
@@ -167,7 +167,6 @@ function openQuitServerModal() {
 </script>
 
 <template>
-
   <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
     @close-modal="closeModal" />
   <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
