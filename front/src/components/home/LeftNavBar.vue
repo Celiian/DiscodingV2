@@ -4,7 +4,7 @@ import PrivateMessageCircleIcon from "../circle-components/PrivateMessageCircleI
 import SearchServerIcon from "../circle-components/SearchServerIcon.vue";
 import ServerCircleIcon from "../circle-components/ServerCircleIcon.vue";
 import { useServerStore } from "../../store/serverstore";
-import { ref, watchEffect } from "vue";
+import { compile, computed, ref, watch, watchEffect } from "vue";
 import { useNotifStore } from "../../store/notifstore";
 import { useUserStore } from "../../store/userstore";
 interface Server {
@@ -18,23 +18,72 @@ const notifStore = useNotifStore();
 const userStore = useUserStore();
 
 const serverList = ref<Server[]>([]);
+const notifList = ref<{ [key: string]: boolean }>({});
+const mentionList = ref<{ [key: string]: number }>({});
 
 const mp_notif = ref<Array<any>>([]);
+const serverNotifs = computed(() => {
+  return notifStore.getServerNotifs();
+});
 
 const userList = ref(new Map<string, any>());
 
 async function getUserList() {
   for (const notif of mp_notif.value) {
-    const user = (await userStore.getUser(notif.sender)).data;
+    const user = (await userStore.getUser({ id: notif.sender })).data;
     if (!userList.value.has(user._id)) {
       userList.value.set(user._id, user);
     }
   }
 }
 
+watch(serverNotifs, async () => {
+  await updateServerNotifs();
+});
+
+watch(serverList, async () => {
+  await updateServerNotifs();
+});
+
+async function updateServerNotifs() {
+  for (let server of serverList.value) {
+    const res = await serverStore.getChannelsServer(server?._id.toString());
+    notifList.value[server?._id.toString()] = false;
+
+    let channels = res.channels.map((chan: any) => chan._id.toString());
+
+    for (const categoryId in res.categories) {
+      if (res.categories.hasOwnProperty(categoryId)) {
+        const category = res.categories[categoryId];
+        for (let chan of category.channels) {
+          channels.push(chan._id.toString());
+        }
+      }
+    }
+
+    for (let notif of notifStore.getServerNotifs()) {
+      if (channels.includes(notif?.source_id)) {
+        notifList.value[server?._id.toString()] = true;
+        if (notif.type == "mention") {
+          if (mentionList.value[server?._id.toString()]) {
+            mentionList.value[server?._id.toString()] = mentionList.value[server?._id.toString()] + 1;
+          } else {
+            mentionList.value[server?._id.toString()] = 1;
+          }
+        } else {
+          if (!mentionList.value[server?._id.toString()]) {
+            mentionList.value[server?._id.toString()] = 0;
+          }
+        }
+      }
+    }
+    console.log(mentionList.value);
+  }
+}
+
 watchEffect(async () => {
-  const server = serverStore.getServerList();
-  serverList.value = server;
+  const servers = serverStore.getServerList();
+  serverList.value = servers;
 
   mp_notif.value = notifStore.getCurrentMpNotifs();
   await getUserList();
@@ -66,8 +115,9 @@ watchEffect(async () => {
       :name="server.name"
       :image-url="server.icon"
       :link="'/server/' + server._id"
-      :notif="false"
-      :count="0"
+      :notif="true"
+      :count="mentionList[server._id.toString()]"
+      :notif_small="notifList[server._id.toString()]"
     />
 
     <AddServerIcon />

@@ -44,9 +44,9 @@ const router = createRouter({
           children: [
             {
               path: ":categoryId/:channelId",
-              component: ServerMessagePageVue
-            }
-          ]
+              component: ServerMessagePageVue,
+            },
+          ],
         },
       ],
     },

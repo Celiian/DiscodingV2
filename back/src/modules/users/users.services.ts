@@ -13,6 +13,16 @@ export async function getUserById(id: string) {
   }
 }
 
+export async function getUserByName(name: string, tag: string) {
+  try {
+    const user = await Users.findOne({ username: name, tag: tag });
+    return user;
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+    throw error;
+  }
+}
+
 export async function editUser({
   id,
   username,

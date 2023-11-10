@@ -41,6 +41,17 @@ export async function getUserByid({ user_id }: { user_id: string }) {
   }
 }
 
+export async function getUserByName({ name, tag }: { name: string; tag: string }) {
+  try {
+    name = name + "+" + tag.replace("#", "");
+    const response = await axios.get(`${API_BASE_URL}/user/name/` + name, { withCredentials: true });
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
+
 export async function edit({
   id,
   icon,
