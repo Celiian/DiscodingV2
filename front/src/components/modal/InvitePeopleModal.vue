@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { onClickOutside } from "@vueuse/core";
 import CloseIcon from "../svg/CloseIcon.vue";
+import CopyIcon from "../svg/CopyIcon.vue";
 import { computed, defineEmits, ref } from "@vue/runtime-core";
 import { useServerStore } from "../../store/serverstore";
 import { watchEffect } from "vue";
@@ -16,6 +17,7 @@ const infiniteCheckboxValue = ref(false);
 const todayDate = format(new Date());
 const dateInput = ref(todayDate);
 const routes = useRoute();
+const inviteCreationDone = ref(true)
 const serverId = computed(() => {
   return routes.params.serverId as string;
 });
@@ -75,11 +77,25 @@ async function createInvite() {
 function onCLickInfiniteCheckbox() {
   infiniteCheckboxValue.value = !infiniteCheckboxValue.value;
 }
+
+function copyToClipboard() {
+  const inviteLink = document.querySelector('.inviteLink')!.innerHTML;
+
+  const copyContent = async () => {
+    try {
+      await navigator.clipboard.writeText(inviteLink)
+    } catch (err) {
+      console.error("La copie n'a pas fonctionné : ", err)
+    }
+  }
+}
+
 </script>
 
 <template>
   <div class="absolute top-0 left-0 w-screen h-screen bg-black/70 z-10 flex justify-center items-center">
-    <div ref="target" class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4">
+    <div v-if="!inviteCreationDone" ref="target"
+      class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4">
       <div class="p-4">
         <h2 class="text-white-500 text-2xl font-bold">Créer une invitation pour "{{ currentServerName }}"</h2>
         <button @click="closeModal" class="absolute top-4 right-4 w-6 h-6">
@@ -121,6 +137,22 @@ function onCLickInfiniteCheckbox() {
         </button>
       </div>
     </div>
+
+
+
+    <div v-if="inviteCreationDone" ref="target"
+      class="bg-grey-400 rounded min-w-[440px] sm:w-auto w-full h-full sm:h-auto relative p-4 flex flex-col justify-center items-center gap-4">
+      <h1 class="salonName uppercase text-[14px]">Lien d'invitation : </h1>
+      <div class="flex justify-between items-center gap-4">
+        <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/server/654a82f40cbcf520c0d31253</h1>
+        <div @click="copyToClipboard"
+          class="w-5 h-5 fill-white-400/50 cursor-pointer hover:fill-white-400/90 duration-150 transition-all">
+          <CopyIcon />
+        </div>
+      </div>
+
+    </div>
+
   </div>
 </template>
 
