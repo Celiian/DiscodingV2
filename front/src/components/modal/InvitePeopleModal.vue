@@ -150,7 +150,7 @@ async function copyToClipboard() {
       class="bg-grey-400 rounded min-w-[440px] sm:w-auto w-full h-full sm:h-auto relative p-4 flex flex-col justify-center items-center gap-4">
       <h1 class="salonName uppercase text-[14px]">Lien d'invitation : </h1>
       <div class="flex justify-between items-center gap-4">
-        <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/server/{{ inviteLinkText }}</h1>
+        <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/accept/{{ inviteLinkText }}</h1>
         <div @click="copyToClipboard"
           class="w-5 h-5 fill-white-400/50 cursor-pointer hover:fill-white-400/90 duration-150 transition-all">
           <CopyIcon />
