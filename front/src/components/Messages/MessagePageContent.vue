@@ -7,6 +7,8 @@ import { emitEvent } from "../../utils/ws";
 import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
 import { useNotifStore } from "../../store/notifstore";
+import { defineProps } from "vue";
+import { deleteNotif } from "../../store/utils/notifrequest";
 
 const notifStore = useNotifStore();
 const userStore = useUserStore();
@@ -23,42 +25,83 @@ const props = defineProps({
 });
 
 interface Message {
+  _id: string;
   channel: string;
   sender: string;
   content: string;
   date: Date;
   file: string;
 }
-const messages = computed<Message[]>(() => {
-  return messagestore.getMessages();
+const userList = ref(new Map<string, any>());
+const serverNotif = computed(() => {
+  return notifStore.getServerNotifs();
 });
-
-watch(messages, () => {
-  setTimeout(() => scrollToElement(), 100);
+const searchedMessage = computed(() => {
+  return messagestore.getSearchedMessage();
 });
 
 const channelId = computed(() => {
   return routes.params.channelId as string;
 });
 
-watchEffect(async () => {
-  const mp_notifs = notifStore.getCurrentMpNotifs();
+watch(searchedMessage, () => {
+  scrollToElement(searchedMessage.value, true);
 
-  const foundNotif: any = mp_notifs.find((notif: any) => {
-    return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
-  });
+  messagestore.setSearchedMessage("");
+});
 
-  if (foundNotif) {
-    notifStore.deleteNotif(foundNotif._id.toString());
+async function deleteNotif() {
+  for (let notif of serverNotif.value) {
+    if (notif.source_id == channelId.value.toString()) {
+      await notifStore.deleteNotif(notif._id.toString());
+    }
   }
+}
+watch(serverNotif, async () => {
+  await deleteNotif();
+});
 
-  emitEvent({ event: "mp-join", data: { channel: channelId.value } });
+watch(channelId, async () => {
+  await deleteNotif();
+});
+
+const messages = computed<Message[]>(() => {
+  return messagestore.getMessages();
+});
+
+watch(messages, async () => {
+  await getUserList();
+  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 100);
+});
+
+watchEffect(async () => {
+  if (props.friend) {
+    const mp_notifs = notifStore.getCurrentMpNotifs();
+
+    const foundNotif: any = mp_notifs.find((notif: any) => {
+      return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
+    });
+
+    if (foundNotif) {
+      notifStore.deleteNotif(foundNotif._id.toString());
+    }
+
+    emitEvent({ event: "mp-join", data: { channel: channelId.value } });
+  } else {
+    emitEvent({ event: "chan-join", data: { channel: channelId.value } });
+    await deleteNotif();
+  }
   await messagestore.getMessagesByChannel(channelId.value);
   console.log(messages.value);
 });
 
 onBeforeRouteLeave(() => {
-  emitEvent({ event: "mp-leave", data: { channel: channelId.value } });
+  if (props.friend) {
+    emitEvent({ event: "mp-leave", data: { channel: channelId.value } });
+  } else {
+    emitEvent({ event: "chan-leave", data: { channel: channelId.value } });
+  }
+  messagestore.leaveChannel();
 });
 
 //METHOD
@@ -78,40 +121,77 @@ function openFileInput() {
 }
 
 async function sendMessage() {
-  if (selectedFileUrl.value != "") {
-    const res = await uploadImage(selectedFile.value);
-
-    messagestore.mp({
-      sender: userStore.getCurrentUser()._id.toString(),
-      content: messageInput.value,
-      channel: channelId.value,
-      friend: props.friend?._id.toString(),
-      file_url: res[0].url,
-    });
+  if (props.friend) {
+    if (selectedFileUrl.value != "") {
+      const res = await uploadImage(selectedFile.value);
+      messagestore.mp({
+        sender: userStore.getCurrentUser()._id.toString(),
+        content: messageInput.value,
+        channel: channelId.value,
+        friend: props.friend?._id.toString(),
+        file_url: res[0].url,
+      });
+    } else {
+      messagestore.mp({
+        sender: userStore.getCurrentUser()._id.toString(),
+        content: messageInput.value,
+        channel: channelId.value,
+        friend: props.friend?._id.toString(),
+        file_url: "",
+      });
+    }
   } else {
-    messagestore.mp({
-      sender: userStore.getCurrentUser()._id.toString(),
-      content: messageInput.value,
-      channel: channelId.value,
-      friend: props.friend?._id.toString(),
-      file_url: "",
-    });
+    if (selectedFileUrl.value != "") {
+      const res = await uploadImage(selectedFile.value);
+      messagestore.mp({
+        sender: userStore.getCurrentUser()._id.toString(),
+        content: messageInput.value,
+        channel: channelId.value,
+        friend: props.friend?._id.toString(),
+        file_url: res[0].url,
+      });
+    } else {
+      messagestore.mp({
+        sender: userStore.getCurrentUser()._id.toString(),
+        content: messageInput.value,
+        channel: channelId.value,
+        friend: props.friend?._id.toString(),
+        file_url: "",
+      });
+    }
+    messageInput.value = "";
+    selectedFileUrl.value = "";
   }
-
-  messageInput.value = "";
-  selectedFileUrl.value = "";
 }
+
 function formatDateToFrench(dateString: string) {
   const date = new Date(dateString);
   const locale = "fr-FR";
   return date.toLocaleDateString(locale);
 }
 
-function scrollToElement() {
-  const el = document.getElementsByClassName("last")[0];
+function scrollToElement(className: string, blink: boolean) {
+  const el = document.getElementsByClassName(className.toString())[0];
 
   if (el) {
     el.scrollIntoView();
+
+    if (blink) {
+      el.classList.add("blink-blue");
+
+      setTimeout(() => {
+        el.classList.remove("blink-blue");
+      }, 700);
+    }
+  }
+}
+
+async function getUserList() {
+  for (const message of messages.value) {
+    const user = (await userStore.getUser({ id: message?.sender })).data;
+    if (!userList.value.has(user._id)) {
+      userList.value.set(user._id, user);
+    }
   }
 }
 
@@ -127,13 +207,13 @@ function removeFile() {
         v-for="(message, index) in messages"
         :key="index"
         v-bind="{
-          userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
+          userName: userList.get(message.sender)?.username,
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
-          icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
           file: message.file,
+          icon: userList.get(message.sender)?.icon,
         }"
-        :class="index == messages.length - 1 ? 'last' : undefined"
+        :class="message._id.toString()"
       />
     </div>
 
@@ -166,7 +246,7 @@ function removeFile() {
               v-model="messageInput"
               class="bg-black/0 placeholder:text-white-100/50 outline-none text-white-400"
               type="text"
-              placeholder="Envoyer un message a Titi"
+              placeholder="Envoyer un message"
             />
           </div>
         </div>
@@ -206,5 +286,18 @@ function removeFile() {
 
   padding-left: 5px;
   padding-right: 5px;
+}
+@keyframes blink-blue {
+  0%,
+  100% {
+    background-color: transparent;
+  }
+  50% {
+    background-color: rgba(70, 70, 212, 0.263);
+  }
+}
+
+.blink-blue {
+  animation: blink-blue 0.7s infinite;
 }
 </style>

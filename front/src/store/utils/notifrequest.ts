@@ -34,3 +34,24 @@ export async function createNewNotif(destined: string, type: string, source_id: 
     return { success: false, data: error };
   }
 }
+
+export async function createNewNotifList(
+  type: string,
+
+  source_id: string,
+  sender: string,
+  server: string
+) {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/notif/users`, {
+      type: type,
+      source_id: source_id,
+      sender: sender,
+      server: server,
+    });
+    console.log(res);
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}

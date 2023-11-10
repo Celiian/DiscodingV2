@@ -7,6 +7,7 @@ import { ref, watchEffect } from "vue";
 import { useRoute } from "vue-router";
 
 const userStore = useUserStore();
+
 const routes = useRoute();
 const friend = ref(null);
 

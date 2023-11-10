@@ -30,6 +30,31 @@ export function initSocketio(httpServer: HttpServer) {
       sendMessageToUser(data.destined_user, "notif", data);
     });
 
+    client.on("chan-join", (data) => {
+      client.join(data.channel);
+    });
+
+    client.on("chan-leave", (data) => {
+      client.leave(data.channel);
+    });
+
+    client.on("notif-group", (data) => {
+      for (let member of data.members) {
+        sendMessageToUser(member, "notif-msg", data);
+      }
+    });
+
+    client.on("msg-sent", async (data) => {
+      const room = data.channel;
+      const socketsInRoom = await io.in(room).allSockets();
+
+      if (socketsInRoom.size === 1) {
+        io.to(data.channel).emit("msg-received", { channel: data.channel });
+      } else {
+        io.to(data.channel).emit("msg-received", { channel: data.channel });
+      }
+    });
+
     client.on("mp-join", (data) => {
       client.join(data.channel);
     });

@@ -8,6 +8,9 @@ import {
   getChannelsByServer,
   editChannel,
   createCategory,
+  leaveServer,
+  createInvite,
+  acceptInvite,
 } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
@@ -51,9 +54,42 @@ export const useServerStore = defineStore("server", {
       await editChannel(id, name, source);
     },
 
+    async leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+      const res = await leaveServer({ member_id, server_id });
+      return res;
+    },
+
     async getChannelsServer(id: string) {
       const res = await getChannelsByServer(id);
       return res.data;
+    },
+
+    async createInvite({
+      server_id,
+      expiration,
+      limit,
+      creator,
+    }: {
+      server_id: String;
+      expiration: Date;
+      limit: number;
+      creator: String;
+    }) {
+      const res = await createInvite({ server_id, expiration, limit, creator });
+      return res;
+    },
+
+    async acceptInvite({
+      invite_id,
+      member_id,
+      server_id,
+    }: {
+      invite_id: string;
+      member_id: String;
+      server_id: String;
+    }) {
+      const res = await acceptInvite({ invite_id, member_id, server_id });
+      return res;
     },
   },
 });

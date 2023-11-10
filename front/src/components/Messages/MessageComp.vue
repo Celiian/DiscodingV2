@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { computed } from "vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
 
 const props = defineProps({
@@ -9,7 +10,25 @@ const props = defineProps({
   file: String,
 });
 
-console.log(props);
+
+const messageContentFormated = computed(() => {
+  // Replace *italics* or _italics_ with <em>italics</em>
+  let message = props.messageContent?.replace(/(\*|_)([^*]+)(\*|_)/g, "<em>$2</em>") || "";
+
+  // Replace **bold** with <strong>bold</strong>
+  message = message.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
+
+  // Replace ***bold italics*** with <strong><em>bold italics</em></strong>
+  message = message.replace(/\*\*\*(.*?)\*\*\*/g, "<strong><em>$1</em></strong>");
+
+  // Replace __underline__ with <u>underline</u>
+  message = message.replace(/__(.*?)__/g, "<u>$1</u>");
+
+  // Replace ~~Strikethrough~~ with <del>Strikethrough</del>
+  message = message.replace(/~~(.*?)~~/g, "<del>$1</del>");
+
+  return message;
+});
 
 //METHOD
 function onClickUserIconOrName() {}
@@ -40,9 +59,11 @@ function onClickUserIconOrName() {}
               </span>
             </div>
             <div class="w-[95%]">
-              <span class="text-white-500 whitespace-break-spaces overflow-x-hidden break-words">{{
-                props.messageContent
-              }}</span>
+              <span
+                class="text-white-500 whitespace-break-spaces overflow-x-hidden break-words"
+                v-html="messageContentFormated"
+              >
+              </span>
             </div>
           </div>
         </div>

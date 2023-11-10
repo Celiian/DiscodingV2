@@ -93,3 +93,75 @@ export async function getChannelsByServer(id: string) {
     return { success: false, data: error };
   }
 }
+
+export async function createInvite({
+  server_id,
+  expiration,
+  limit,
+  creator,
+}: {
+  server_id: String;
+  expiration: Date;
+  limit: number;
+  creator: String;
+}) {
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/invite/create`,
+      {
+        server_id: server_id,
+        expiration: expiration,
+        limit: limit,
+        creator: creator,
+      },
+      { withCredentials: true }
+    );
+    return { success: true, data: res };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function acceptInvite({
+  invite_id,
+  member_id,
+  server_id,
+}: {
+  invite_id: string;
+  member_id: String;
+  server_id: String;
+}) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/invite/create`,
+      {
+        invite_id: invite_id,
+        member_id: member_id,
+        server_id: server_id,
+      },
+      { withCredentials: true }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/server/leave`,
+      {
+        member_id: member_id,
+        server_id: server_id,
+      },
+      { withCredentials: true }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
