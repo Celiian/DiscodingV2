@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { computed } from "@vue/reactivity";
-// import NotificationCircle from "../circle-components/NotificationCircle.vue";
+import NotificationCircle from "../circle-components/NotificationCircle.vue";
 
 const props = defineProps({
   buttonTitle: String,
@@ -21,14 +21,11 @@ function onClickFilterButton() {
 </script>
 
 <template>
-  <div
-    @click="onClickFilterButton"
-    :class="selectedClass"
-    class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap"
-  >
+  <div @click="onClickFilterButton" :class="selectedClass"
+    class="min-w-[40px] text-center items-center flex justify-center rounded mx-2 py-[2px] px-[8px] cursor-pointer text-[16px] leading-5 font-semibold text-white-200 hover:text-white-400 hover:bg-white-500/5 transition-all duration-150 whitespace-nowrap">
     {{ props.buttonTitle }}
 
-    <!-- <NotificationCircle class="h-full ml-[8px] w-auto" v-if="notifIsShown" :notifNumber="notifNumber" /> -->
+    <NotificationCircle class="h-full ml-[8px] w-auto" v-if="notifIsShown" :number="notifNumber" />
   </div>
 </template>
 
