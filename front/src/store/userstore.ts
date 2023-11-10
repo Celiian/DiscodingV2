@@ -2,9 +2,24 @@
 import { defineStore } from "pinia";
 import { login, register, auth, getUserByid, edit, getUserByName } from "./utils/userrequest";
 
+interface User {
+  _id: string;
+  tag: String;
+  email: string;
+  username: string;
+  password: string;
+  token: string;
+  createdAt: Date;
+  icon: string;
+}
+
+interface StateType {
+  currentUser: User | null;
+}
+
 export const useUserStore = defineStore("user", {
-  state: () => ({
-    currentUser: null as null | any,
+  state: (): StateType => ({
+    currentUser: null,
   }),
   actions: {
     async login({ email, password }: { email: string; password: string }) {
@@ -36,10 +51,10 @@ export const useUserStore = defineStore("user", {
       }
       return res.success;
     },
-    getCurrentUser() {
+    getCurrentUser(): User | null {
       return this.currentUser;
     },
-    async getUser({ id }: { id: string }) {
+    async getUser({ id }: { id: string }): Promise<{ success: boolean; data: User }> {
       const res = await getUserByid({ user_id: id });
       return { success: res.success, data: res.data };
     },

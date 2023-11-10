@@ -16,6 +16,14 @@ const serverList = computed(() => {
   return serverStore.getServerList();
 });
 
+interface Channel {
+  _id: string;
+  name: string;
+  type: string;
+  audio: boolean;
+  users: [string, string];
+}
+
 const notifList = ref<{ [key: string]: boolean }>({});
 const mentionList = ref<{ [key: string]: number }>({});
 
@@ -48,7 +56,7 @@ async function updateServerNotifs() {
     const res = await serverStore.getChannelsServer(server?._id.toString());
     notifList.value[server?._id.toString()] = false;
 
-    let channels = res.channels.map((chan: any) => chan._id.toString());
+    let channels = res.channels.map((chan: Channel) => chan._id.toString());
 
     for (const categoryId in res.categories) {
       if (res.categories.hasOwnProperty(categoryId)) {

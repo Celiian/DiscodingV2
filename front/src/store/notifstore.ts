@@ -20,19 +20,19 @@ export const useNotifStore = defineStore("notif", {
   actions: {
     async getNotifs() {
       const userStore = useUserStore();
-      const res = await getNotifForUser(userStore.getCurrentUser()._id.toString());
-      this.mp_notifs = res.data.filter((notif: any) => {
+      const res = await getNotifForUser(userStore.getCurrentUser()?._id.toString() || "");
+      this.mp_notifs = res.data.filter((notif: Notification) => {
         return notif.type === "mp";
       });
 
-      this.server_notifs = res.data.filter((notif: any) => {
+      this.server_notifs = res.data.filter((notif: Notification) => {
         return notif.type !== "mp";
       });
       return res.data;
     },
     async createNotif(destined: string, type: string, source_id: string) {
       const userStore = useUserStore();
-      const res = await createNewNotif(destined, type, source_id, userStore.getCurrentUser()._id.toString());
+      const res = await createNewNotif(destined, type, source_id, userStore.getCurrentUser()?._id.toString() || "");
       return res.data;
     },
     async deleteNotif(notif_id: string) {

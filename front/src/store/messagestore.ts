@@ -14,9 +14,16 @@ interface Message {
   date: Date;
 }
 
+interface Channel {
+  name: string;
+  type: string;
+  audio: boolean;
+  users: [string, string];
+}
+
 export const useMessageStore = defineStore("message", {
   state: () => ({
-    mp_channels: [],
+    mp_channels: <Array<Channel>>[],
     current_channel: "",
     messages: <Array<Message>>[],
     searched_message: "",
@@ -26,13 +33,13 @@ export const useMessageStore = defineStore("message", {
     getSearchedMessage() {
       return this.searched_message;
     },
-    setSearchedMessage(message: any) {
+    setSearchedMessage(message: string) {
       this.searched_message = message;
     },
     async getMpChannels() {
       const userStore = useUserStore();
       const user = userStore.getCurrentUser();
-      const res = await getChannelsByUser(user._id.toString());
+      const res = await getChannelsByUser(user?._id.toString() || "");
       this.mp_channels = res.data;
 
       return res;

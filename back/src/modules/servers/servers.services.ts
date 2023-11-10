@@ -1,4 +1,4 @@
-import { ServerCreateBody } from "@/types/servers.types";
+import { Server, ServerCreateBody } from "@/types/servers.types";
 import { Servers } from "@/db/models/Server";
 import { ObjectId } from "mongodb";
 import { Members } from "@/db/models/Members";
@@ -27,7 +27,7 @@ export async function getServersByUser(user_id: string): Promise<any[]> {
       return oid;
     });
 
-    const servers: any[] = [];
+    const servers: Server[] = [];
 
     const member_servers = await Servers.find({ _id: { $in: serverIds } }).toArray();
 

@@ -18,13 +18,13 @@ const inviteId = computed(() => {
 });
 const target = ref(null);
 const currentUserId = computed(() => {
-  return userStore.getCurrentUser()._id.toString();
+  return userStore.getCurrentUser()?._id.toString();
 });
 
 watchEffect(async () => {
   if (inviteId.value) {
     const result = await serverStore.getServerByInviteId({ invite_id: inviteId.value });
-    serverName.value = (result as any).data.name;
+    serverName.value = result?.name.toString() || "";
   }
 });
 //METHOD
@@ -37,11 +37,10 @@ async function acceptInvite() {
   const res = (
     await serverStore.acceptInvite({
       invite_id: inviteId.value.toString(),
-      member_id: currentUserId.value.toString(),
+      member_id: currentUserId.value?.toString() || "",
     })
   ).data;
-  console.log(res);
-  inviteExpired.value = !(res as any).success;
+  inviteExpired.value = !res.success;
   if (!inviteExpired.value) {
     closeModal();
   }

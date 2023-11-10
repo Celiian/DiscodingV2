@@ -60,7 +60,7 @@ watchEffect(async () => {
 
   for (let channelStored of messageStore.getCurrentChannels()) {
     if (user.value) {
-      if (channelStored?.users.includes(user.value?._id.toString())) {
+      if (channelStored.users.includes(user.value?._id.toString())) {
         channel.value = channelStored;
       }
     }
@@ -74,7 +74,11 @@ watchEffect(async () => {
     class="h-[62px] flex ml-[30px] mr-5 font-medium text-[16px] leading-5 overflow-hidden box-border cursor-pointer border-t-[1px] border-white-100/20 hover:bg-white-100/10 hover:border-white-100/0 rounded group/main"
   >
     <router-link
-      :to=" friendStore.displayed === 0 || friendStore.displayed === 1 ? '/me/message/' + channel?._id.toString() + '/' + (user as any)._id.toString() : '/me/friends'"
+      :to="
+        friendStore.displayed === 0 || friendStore.displayed === 1
+          ? '/me/message/' + channel?._id.toString() + '/' + user._id.toString()
+          : '/me/friends'
+      "
       class="flex grow items-center justify-between max-w-full px-2"
     >
       <!-- user info -->
@@ -92,7 +96,7 @@ watchEffect(async () => {
           <!--name-->
           <div class="flex grow items-center justify-start whitespace-nowrap">
             <span class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-500">
-              {{ (user as any)?.username }}
+              {{ user.username }}
             </span>
           </div>
           <!--subtitle-->

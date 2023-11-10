@@ -30,14 +30,14 @@ export const useServerStore = defineStore("server", {
     async createServer({ serverName, icon }: { serverName: string; icon: string }) {
       const userStore = useUserStore();
       let user = userStore.getCurrentUser();
-      await createServer({ serverName: serverName, icon: icon, owner: user._id });
+      await createServer({ serverName: serverName, icon: icon, owner: user?._id || "" });
       await this.getServerByUser();
     },
 
     async getServerByUser() {
       const userStore = useUserStore();
       let user = userStore.getCurrentUser();
-      let res = await getServerByUser(user._id);
+      let res = await getServerByUser({ user_id: user?._id || "" });
       this.serverList = res.data;
     },
 
@@ -74,13 +74,13 @@ export const useServerStore = defineStore("server", {
       return res.data;
     },
 
-    async getServerByInviteId({ invite_id }: { invite_id: string }) {
+    async getServerByInviteId({ invite_id }: { invite_id: string }): Promise<Server | null> {
       const res = await getServerByInviteId({ invite_id: invite_id });
 
       if (res.success) {
-        return res.data;
+        return res.data as Server;
       } else {
-        return res;
+        return null;
       }
     },
 
