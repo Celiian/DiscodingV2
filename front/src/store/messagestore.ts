@@ -57,17 +57,16 @@ export const useMessageStore = defineStore("message", {
       content,
       channel,
       file_url,
+      server,
     }: {
       sender: string;
       content: string;
       channel: string;
       file_url: string;
-    }) {
-      const res = await sendMessage(sender, content, channel, file_url);
       server: string;
     }) {
       const notifStore = useNotifStore();
-      const res = await sendMessage(sender, content, channel);
+      const res = await sendMessage(sender, content, channel, file_url);
       emitEvent({ event: "msg-sent", data: { channel: channel, user: sender } });
       const members = await notifStore.notifyChannelUsers({
         type: "msg",

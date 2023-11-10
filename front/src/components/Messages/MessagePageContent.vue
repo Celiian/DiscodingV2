@@ -8,7 +8,6 @@ import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
 import { useNotifStore } from "../../store/notifstore";
 import { defineProps } from "vue";
-import { deleteNotif } from "../../store/utils/notifrequest";
 
 const notifStore = useNotifStore();
 const userStore = useUserStore();
@@ -16,7 +15,6 @@ const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
 
-import { defineProps } from "vue";
 import BinIcon from "../svg/BinIcon.vue";
 import { uploadImage } from "../../store/utils/imageupload";
 
