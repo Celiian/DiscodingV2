@@ -1,7 +1,7 @@
 import axios from "axios";
 //import { emitEvent } from "../../utils/ws";
 
-const API_BASE_URL = process.env.API_BASE_URL;
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getNotifForUser(user_id: string) {
   try {
