@@ -6,6 +6,7 @@ import { Category } from "@/types/categories.types";
 import { Categories } from "@/db/models/Category";
 import { Channels } from "@/db/models/Channel";
 import { MemberCreateBody } from "@/types/members.types";
+import { Invitations } from "@/db/models/Invitations";
 
 export async function createServer(body: ServerCreateBody) {
   try {
@@ -101,5 +102,18 @@ export async function leaveServer(body: MemberCreateBody) {
     });
   } catch (error) {
     console.error("Error fetching server data:", error);
+  }
+}
+
+export async function getServerByInviteId(invite_id: string) {
+  try {
+    var oid = new ObjectId(invite_id);
+    const invitation = await Invitations.findOne({ _id: oid });
+    var server_oid = new ObjectId(invitation?._id);
+    const server = await Servers.findOne({ _id: server_oid });
+    return server;
+  } catch (error) {
+    console.error("Error fetching server data:", error);
+    throw error;
   }
 }

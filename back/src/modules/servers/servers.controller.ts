@@ -7,6 +7,7 @@ import {
   leaveServer,
   createCategory,
   getChannelsByServer,
+  getServerByInviteId,
 } from "./servers.services";
 import { Category } from "@/types/categories.types";
 import { MemberCreateBody } from "@/types/members.types";
@@ -74,6 +75,20 @@ export function registerServerRoutes(app: Express) {
         res.status(404).json({ error: "Server not found" });
       } else {
         res.json(channels);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.get("/server/:invite_id/", async (req: Request<{ id: string }, unknown, unknown>, res: Response) => {
+    try {
+      const id = req.params.id;
+      const server = await getServerByInviteId(id);
+      if (!server) {
+        res.status(404).json({ error: "Server not found" });
+      } else {
+        res.json(server);
       }
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
