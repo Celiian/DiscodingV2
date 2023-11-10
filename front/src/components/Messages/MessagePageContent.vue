@@ -18,7 +18,6 @@ const showModal = ref(false);
 
 import BinIcon from "../svg/BinIcon.vue";
 import { uploadImage } from "../../store/utils/imageupload";
-import { DefineStoreOptionsInPlugin } from "pinia";
 
 const props = defineProps({
   friend: null,

@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = process.env.API_BASE_URL;
+
 import axios from "axios";
 
 export async function login({ email, password }: { email: string; password: string }) {
