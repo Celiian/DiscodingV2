@@ -1,7 +1,7 @@
 import axios from "axios";
 //import { emitEvent } from "../../utils/ws";
 
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function getNotifForUser(user_id: string) {
   try {
@@ -29,6 +29,27 @@ export async function createNewNotif(destined: string, type: string, source_id: 
       source_id: source_id,
       sender: sender,
     });
+    return { success: true, data: res.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
+
+export async function createNewNotifList(
+  type: string,
+
+  source_id: string,
+  sender: string,
+  server: string
+) {
+  try {
+    const res = await axios.post(`${API_BASE_URL}/notif/users`, {
+      type: type,
+      source_id: source_id,
+      sender: sender,
+      server: server,
+    });
+    console.log(res);
     return { success: true, data: res.data };
   } catch (error) {
     return { success: false, data: error };

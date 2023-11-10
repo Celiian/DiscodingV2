@@ -1,4 +1,5 @@
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 import axios from "axios";
 
 export async function login({ email, password }: { email: string; password: string }) {
@@ -34,6 +35,17 @@ export async function auth() {
 export async function getUserByid({ user_id }: { user_id: string }) {
   try {
     const response = await axios.get(`${API_BASE_URL}/user/` + user_id, { withCredentials: true });
+
+    return { success: true, data: response.data };
+  } catch (error) {
+    return { success: false, data: error };
+  }
+}
+
+export async function getUserByName({ name, tag }: { name: string; tag: string }) {
+  try {
+    name = name + "+" + tag.replace("#", "");
+    const response = await axios.get(`${API_BASE_URL}/user/name/` + name, { withCredentials: true });
 
     return { success: true, data: response.data };
   } catch (error) {

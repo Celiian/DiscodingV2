@@ -1,20 +1,19 @@
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+
 import axios from "axios";
 
-export async function createServer({
-  serverName,
-  icon,
-  owner,
-}: {
-  serverName: string;
-  icon: ArrayBuffer;
+interface Server {
+  _id: string;
+  name: String;
+  icon: string;
   owner: String;
-}) {
+}
+
+export async function createServer({ serverName, icon, owner }: { serverName: string; icon: string; owner: String }) {
   try {
-    let base64Data = "data:image/png;base64, " + arrayBufferToBase64(icon);
     await axios.post(
       `${API_BASE_URL}/server/create`,
-      { name: serverName, icon: base64Data, owner: owner },
+      { name: serverName, icon: icon, owner: owner },
       { withCredentials: true }
     );
     return { success: true };
@@ -22,15 +21,6 @@ export async function createServer({
     console.log(error);
     return { success: false, data: error };
   }
-}
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const uint8Array = new Uint8Array(buffer);
-  let binaryString = "";
-  for (let i = 0; i < uint8Array.length; i++) {
-    binaryString += String.fromCharCode(uint8Array[i]);
-  }
-  return btoa(binaryString);
 }
 
 export async function getServerByUser(user_id: { user_id: string }) {
@@ -106,13 +96,48 @@ export async function createInvite({
   creator: String;
 }) {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${API_BASE_URL}/invite/create`,
       {
         server_id: server_id,
         expiration: expiration,
         limit: limit,
         creator: creator,
+      },
+      { withCredentials: true }
+    );
+    return { success: true, data: res };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
+  try {
+    const res = await axios.post(
+      `${API_BASE_URL}/invite/accept`,
+      {
+        invite_id: invite_id,
+        member_id: member_id,
+      },
+      { withCredentials: true }
+    );
+
+    return res;
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/server/leave`,
+      {
+        member_id: member_id,
+        server_id: server_id,
       },
       { withCredentials: true }
     );
@@ -123,26 +148,10 @@ export async function createInvite({
   }
 }
 
-export async function acceptInvite({
-  invite_id,
-  member_id,
-  server_id,
-}: {
-  invite_id: string;
-  member_id: String;
-  server_id: String;
-}) {
+export async function getServerByInviteId({ invite_id }: { invite_id: string }) {
   try {
-    await axios.post(
-      `${API_BASE_URL}/invite/create`,
-      {
-        invite_id: invite_id,
-        member_id: member_id,
-        server_id: server_id,
-      },
-      { withCredentials: true }
-    );
-    return { success: true };
+    const res = await axios.get<Server>(`${API_BASE_URL}/server/` + invite_id, { withCredentials: true });
+    return { success: true, data: res.data };
   } catch (error) {
     console.log(error);
     return { success: false, data: error };

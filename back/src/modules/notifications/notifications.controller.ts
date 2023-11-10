@@ -1,6 +1,6 @@
 import { Express, Request, Response } from "express";
-import { CreateNotificationBody } from "@/types/notifications.types";
-import { getNotifs, createNotif, deleteNotif } from "./notifications.services";
+import { CreateNotificationBody, CreateNotificationListBody } from "@/types/notifications.types";
+import { getNotifs, createNotif, deleteNotif, createNotifForChannelUsers } from "./notifications.services";
 
 export function registerNotificationsRoutes(app: Express) {
   app.get("/notif/:user_id", async (req: Request<{ user_id: string }, unknown, unknown>, res: Response) => {
@@ -39,6 +39,15 @@ export function registerNotificationsRoutes(app: Express) {
       } else {
         res.json(result);
       }
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+
+  app.post("/notif/users", async (req: Request<unknown, unknown, CreateNotificationListBody>, res: Response) => {
+    try {
+      const membersIds = await createNotifForChannelUsers(req.body);
+      res.status(200).json(membersIds);
     } catch (error) {
       res.status(500).json({ error: "Internal server error" });
     }

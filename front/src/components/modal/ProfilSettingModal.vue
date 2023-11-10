@@ -12,7 +12,7 @@ const userStore = useUserStore();
 const currentUser = userStore.currentUser;
 const target = ref(null);
 
-const usernameInput = ref(currentUser.username);
+const usernameInput = ref(currentUser?.username);
 const passwordInput = ref("");
 const usernameInputIsDisabled = ref(true);
 const passwordInputIsDisabled = ref(true);
@@ -26,9 +26,9 @@ onClickOutside(target, () => closeModal());
 async function onClickEditPassword() {
   if (!passwordInputIsDisabled.value) {
     await userStore.editUser({
-      id: currentUser._id.toString(),
-      icon: currentUser.icon,
-      username: currentUser.username,
+      id: currentUser!._id.toString(),
+      icon: currentUser!.icon,
+      username: currentUser!.username,
       password: passwordInput.value,
     });
   }
@@ -39,9 +39,9 @@ async function onClickEditPassword() {
 async function onClickEditUsername() {
   if (!usernameInputIsDisabled.value) {
     await userStore.editUser({
-      id: currentUser._id.toString(),
-      icon: currentUser.icon,
-      username: usernameInput.value,
+      id: currentUser!._id.toString(),
+      icon: currentUser!.icon,
+      username: usernameInput.value || "",
       password: "no-change-&@#1%",
     });
   }
@@ -58,14 +58,14 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    const selectedFile = event.target?.files;
+    const selectedFile = (event.target as HTMLInputElement).files;
     if (selectedFile) {
       const res = await uploadImage(selectedFile);
 
       userStore.editUser({
-        id: currentUser._id.toString(),
+        id: currentUser!._id.toString(),
         icon: res[0].url,
-        username: currentUser.username,
+        username: currentUser!.username,
         password: "no-change-&@#1%",
       });
     }
@@ -74,7 +74,7 @@ function openFileInput() {
 </script>
 
 <template>
-  <div class="absolute top-0 left-0 w-screen h-screen bg-grey-100/70 z-10 flex justify-center items-center">
+  <div class="absolute top-0 left-0 w-screen h-screen bg-grey-100/70 z-30 flex justify-center items-center">
     <div ref="target" class="relative w-[660px] bg-[#1e1f22] rounded flex flex-col">
       <div class="min-h-[100px] bg-blue-200 rounded-t"></div>
       <!--banniere-->
@@ -157,7 +157,7 @@ function openFileInput() {
             <div class="flex flex-col">
               <span class="uppercase text-[12px] leading-4 font-bold tracking-wide text-white-200">email</span>
               <span class="text-[16px] leading-5 font-normal text-white-400 bg-black/0 outline-none">{{
-                currentUser.email
+                currentUser!.email
               }}</span>
             </div>
           </div>

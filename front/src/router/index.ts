@@ -7,6 +7,7 @@ import PersonalPageVue from "../components/home/PersonalPage.vue";
 import MessagePageVue from "../components/Messages/MessagePage.vue";
 import ServerPageVue from "../components/server/ServerPage.vue";
 import ServerMessagePageVue from "../components/server/ServerMessagePage.vue";
+import InviteServerPageVue from "../components/modal/InviteServerPageModal.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -44,9 +45,14 @@ const router = createRouter({
           children: [
             {
               path: ":categoryId/:channelId",
-              component: ServerMessagePageVue
-            }
-          ]
+              component: ServerMessagePageVue,
+            },
+          ],
+        },
+        {
+          path: "/accept/:inviteId",
+          name: "accept",
+          component: InviteServerPageVue,
         },
       ],
     },

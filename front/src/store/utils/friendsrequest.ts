@@ -2,7 +2,7 @@ import axios from "axios";
 import { emitEvent } from "../../utils/ws";
 
 // Titi#4565
-const API_BASE_URL = "http://localhost:3001";
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export async function addFriendRequest({
   receiver_name,

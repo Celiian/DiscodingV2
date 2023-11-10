@@ -18,16 +18,26 @@ export async function acceptInvite(body: InvitationsAcceptBody) {
     const oid = new ObjectId(body.invite_id);
     const invite = await Invitations.findOne({ _id: oid });
 
-    if (invite && (invite.limit > 0 || invite.limit == -1) && invite.expiration > new Date()) {
-      await Invitations.findOneAndUpdate({ _id: oid }, { limit: invite.limit - 1 });
-      const res = await Members.insertOne({
-        member_id: body.member_id,
-        server_id: body.server_id,
-        roles: [],
-      });
-      return res;
+    if (
+      invite &&
+      (invite.limit > 0 || invite.limit == -1) &&
+      new Date(invite!.expiration).getTime() > new Date().getTime()
+    ) {
+      if (invite.limit > 0) {
+        await Invitations.findOneAndUpdate({ _id: oid }, { $set: { limit: invite.limit - 1 } });
+      }
+      const member = await Members.findOne({ member_id: body.member_id, server_id: invite.server_id });
+      if (!member) {
+        const res = await Members.insertOne({
+          member_id: body.member_id,
+          server_id: invite.server_id,
+          roles: [],
+        });
+        return { success: true, data: res };
+      }
+      return { success: false, data: null };
     } else {
-      return { success: false };
+      return { success: false, data: null };
     }
   } catch (error) {
     console.error("Error accepting invite:", error);

@@ -20,6 +20,7 @@ export async function sendMessage(body: MessageCreateBody) {
     content: body.content,
     channel: body.channel,
     date: new Date(),
+    file: body.file,
   });
   return res;
 }

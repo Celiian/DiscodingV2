@@ -48,6 +48,14 @@ function cleanInputValue() {
   input.value = "";
 }
 
+interface Message {
+  channel: string;
+  sender: string;
+  content: string;
+  file: string;
+  date: Date;
+}
+
 const result = ref<Array<any>>([]);
 const displayed_result = ref<Array<any>>([]);
 const index = ref<number>(0);
@@ -57,7 +65,7 @@ async function inputSearchValidation() {
     showModal.value = true;
     await getUserList();
 
-    result.value = messages.value.filter((message: any) => {
+    result.value = messages.value.filter((message: Message) => {
       return message.content.includes(input.value);
     });
 
@@ -218,7 +226,9 @@ function jump(id: string) {
 
                   <div class="flex justify-center mt-4 items-center">
                     <button @click="prevPage" class="text-white px-2 py-1 rounded hover:bg-grey-200">Précédent</button>
-                    <p class="m-2">{{ index / 5 + " / " + Math.floor((result.length - 1) / 5) }}</p>
+                    <p class="m-2" v-if="index > 0">{{ index / 5 + " / " + Math.floor((result.length - 1) / 5) }}</p>
+                    <p class="m-2" v-else>1 / 1</p>
+
                     <button @click="nextPage" class="ml-2 text-white px-2 py-1 rounded hover:bg-grey-200">
                       Suivant
                     </button>

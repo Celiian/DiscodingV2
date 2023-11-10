@@ -3,6 +3,13 @@ import { defineStore } from "pinia";
 import { useUserStore } from "./userstore";
 import { getFriendsList, addFriendRequest, acceptFriendRequest, rejectFriendRequest } from "./utils/friendsrequest";
 
+export interface Friend {
+  _id: string;
+  receiver: string;
+  initiator: string;
+  status: string;
+}
+
 export const useFriendsStore = defineStore("friends", {
   state: () => ({
     friends: [],
@@ -12,19 +19,19 @@ export const useFriendsStore = defineStore("friends", {
   }),
 
   actions: {
-    getFriendsOnline(): any[] {
+    getFriendsOnline(): Friend[] {
       return this.friends;
     },
-    getPending(): any[] {
+    getPending(): Friend[] {
       return this.pending;
     },
-    getRejected(): any[] {
+    getRejected(): Friend[] {
       return this.rejected;
     },
     async getFriends() {
       const userstore = useUserStore();
       const user = userstore.getCurrentUser();
-      let res = await getFriendsList(user._id);
+      let res = await getFriendsList(user?._id || "");
       if (res?.success) {
         this.friends = res?.data.friends;
         this.pending = res?.data.pending;
@@ -40,13 +47,14 @@ export const useFriendsStore = defineStore("friends", {
     async rejectFriend({ receiver_id }: { receiver_id: string }) {
       const userstore = useUserStore();
       const user = userstore.getCurrentUser();
-      await rejectFriendRequest({ receiver_id, initiator_id: user._id });
+      await rejectFriendRequest({ receiver_id, initiator_id: user?._id || "" });
+      await this.getFriends();
     },
 
     async addNewFriend({ receiver_name }: { receiver_name: string }) {
       const userstore = useUserStore();
       const user = userstore.getCurrentUser();
-      await addFriendRequest({ receiver_name: receiver_name, initiator_id: user._id });
+      await addFriendRequest({ receiver_name: receiver_name, initiator_id: user?._id || "" });
       await this.getFriends();
     },
 

@@ -8,27 +8,36 @@ import {
   getChannelsByServer,
   editChannel,
   createCategory,
+  leaveServer,
   createInvite,
   acceptInvite,
+  getServerByInviteId,
 } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
+interface Server {
+  _id: string;
+  name: String;
+  icon: string;
+  owner: String;
+}
+
 export const useServerStore = defineStore("server", {
   state: () => ({
-    serverList: [],
+    serverList: <Array<Server>>[],
   }),
   actions: {
-    async createServer({ serverName, icon }: { serverName: string; icon: ArrayBuffer }) {
+    async createServer({ serverName, icon }: { serverName: string; icon: string }) {
       const userStore = useUserStore();
       let user = userStore.getCurrentUser();
-      await createServer({ serverName: serverName, icon: icon, owner: user._id });
+      await createServer({ serverName: serverName, icon: icon, owner: user?._id || "" });
       await this.getServerByUser();
     },
 
     async getServerByUser() {
       const userStore = useUserStore();
       let user = userStore.getCurrentUser();
-      let res = await getServerByUser(user._id);
+      let res = await getServerByUser({ user_id: user?._id || "" });
       this.serverList = res.data;
     },
 
@@ -53,9 +62,26 @@ export const useServerStore = defineStore("server", {
       await editChannel(id, name, source);
     },
 
+    async leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+      const res = await leaveServer({ member_id, server_id });
+
+      this.getServerByUser();
+      return res;
+    },
+
     async getChannelsServer(id: string) {
       const res = await getChannelsByServer(id);
       return res.data;
+    },
+
+    async getServerByInviteId({ invite_id }: { invite_id: string }): Promise<Server | null> {
+      const res = await getServerByInviteId({ invite_id: invite_id });
+
+      if (res.success) {
+        return res.data as Server;
+      } else {
+        return null;
+      }
     },
 
     async createInvite({
@@ -73,17 +99,12 @@ export const useServerStore = defineStore("server", {
       return res;
     },
 
-    async acceptInvite({
-      invite_id,
-      member_id,
-      server_id,
-    }: {
-      invite_id: string;
-      member_id: String;
-      server_id: String;
-    }) {
-      const res = await acceptInvite({ invite_id, member_id, server_id });
-      return res;
+    async acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
+      const res = await acceptInvite({ invite_id, member_id });
+      if ((res as any).success) {
+        this.getServerByUser();
+        return res;
+      } else return res;
     },
   },
 });
