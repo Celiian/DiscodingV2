@@ -73,9 +73,9 @@ function onClickAddFriendsButton() {
         <NotifInboxIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150" />
       </div>
 
-      <div class="group h-[24px] w-[24px] mx-2 cursor-pointer">
+      <a href="https://support.discord.com/hc/fr" target="_blank" class="group h-[24px] w-[24px] mx-2 cursor-pointer">
         <InfoIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150" />
-      </div>
+      </a>
     </div>
   </div>
 </template>
