@@ -4,7 +4,7 @@ import PrivateMessageCircleIcon from "../circle-components/PrivateMessageCircleI
 import SearchServerIcon from "../circle-components/SearchServerIcon.vue";
 import ServerCircleIcon from "../circle-components/ServerCircleIcon.vue";
 import { useServerStore } from "../../store/serverstore";
-import { compile, computed, ref, watch, watchEffect } from "vue";
+import { computed, ref, watch, watchEffect } from "vue";
 import { useNotifStore } from "../../store/notifstore";
 import { useUserStore } from "../../store/userstore";
 interface Server {

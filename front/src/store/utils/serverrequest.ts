@@ -124,22 +124,13 @@ export async function createInvite({
   }
 }
 
-export async function acceptInvite({
-  invite_id,
-  member_id,
-  server_id,
-}: {
-  invite_id: string;
-  member_id: String;
-  server_id: String;
-}) {
+export async function acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
   try {
     await axios.post(
-      `${API_BASE_URL}/invite/create`,
+      `${API_BASE_URL}/invite/accept`,
       {
         invite_id: invite_id,
         member_id: member_id,
-        server_id: server_id,
       },
       { withCredentials: true }
     );

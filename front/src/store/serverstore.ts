@@ -79,16 +79,8 @@ export const useServerStore = defineStore("server", {
       return res;
     },
 
-    async acceptInvite({
-      invite_id,
-      member_id,
-      server_id,
-    }: {
-      invite_id: string;
-      member_id: String;
-      server_id: String;
-    }) {
-      const res = await acceptInvite({ invite_id, member_id, server_id });
+    async acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
+      const res = await acceptInvite({ invite_id, member_id });
       return res;
     },
   },
