@@ -11,7 +11,6 @@ const emit = defineEmits(["close-modal"]);
 const userStore = useUserStore();
 const serverStore = useServerStore();
 
-const uploadedImage = ref("");
 const currentUser = userStore.currentUser;
 const serverName = ref("");
 const target = ref(null);
@@ -31,7 +30,7 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    selectedFile.value = event.target?.files;
+    selectedFile.value = (event.target as HTMLInputElement).files;
     selectedFileUrl.value = URL.createObjectURL(selectedFile.value[0]);
   });
 }
@@ -73,12 +72,12 @@ async function createServer() {
 
         <div class="flex justify-center pt-1">
           <input type="file" id="fileInput" style="display: none" accept="image/*" />
-          <button v-if="uploadedImage == ''" @click="openFileInput">
+          <button v-if="selectedFileUrl == ''" @click="openFileInput">
             <AddPhotoIcon />
           </button>
           <div
             v-else
-            :style="{ backgroundImage: 'url(' + uploadedImage + ')' }"
+            :style="{ backgroundImage: 'url(' + selectedFileUrl + ')' }"
             class="w-[80px] h-[80px] flex items-center justify-center cursor-pointer rounded-[50%] group-hover:rounded-2xl transition-all duration-300 overflow-hidden bg-cover bg-center"
             @click="openFileInput"
           ></div>
@@ -88,7 +87,7 @@ async function createServer() {
           <h3 class="mb-2 text-xs font-bold text-grey-500">NOM DU SERVEUR</h3>
           <input
             type="text"
-            :placeholder="'Serveur de ' + currentUser"
+            :placeholder="'Serveur de ' + currentUser.username"
             class="w-full h-[40px] bg-white-500 rounded p-[10px] placeholder:text-grey-300 focus:outline-0"
             v-model="serverName"
           />
@@ -115,4 +114,3 @@ async function createServer() {
 </template>
 
 <style scoped></style>
-../../store/userStore ../../store/serverStore
