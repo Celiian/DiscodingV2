@@ -66,6 +66,21 @@ export const useMessageStore = defineStore("message", {
       server: string;
     }) {
       const notifStore = useNotifStore();
+      const userStore = useUserStore();
+      if (content.includes("@") && content.includes("#")) {
+        let contentEdited = content.split("@")[1];
+        let username = contentEdited.split("#")[0];
+        let tag = "#" + contentEdited.split("#")[1].slice(0, 4);
+        const res = await userStore.getUserByName({ username: username, tag: tag });
+        if (res.success) {
+          emitEvent({
+            event: "notif-mention",
+            data: { channel: channel, user: res.data._id.toString(), server: server },
+          });
+          notifStore.createNotif(res.data._id, "mention", channel);
+        }
+      }
+
       const res = await sendMessage(sender, content, channel, file_url);
       emitEvent({ event: "msg-sent", data: { channel: channel, user: sender } });
       const members = await notifStore.notifyChannelUsers({

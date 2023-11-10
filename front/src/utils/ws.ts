@@ -18,6 +18,13 @@ socket.on("notif", async () => {
   notificationSound.play();
 });
 
+socket.on("notif-mention", async () => {
+  const notifstore = useNotifStore();
+  notifstore.getNotifs();
+
+  notificationSound.play();
+});
+
 socket.on("friend-add", () => {
   const friendsStore = useFriendsStore();
 

@@ -19,6 +19,7 @@ const userStore = useUserStore();
 
 const serverList = ref<Server[]>([]);
 const notifList = ref<{ [key: string]: boolean }>({});
+const mentionList = ref<{ [key: string]: number }>({});
 
 const mp_notif = ref<Array<any>>([]);
 const serverNotifs = computed(() => {
@@ -63,8 +64,20 @@ async function updateServerNotifs() {
     for (let notif of notifStore.getServerNotifs()) {
       if (channels.includes(notif?.source_id)) {
         notifList.value[server?._id.toString()] = true;
+        if (notif.type == "mention") {
+          if (mentionList.value[server?._id.toString()]) {
+            mentionList.value[server?._id.toString()] = mentionList.value[server?._id.toString()] + 1;
+          } else {
+            mentionList.value[server?._id.toString()] = 1;
+          }
+        } else {
+          if (!mentionList.value[server?._id.toString()]) {
+            mentionList.value[server?._id.toString()] = 0;
+          }
+        }
       }
     }
+    console.log(mentionList.value);
   }
 }
 
@@ -102,8 +115,8 @@ watchEffect(async () => {
       :name="server.name"
       :image-url="server.icon"
       :link="'/server/' + server._id"
-      :notif="false"
-      :count="0"
+      :notif="true"
+      :count="mentionList[server._id.toString()]"
       :notif_small="notifList[server._id.toString()]"
     />
 

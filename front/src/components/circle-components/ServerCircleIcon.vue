@@ -32,7 +32,7 @@ const { name, imageUrl, link, notif, count, notif_small } = defineProps([
         {{ name }}
       </div>
 
-      <NotificationCircle v-if="notif" :number="count" />
+      <NotificationCircle v-if="notif && count > 0" :number="count" />
     </div>
   </router-link>
 </template>
