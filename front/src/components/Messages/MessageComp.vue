@@ -1,6 +1,13 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import RoundedLogoIcon from "../circle-components/RoundedLogoIcon.vue";
+import { useUserStore } from "../../store/userstore";
+
+const userStore = useUserStore();
+
+const mention_usr = computed(() => {
+  return props.messageContent?.includes(userStore.getCurrentUser().username + userStore.getCurrentUser().tag);
+});
 
 const props = defineProps({
   userName: String,
@@ -9,7 +16,6 @@ const props = defineProps({
   icon: String,
   file: String,
 });
-
 
 const messageContentFormated = computed(() => {
   // Replace *italics* or _italics_ with <em>italics</em>
@@ -35,7 +41,14 @@ function onClickUserIconOrName() {}
 </script>
 
 <template>
-  <div class="w-full h-fit">
+  <div
+    class="w-full h-fit"
+    :style="
+      mention_usr
+        ? 'background-color: #444039; border-left-style: solid; border-color: #e5cb5c; border-left-width:2px'
+        : ''
+    "
+  >
     <div class="w-full h-full">
       <div class="relative outline-none px-4 hover:bg-black/10">
         <div class="mt-[1.06rem] min-h-[2.75rem] flex items-center">
@@ -60,10 +73,10 @@ function onClickUserIconOrName() {}
             </div>
             <div class="w-[95%]">
               <span
-                class="text-white-500 whitespace-break-spaces overflow-x-hidden break-words"
+                :class="['text-white-500', 'whitespace-break-spaces', 'overflow-x-hidden', 'break-words']"
                 v-html="messageContentFormated"
-              >
-              </span>
+                :style="mention_usr ? 'background-color: rgba(73, 175, 222, 0.7); border-radius: 5px; padding:4px' : ''"
+              ></span>
             </div>
           </div>
         </div>
