@@ -41,6 +41,7 @@ function onClickCloseButton() {
       :to="'/me/message/' + channel?._id + '/' + friend?._id"
       class="flex items-center box-border w-full cursor-pointer"
     >
+
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
         <RoundedLogoIcon :icon="friend?.icon" />
@@ -51,9 +52,11 @@ function onClickCloseButton() {
         <!--name-->
         <div class="flex grow items-center justify-start whitespace-nowrap">
           <span
+
             class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-200 group-hover:text-white-400 transition-all duration-150"
           >
             {{ friend?.username || "" }}
+
           </span>
         </div>
         <!--subtitle-->

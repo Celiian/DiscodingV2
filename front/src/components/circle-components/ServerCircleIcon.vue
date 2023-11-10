@@ -24,12 +24,8 @@ const { name, imageUrl, link, notif, count, notif_small } = defineProps([
         </div>
       </div>
 
-      <!-- group-hover:block hidden  -->
-      <div class="absolute origin-center top-1 left-full bg-black p-2 text-white-600 z-[10] whitespace-nowrap truncate">
-        <div class="bg-black"></div>
-        {{ name }}
-      </div>
 
+      <!-- red notification circle-->
       <div class="absolute -bottom-1 right-2">
         <NotificationCircle v-if="notif && count > 0" :number="count" />
       </div>

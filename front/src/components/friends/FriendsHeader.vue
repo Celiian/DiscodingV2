@@ -17,6 +17,10 @@ const isAddFriendsPageShown = computed(() => {
   return buttonSelectedIndex.value === -1 ? true : false;
 });
 
+const notifNumber = computed(() => {
+  return friendsstore.getPending().length
+})
+
 watch(buttonSelectedIndex, (newValue) => {
   friendsstore.setDisplayed(newValue as number);
 });
@@ -54,7 +58,7 @@ function onClickAddFriendsButton() {
       <div class="flex">
         <!--filtered buttons-->
         <div v-for="(button, index) in filteredButtons">
-          <FilterButton :notifIsShown="index === 2" :notifNumber="2" :buttonTitle="button"
+          <FilterButton :notifIsShown="index === 2 && notifNumber > 0" :notifNumber="notifNumber" :buttonTitle="button"
             :isSelected="buttonSelectedIndex === index" :key="index" @click="onClickFilterButton(index)" />
         </div>
         <AddFriendsButton @click="onClickAddFriendsButton" :isSelected="buttonSelectedIndex === -1" />
@@ -73,9 +77,9 @@ function onClickAddFriendsButton() {
         <NotifInboxIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150" />
       </div>
 
-      <div class="group h-[24px] w-[24px] mx-2 cursor-pointer">
+      <a href="https://support.discord.com/hc/fr" target="_blank" class="group h-[24px] w-[24px] mx-2 cursor-pointer">
         <InfoIcon class="fill-white-300 group-hover:fill-white-500 transition-all duration-150" />
-      </div>
+      </a>
     </div>
   </div>
 </template>

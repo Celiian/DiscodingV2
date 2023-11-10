@@ -5,7 +5,7 @@ const props = defineProps({
 </script>
 
 <template>
-  <img :src="props.icon" class="w-full h-full shrink-0 relative rounded-full mr-3 object-cover" />
+  <img :src="props.icon" class="w-full h-full shrink-0 z-0 relative rounded-full mr-3 object-cover" />
 </template>
 
 <style scoped></style>
