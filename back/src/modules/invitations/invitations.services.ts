@@ -22,7 +22,7 @@ export async function acceptInvite(body: InvitationsAcceptBody) {
       await Invitations.findOneAndUpdate({ _id: oid }, { limit: invite.limit - 1 });
       const res = await Members.insertOne({
         member_id: body.member_id,
-        server_id: body.server_id,
+        server_id: invite.server_id,
         roles: [],
       });
       return res;

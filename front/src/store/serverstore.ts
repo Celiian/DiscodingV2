@@ -11,6 +11,7 @@ import {
   leaveServer,
   createInvite,
   acceptInvite,
+  getServerByInviteId,
 } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
@@ -64,6 +65,15 @@ export const useServerStore = defineStore("server", {
       return res.data;
     },
 
+    async getServerByInviteId({ invite_id }: { invite_id: string }) {
+      const res = await getServerByInviteId({ invite_id: invite_id });
+      if (res.success) {
+        return res.data;
+      } else {
+        return res;
+      }
+    },
+
     async createInvite({
       server_id,
       expiration,
@@ -79,16 +89,8 @@ export const useServerStore = defineStore("server", {
       return res;
     },
 
-    async acceptInvite({
-      invite_id,
-      member_id,
-      server_id,
-    }: {
-      invite_id: string;
-      member_id: String;
-      server_id: String;
-    }) {
-      const res = await acceptInvite({ invite_id, member_id, server_id });
+    async acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
+      const res = await acceptInvite({ invite_id, member_id });
       return res;
     },
   },
