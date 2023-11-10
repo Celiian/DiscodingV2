@@ -31,14 +31,10 @@ function onClickCloseButton() {
 </script>
 
 <template>
-  <div
-    @click="onClickOnCard"
-    class="group relative max-w-[224px] ml-2 box-border block px-2 py-[1px] rounded hover:bg-white-100/10 transition-all duration-150"
-  >
-    <router-link
-      :to="'/me/message/' + (channel as any)?._id + '/' + (friend as any)?._id"
-      class="flex items-center box-border w-full cursor-pointer"
-    >
+  <div @click="onClickOnCard"
+    class="group relative max-w-[224px] ml-2 box-border block px-2 py-[1px] rounded hover:bg-white-100/10 transition-all duration-150">
+    <router-link :to="'/me/message/' + (channel as any)?._id + '/' + (friend as any)?._id"
+      class="flex items-center box-border w-full cursor-pointer">
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
         <RoundedLogoIcon :icon="(friend as any)?.icon" />
@@ -49,8 +45,7 @@ function onClickCloseButton() {
         <!--name-->
         <div class="flex grow items-center justify-start whitespace-nowrap">
           <span
-            class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-200 group-hover:text-white-400 transition-all duration-150"
-          >
+            class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-200 group-hover:text-white-400 transition-all duration-150">
             {{ (friend as any)?.username || "" }}
           </span>
         </div>
