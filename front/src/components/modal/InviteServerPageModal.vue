@@ -21,8 +21,7 @@ const currentUserId = computed(() => {
 
 watchEffect(async () => {
   const result = await serverStore.getServerByInviteId({ invite_id: inviteId.value });
-  console.log(result.data.name),
-    serverName.value = result.data.name
+  serverName.value = result.data.name
 });
 //METHOD
 function closeModal() {
