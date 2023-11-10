@@ -10,10 +10,9 @@ const router = useRouter()
 const routes = useRoute()
 const userStore = useUserStore();
 const serverStore = useServerStore()
-const serverName = ref()
-const serverId = ref()
-const invitId = computed(() => {
-  return routes.params.InviteId as string;
+const serverName = ref('')
+const inviteId = computed(() => {
+  return routes.params.inviteId as string;
 });
 const target = ref(null);
 const currentUserId = computed(() => {
@@ -21,19 +20,20 @@ const currentUserId = computed(() => {
 });
 
 watchEffect(async () => {
-  const result = await serverStore.getServerByInviteId({ id: serverId.value });
-  serverId.value = result._id;
-  serverName.value = result.name;
+  const result = await serverStore.getServerByInviteId({ invite_id: inviteId.value });
+  console.log(result.data.name),
+    serverName.value = result.data.name
 });
 //METHOD
 function closeModal() {
-  router.push("/home")
+  router.push("/")
 }
 onClickOutside(target, () => closeModal());
 
-// function acceptInvite() {
-//   serverStore.acceptInvite({ invite_id: , member_id: currentUserId.value })
-// }
+function acceptInvite() {
+  serverStore.acceptInvite({ invite_id: inviteId.value, member_id: currentUserId.value })
+  closeModal()
+}
 
 
 </script>
@@ -51,11 +51,11 @@ onClickOutside(target, () => closeModal());
       </div>
 
       <div class="pt-6 px-6 text-center pb-2 flex w-full gap-10 justify-center">
-        <button @click="acceptInvite"
+        <button @click="closeModal"
           class="px-8 py-2 bg-red hover:bg-red/0 hover:text-red rounded text-white-600 text-sm transition-all duration-150 ">
           Refuser
         </button>
-        <button @click="closeModal"
+        <button @click="acceptInvite"
           class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 ">
           Accepter
         </button>

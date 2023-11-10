@@ -50,7 +50,7 @@ const router = createRouter({
           ],
         },
         {
-          path: "/accept/:invitId",
+          path: "/accept/:inviteId",
           name: "accept",
           component: InviteServerPageVue,
         },
