@@ -7,14 +7,20 @@ import { useServerStore } from "../../store/serverstore";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useNotifStore } from "../../store/notifstore";
 import { useUserStore } from "../../store/userstore";
+import { useFriendsStore } from "../../store/friendsstore";
 
 const serverStore = useServerStore();
+const friendsStore = useFriendsStore()
 const notifStore = useNotifStore();
 const userStore = useUserStore();
 
 const serverList = computed(() => {
   return serverStore.getServerList();
 });
+
+const notifNumber = computed(() => {
+  return friendsStore.getPending().length
+})
 
 const notifList = ref<{ [key: string]: boolean }>({});
 const mentionList = ref<{ [key: string]: number }>({});
@@ -86,33 +92,21 @@ watchEffect(async () => {
 <template>
   <nav class="w-[72px] min-w-[72px] bg-grey-100 pt-3 h-[100vh] overflow-y-scroll">
     <router-link to="/me/friends">
-      <PrivateMessageCircleIcon />
+      <PrivateMessageCircleIcon :notifNumber="notifNumber" />
     </router-link>
 
-    <ServerCircleIcon
-      v-for="notif in mp_notif"
-      :name="userList.get(notif.sender)?.username || ''"
+    <ServerCircleIcon v-for="notif in mp_notif" :name="userList.get(notif.sender)?.username || ''"
       :image-url="userList.get(notif.sender)?.icon || '/src/assets/discord.neutral.png'"
-      :link="'/me/message/' + notif.source_id + '/' + notif.sender"
-      :notif="true"
-      :count="notif.count"
-    />
+      :link="'/me/message/' + notif.source_id + '/' + notif.sender" :notif="true" :count="notif.count" />
 
     <div class="w-full flex justify-center mb-2">
       <div class="w-[32px] h-[2px] bg-grey-400"></div>
     </div>
 
     <!-- Conditional rendering of ServerCircleIcon -->
-    <ServerCircleIcon
-      v-if="serverList.length > 0"
-      v-for="server in serverList"
-      :name="server.name"
-      :image-url="server.icon"
-      :link="'/server/' + server._id"
-      :notif="true"
-      :count="mentionList[server._id.toString()]"
-      :notif_small="notifList[server._id.toString()]"
-    />
+    <ServerCircleIcon v-if="serverList.length > 0" v-for="server in serverList" :name="server.name"
+      :image-url="server.icon" :link="'/server/' + server._id" :notif="true" :count="mentionList[server._id.toString()]"
+      :notif_small="notifList[server._id.toString()]" />
 
     <AddServerIcon />
     <SearchServerIcon />
