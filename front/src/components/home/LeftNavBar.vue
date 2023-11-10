@@ -4,15 +4,22 @@ import PrivateMessageCircleIcon from "../circle-components/PrivateMessageCircleI
 import SearchServerIcon from "../circle-components/SearchServerIcon.vue";
 import ServerCircleIcon from "../circle-components/ServerCircleIcon.vue";
 import { useServerStore } from "../../store/serverstore";
-import { computed, ref, watch, watchEffect } from "vue";
+import { computed, onMounted, ref, watch, watchEffect } from "vue";
 import { useNotifStore } from "../../store/notifstore";
 import { useUserStore } from "../../store/userstore";
 import { useFriendsStore } from "../../store/friendsstore";
+import { useRouter } from "vue-router";
 
 const serverStore = useServerStore();
 const friendsStore = useFriendsStore()
 const notifStore = useNotifStore();
 const userStore = useUserStore();
+const router = useRouter()
+
+
+const iconIsSelected = computed(() => {
+  return router.currentRoute.value.fullPath.includes('/me/')
+})
 
 const serverList = computed(() => {
   return serverStore.getServerList();
@@ -92,7 +99,7 @@ watchEffect(async () => {
 <template>
   <nav class="w-[72px] min-w-[72px] bg-grey-100 pt-3 h-[100vh] overflow-y-scroll">
     <router-link to="/me/friends">
-      <PrivateMessageCircleIcon :notifNumber="notifNumber" />
+      <PrivateMessageCircleIcon :notifNumber="notifNumber" :isSelected="iconIsSelected" />
     </router-link>
 
     <ServerCircleIcon v-for="notif in mp_notif" :name="userList.get(notif.sender)?.username || ''"

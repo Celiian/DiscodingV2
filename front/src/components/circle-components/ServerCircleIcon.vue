@@ -18,7 +18,7 @@ const { name, imageUrl, link, notif, count, notif_small } = defineProps([
       <img :src="imageUrl"
         class="w-[48px] h-[48px] flex items-center justify-center cursor-pointer rounded-[50%] group-hover:rounded-2xl transition-all duration-300 object-cover" />
 
-      <div v-if="true" class="absolute h-[48px] w-2 top-0 left-0 flex items-center justify-start">
+      <div v-if="notif_small" class="absolute h-[48px] w-2 top-0 left-0 flex items-center justify-start">
         <div
           class="h-[8px] group-hover:h-[20px] w-full bg-white-600 block rounded-r-[4px] -ml-[4px] transition-all duration-300">
         </div>

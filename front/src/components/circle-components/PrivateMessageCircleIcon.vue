@@ -1,7 +1,8 @@
 <script setup lang="ts">
 import NotificationCircle from "../circle-components/NotificationCircle.vue"
 const props = defineProps({
-    notifNumber: Number
+    notifNumber: Number,
+    isSelected: Boolean
 })
 </script>
 
@@ -16,7 +17,7 @@ const props = defineProps({
             <!-- little white bar -->
             <div class="absolute h-[48px] w-2 top-0 left-0 flex items-center justify-start ">
                 <div
-                    class="group-hover:h-[20px] h-[0px] w-full bg-white-400 block rounded-r-[4px] group-hover:-ml-[4px] -ml-[8px] transition-all duration-300">
+                    :class="isSelected ? 'bg-white-400 w-full rounded-r-[4px] h-[48px] -ml-[4px] transition-all duration-300' : 'group-hover:h-[20px] h-[0px] w-full bg-white-400 block rounded-r-[4px] group-hover:-ml-[4px] -ml-[8px] transition-all duration-300'">
                 </div>
             </div>
         </div>
