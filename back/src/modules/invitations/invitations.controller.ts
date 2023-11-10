@@ -9,8 +9,8 @@ export function registerInvitationsRoutes(app: Express) {
   });
 
   app.post("/invite/accept", async (req: Request<unknown, unknown, InvitationsAcceptBody>, res: Response) => {
+    console.log("??????")
     const invite = await acceptInvite(req.body);
-
     res.json({ success: true, data: invite });
   });
 }

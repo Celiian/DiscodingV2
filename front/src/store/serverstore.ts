@@ -11,6 +11,7 @@ import {
   leaveServer,
   createInvite,
   acceptInvite,
+  getServerByInviteId,
 } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
@@ -62,6 +63,15 @@ export const useServerStore = defineStore("server", {
     async getChannelsServer(id: string) {
       const res = await getChannelsByServer(id);
       return res.data;
+    },
+
+    async getServerByInviteId({ invite_id }: { invite_id: string }) {
+      const res = await getServerByInviteId({ invite_id: invite_id });
+      if (res.success) {
+        return res.data;
+      } else {
+        return res;
+      }
     },
 
     async createInvite({

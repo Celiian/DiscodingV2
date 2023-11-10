@@ -157,3 +157,13 @@ export async function leaveServer({ member_id, server_id }: { member_id: string;
     return { success: false, data: error };
   }
 }
+
+export async function getServerByInviteId({ invite_id }: { invite_id: string }) {
+  try {
+    const server = await axios.get(`${API_BASE_URL}/server/` + invite_id, { withCredentials: true });
+    return { success: true, data: server };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
