@@ -19,7 +19,7 @@ const serverId = computed(() => {
 const currentServerName = ref();
 const currentServerId = ref();
 const currentUserId = computed(() => {
-  return userStore.getCurrentUser()._id.toString();
+  return userStore.getCurrentUser()!._id.toString();
 });
 
 const isButtonDisabled = computed(() => {

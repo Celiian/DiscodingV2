@@ -62,7 +62,7 @@ export async function connectToServer() {
   const userstore = useUserStore();
   try {
     await socket.connect();
-    socket.emit("init-connect", { userId: userstore.getCurrentUser()._id });
+    socket.emit("init-connect", { userId: userstore.getCurrentUser()!._id });
 
     console.log("Connected to the server");
   } catch (error) {

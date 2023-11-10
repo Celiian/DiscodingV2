@@ -134,7 +134,7 @@ async function sendMessage() {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
       messagestore.mp({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         friend: props.friend?._id.toString(),
@@ -142,7 +142,7 @@ async function sendMessage() {
       });
     } else {
       messagestore.mp({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         friend: props.friend?._id.toString(),
@@ -153,7 +153,7 @@ async function sendMessage() {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
       messagestore.messageServer({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         file_url: res[0].url,
@@ -161,7 +161,7 @@ async function sendMessage() {
       });
     } else {
       messagestore.messageServer({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         file_url: "",

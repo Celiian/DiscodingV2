@@ -17,16 +17,16 @@ const infiniteCheckboxValue = ref(false);
 const todayDate = format(new Date());
 const dateInput = ref(todayDate);
 const routes = useRoute();
-const inviteCreationDone = ref(false)
-const inviteLinkText = ref('')
-const isTextCopied = ref(false)
+const inviteCreationDone = ref(false);
+const inviteLinkText = ref("");
+const isTextCopied = ref(false);
 const serverId = computed(() => {
   return routes.params.serverId as string;
 });
 const currentServerName = ref();
 const currentServerId = ref();
 const currentUserId = computed(() => {
-  return userStore.getCurrentUser()._id.toString();
+  return userStore.getCurrentUser()!._id.toString();
 });
 
 watchEffect(async () => {
@@ -53,7 +53,6 @@ function closeModal() {
 
 onClickOutside(target, () => closeModal());
 
-
 async function createInvite() {
   if (dateInput.value) {
     const invitDate = new Date(dateInput.value);
@@ -67,11 +66,9 @@ async function createInvite() {
         creator: currentUserId.value,
       });
       if (resp.success) {
-        inviteLinkText.value = resp.data.data.data.insertedId
-        inviteCreationDone.value = true
+        inviteLinkText.value = resp.data.data.data.insertedId;
+        inviteCreationDone.value = true;
       }
-
-
     } catch (error) {
       console.error("Erreur lors de la création de l'invitation : ", error);
     }
@@ -83,25 +80,24 @@ function onCLickInfiniteCheckbox() {
 }
 
 async function copyToClipboard() {
-  const inviteLink = document.querySelector('.inviteLink')!.innerHTML;
-
+  const inviteLink = document.querySelector(".inviteLink")!.innerHTML;
 
   try {
-    await navigator.clipboard.writeText(inviteLink)
-    isTextCopied.value = true
-
+    await navigator.clipboard.writeText(inviteLink);
+    isTextCopied.value = true;
   } catch (err) {
-    console.error("La copie n'a pas fonctionné : ", err)
+    console.error("La copie n'a pas fonctionné : ", err);
   }
 }
-
-
 </script>
 
 <template>
   <div class="absolute top-0 left-0 w-screen h-screen bg-black/70 z-30 flex justify-center items-center">
-    <div v-if="!inviteCreationDone" ref="target"
-      class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4">
+    <div
+      v-if="!inviteCreationDone"
+      ref="target"
+      class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4"
+    >
       <div class="p-4">
         <h2 class="text-white-500 text-2xl font-bold">Créer une invitation pour {{ currentServerName }}</h2>
         <button @click="closeModal" class="absolute top-4 right-4 w-6 h-6">
@@ -116,9 +112,15 @@ async function copyToClipboard() {
           <p class="salonName uppercase text-[14px]">personne qui pourront accepter :</p>
           <div class="flex gap-10 justify-start items-center">
             <div class="flex items-center w-1/5 px-1 rounded m-1 bg-white-300/80">
-              <input :disabled="infiniteCheckboxValue" type="number" v-model="inputPeopleNumber" placeholder="10" min="1"
+              <input
+                :disabled="infiniteCheckboxValue"
+                type="number"
+                v-model="inputPeopleNumber"
+                placeholder="10"
+                min="1"
                 max="99"
-                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500 disabled:text-white-500/40 disabled:cursor-not-allowed" />
+                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500 disabled:text-white-500/40 disabled:cursor-not-allowed"
+              />
             </div>
             <div>
               <input @click="onCLickInfiniteCheckbox" id="infini" type="checkbox" class="mr-2" />
@@ -130,29 +132,39 @@ async function copyToClipboard() {
           <p class="salonName uppercase text-[14px]">Date d'expiration de l'invitation :</p>
           <div class="flex gap-10 justify-start items-center">
             <div class="flex items-center w-2/5 px-1 rounded m-1 bg-white-300/80">
-              <input required type="date" v-model="dateInput" :min="todayDate"
-                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500" />
+              <input
+                required
+                type="date"
+                v-model="dateInput"
+                :min="todayDate"
+                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500"
+              />
             </div>
           </div>
         </div>
       </div>
       <div class="pt-6 px-6 text-center">
-        <button @click="createInvite"
-          class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 disabled:bg-white-300/80">
+        <button
+          @click="createInvite"
+          class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 disabled:bg-white-300/80"
+        >
           Créer
         </button>
       </div>
     </div>
 
-
-
-    <div v-if="inviteCreationDone" ref="target"
-      class="bg-grey-400 rounded min-w-[440px] sm:w-auto w-full h-full sm:h-auto relative p-4 flex flex-col justify-center items-center gap-4">
-      <h1 class="salonName uppercase text-[14px]">Lien d'invitation : </h1>
+    <div
+      v-if="inviteCreationDone"
+      ref="target"
+      class="bg-grey-400 rounded min-w-[440px] sm:w-auto w-full h-full sm:h-auto relative p-4 flex flex-col justify-center items-center gap-4"
+    >
+      <h1 class="salonName uppercase text-[14px]">Lien d'invitation :</h1>
       <div class="flex justify-between items-center gap-4">
         <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/accept/{{ inviteLinkText }}</h1>
-        <div @click="copyToClipboard"
-          class="w-5 h-5 fill-white-400/50 cursor-pointer hover:fill-white-400/90 duration-150 transition-all">
+        <div
+          @click="copyToClipboard"
+          class="w-5 h-5 fill-white-400/50 cursor-pointer hover:fill-white-400/90 duration-150 transition-all"
+        >
           <CopyIcon />
         </div>
       </div>
@@ -160,15 +172,15 @@ async function copyToClipboard() {
       <div v-if="isTextCopied">
         <h2 class="text-[12px] text-green-onlineCircle">Lien d'invitation copié !</h2>
         <div class="pt-6 px-6 text-center">
-          <button @click="closeModal"
-            class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 ">
+          <button
+            @click="closeModal"
+            class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300"
+          >
             Quitter
           </button>
         </div>
       </div>
-
     </div>
-
   </div>
 </template>
 

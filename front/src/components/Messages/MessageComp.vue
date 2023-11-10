@@ -7,7 +7,7 @@ const userStore = useUserStore();
 
 const mention_usr = computed(() => {
   if (userStore.getCurrentUser()?.username) {
-    return props.messageContent?.includes(userStore.getCurrentUser()?.username + userStore.getCurrentUser().tag);
+    return props.messageContent?.includes(userStore.getCurrentUser()!.username + userStore.getCurrentUser()!.tag);
   }
 });
 
