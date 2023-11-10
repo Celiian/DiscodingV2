@@ -50,7 +50,7 @@ export function registerAuthRoutes(app: Express) {
     }
   });
 
-  app.post('/envoyer-email-verification', async (req, res) => {
+  app.post('/email', async (req, res) => {
     const { destinataire } = req.body;
     const corps = `
       <p>Merci de vérifier votre adresse e-mail.</p>

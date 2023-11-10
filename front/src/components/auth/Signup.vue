@@ -1,4 +1,5 @@
-<script setup lang="ts">import { ref, computed } from 'vue';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import axios from 'axios';
 import { useUserStore } from '../../store/userstore';
 import { useRouter } from 'vue-router';
@@ -9,6 +10,26 @@ const router = useRouter();
 const email = ref('');
 const username = ref('');
 const password = ref('');
+const selectedDay = ref('');
+const selectedMonth = ref('');
+const selectedYear = ref('');
+const tosCheckBox = ref(false);
+
+const days = [...Array(31).keys()].map(day => (day + 1).toString());
+const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+const years = [...Array(100).keys()].map(year => (new Date().getFullYear() - year).toString());
+
+const continueDisabled = computed(() => {
+  return !(
+    email.value &&
+    username.value &&
+    password.value &&
+    selectedDay.value &&
+    selectedMonth.value &&
+    selectedYear.value &&
+    tosCheckBox.value
+  );
+});
 
 async function signup() {
   const user = {
@@ -22,55 +43,20 @@ async function signup() {
   };
 
   try {
-// Enregistrement de l'utilisateur localement (vous devrez peut-être ajuster cette logique)
-    
-    await userStore.register({username: user.username, password: password.value, email: user.email});
+    // Envoi des données au backend pour l'envoi de l'e-mail de vérification
+    await axios.post('http://localhost:3000/email', {
+      destinataire: user.email,
+    });
+
+    // Enregistrement de l'utilisateur localement (vous devrez peut-être ajuster cette logique)
+    await userStore.register({ username: user.username, password: password.value, email: user.email });
 
     // Redirection vers la page de connexion
     router.push('/login');
-    } catch (error) {
+  } catch (error) {
     console.error('Inscription échouée :', error);
-    }
-    // Envoi des données au backend pour l'envoi de l'e-mail de vérification
-    await axios.post('http://localhost:3000/envoyer-email-verification', {
-      destinataire: user.email,
-    });
+  }
 }
-
-const selectedDay = ref<string>("");
-const selectedMonth = ref<string>("");
-const selectedYear = ref<string>("");
-const tosCheckBox = ref<Boolean>(false);
-
-const days = [...Array(31).keys()].map((day) => (day + 1).toString());
-const months = [
-  "janvier",
-  "février",
-  "mars",
-  "avril",
-  "mai",
-  "juin",
-  "juillet",
-  "août",
-  "septembre",
-  "octobre",
-  "novembre",
-  "décembre",
-];
-
-const years = [...Array(100).keys()].map((year) => (new Date().getFullYear() - year).toString());
-
-const continueDisabled = computed(() => {
-  return !(
-    email.value &&
-    username.value &&
-    password.value &&
-    selectedDay.value &&
-    selectedMonth.value &&
-    selectedYear.value &&
-    tosCheckBox.value
-  );
-});
 </script>
 
 <template>
@@ -160,7 +146,7 @@ const continueDisabled = computed(() => {
             </label>
           </div>
           <div class="btn-position">
-            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
+            <button type="button" :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="tosCheckBox" />
