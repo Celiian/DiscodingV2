@@ -2,11 +2,19 @@
 import { defineStore } from "pinia";
 import { useUserStore } from "./userstore";
 import { getNotifForUser, createNewNotif, deleteNotif, createNewNotifList } from "./utils/notifrequest";
+interface Notification {
+  _id: string;
+  type: string;
+  destined_user: string;
+  source_id: string;
+  sender: string;
+  count: number;
+}
 
 export const useNotifStore = defineStore("notif", {
   state: () => ({
-    mp_notifs: [],
-    server_notifs: [],
+    mp_notifs: <Array<Notification>>[],
+    server_notifs: <Array<Notification>>[],
   }),
 
   actions: {

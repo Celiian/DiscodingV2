@@ -7,17 +7,15 @@ import { useServerStore } from "../../store/serverstore";
 import { computed, ref, watch, watchEffect } from "vue";
 import { useNotifStore } from "../../store/notifstore";
 import { useUserStore } from "../../store/userstore";
-interface Server {
-  name: string;
-  icon: string;
-  _id: string;
-}
 
 const serverStore = useServerStore();
 const notifStore = useNotifStore();
 const userStore = useUserStore();
 
-const serverList = ref<Server[]>([]);
+const serverList = computed(() => {
+  return serverStore.getServerList();
+});
+
 const notifList = ref<{ [key: string]: boolean }>({});
 const mentionList = ref<{ [key: string]: number }>({});
 
@@ -77,14 +75,10 @@ async function updateServerNotifs() {
         }
       }
     }
-    console.log(mentionList.value);
   }
 }
 
 watchEffect(async () => {
-  const servers = serverStore.getServerList();
-  serverList.value = servers;
-
   mp_notif.value = notifStore.getCurrentMpNotifs();
   await getUserList();
 });

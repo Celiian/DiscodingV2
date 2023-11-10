@@ -23,15 +23,6 @@ const props = defineProps({
   friend: null,
 });
 
-interface Message {
-  _id: string;
-  channel: string;
-  sender: string;
-  content: string;
-  date: Date;
-  file: string;
-}
-
 const userList = ref(new Map<string, any>());
 const serverNotif = computed(() => {
   return notifStore.getServerNotifs();
@@ -65,13 +56,13 @@ watch(channelId, async () => {
   await deleteNotif();
 });
 
-const messages = computed<Message[]>(() => {
+const messages = computed(() => {
   return messagestore.getMessages();
 });
 
 watch(messages, async () => {
   await getUserList();
-  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 100);
+  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 50);
 });
 
 watchEffect(async () => {
@@ -113,14 +104,12 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    selectedFile.value = event.target?.files;
+    selectedFile.value = (event.target as HTMLInputElement).files;
     selectedFileUrl.value = URL.createObjectURL(selectedFile.value[0]);
-    console.log(selectedFile.value);
   });
 }
 
 async function sendMessage() {
-  console.log(selectedFile.value);
   if (props.friend) {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
@@ -159,9 +148,9 @@ async function sendMessage() {
         server: routes.params.serverId.toString(),
       });
     }
-    messageInput.value = "";
-    selectedFileUrl.value = "";
   }
+  messageInput.value = "";
+  selectedFileUrl.value = "";
 }
 
 function formatDateToFrench(dateString: string) {
@@ -246,11 +235,11 @@ function complete(user: any) {
         v-for="(message, index) in messages"
         :key="index"
         v-bind="{
-          userName: userList.get(message.sender)?.username,
-          date: formatDateToFrench(message.date.toString()),
-          messageContent: message.content,
+          userName: userList.get(message.sender)?.username || '',
+          date: formatDateToFrench(message.date.toString()) || '',
+          messageContent: message.content || '',
           file: message.file,
-          icon: userList.get(message.sender)?.icon,
+          icon: userList.get(message.sender)?.icon || '',
         }"
         :class="message._id.toString()"
       />

@@ -21,14 +21,11 @@ export async function createServer(body: ServerCreateBody) {
 }
 export async function getServersByUser(user_id: string): Promise<any[]> {
   try {
-    const member_array = await Members.find({ member_id: user_id });
-
-    const serverIds: ObjectId[] = await member_array
-      .map((member) => {
-        var oid = new ObjectId(member.server_id as string);
-        return oid;
-      })
-      .toArray();
+    const member_array = await Members.find({ member_id: user_id }).toArray();
+    const serverIds: ObjectId[] = member_array.map((member) => {
+      var oid = new ObjectId(member.server_id as string);
+      return oid;
+    });
 
     const servers: any[] = [];
 

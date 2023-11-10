@@ -218,7 +218,9 @@ function jump(id: string) {
 
                   <div class="flex justify-center mt-4 items-center">
                     <button @click="prevPage" class="text-white px-2 py-1 rounded hover:bg-grey-200">Précédent</button>
-                    <p class="m-2">{{ index / 5 + " / " + Math.floor((result.length - 1) / 5) }}</p>
+                    <p class="m-2" v-if="index > 0">{{ index / 5 + " / " + Math.floor((result.length - 1) / 5) }}</p>
+                    <p class="m-2" v-else>1 / 1</p>
+
                     <button @click="nextPage" class="ml-2 text-white px-2 py-1 rounded hover:bg-grey-200">
                       Suivant
                     </button>

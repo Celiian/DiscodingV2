@@ -2,20 +2,11 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import axios from "axios";
 
-export async function createServer({
-  serverName,
-  icon,
-  owner,
-}: {
-  serverName: string;
-  icon: ArrayBuffer;
-  owner: String;
-}) {
+export async function createServer({ serverName, icon, owner }: { serverName: string; icon: string; owner: String }) {
   try {
-    let base64Data = "data:image/png;base64, " + arrayBufferToBase64(icon);
     await axios.post(
       `${API_BASE_URL}/server/create`,
-      { name: serverName, icon: base64Data, owner: owner },
+      { name: serverName, icon: icon, owner: owner },
       { withCredentials: true }
     );
     return { success: true };
@@ -23,15 +14,6 @@ export async function createServer({
     console.log(error);
     return { success: false, data: error };
   }
-}
-
-function arrayBufferToBase64(buffer: ArrayBuffer): string {
-  const uint8Array = new Uint8Array(buffer);
-  let binaryString = "";
-  for (let i = 0; i < uint8Array.length; i++) {
-    binaryString += String.fromCharCode(uint8Array[i]);
-  }
-  return btoa(binaryString);
 }
 
 export async function getServerByUser(user_id: { user_id: string }) {

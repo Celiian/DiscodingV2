@@ -5,11 +5,20 @@ import { getChannelsByUser, getMessagesByChannel, sendMessage } from "./utils/me
 import { emitEvent } from "../utils/ws";
 import { useNotifStore } from "./notifstore";
 
+interface Message {
+  _id: string;
+  channel: string;
+  sender: string;
+  content: string;
+  file: string;
+  date: Date;
+}
+
 export const useMessageStore = defineStore("message", {
   state: () => ({
     mp_channels: [],
     current_channel: "",
-    messages: [],
+    messages: <Array<Message>>[],
     searched_message: "",
   }),
 
