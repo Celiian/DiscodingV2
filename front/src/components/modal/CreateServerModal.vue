@@ -5,6 +5,7 @@ import { useUserStore } from "../../store/userstore";
 import { onClickOutside } from "@vueuse/core";
 import { ref } from "vue";
 import { useServerStore } from "../../store/serverstore";
+import { uploadImage } from "../../store/utils/imageupload";
 
 const emit = defineEmits(["close-modal"]);
 const userStore = useUserStore();
@@ -15,6 +16,9 @@ const currentUser = userStore.currentUser;
 const serverName = ref("");
 const target = ref(null);
 
+const selectedFile = ref();
+const selectedFileUrl = ref("");
+
 //METHOD
 
 function closeModal() {
@@ -22,45 +26,18 @@ function closeModal() {
 }
 onClickOutside(target, () => closeModal());
 
-function convertImageToBinary(selectedFile: Blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-
-    reader.onload = (event) => {
-      const binaryData = event.target?.result;
-      resolve(binaryData);
-    };
-
-    reader.onerror = (error) => {
-      reject(error);
-    };
-
-    reader.readAsArrayBuffer(selectedFile);
-  });
-}
-
 function openFileInput() {
   const fileInput = document.getElementById("fileInput");
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    const selectedFile = event.target?.files[0];
-
-    if (selectedFile) {
-      try {
-        uploadedImage.value = URL.createObjectURL(selectedFile);
-      } catch (error) {
-        console.error("Error displaying image:", error);
-      }
-    }
+    selectedFile.value = event.target?.files;
+    selectedFileUrl.value = URL.createObjectURL(selectedFile.value[0]);
   });
 }
 
 async function createServer() {
-  const fileInput = document.getElementById("fileInput");
-  const selectedFile = fileInput?.files[0];
-
-  if (!selectedFile) {
+  if (!selectedFile.value) {
     console.error("No file uploaded");
     return;
   }
@@ -71,9 +48,9 @@ async function createServer() {
   }
 
   try {
-    const binaryData = (await convertImageToBinary(selectedFile)) as Blob;
+    const res = await uploadImage(selectedFile.value);
 
-    serverStore.createServer({ serverName: serverName.value, icon: binaryData });
+    serverStore.createServer({ serverName: serverName.value, icon: res[0].url });
   } catch (error) {
     console.error("Error creating server:", error);
   }

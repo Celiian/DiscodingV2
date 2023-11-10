@@ -6,7 +6,9 @@ import { useUserStore } from "../../store/userstore";
 const userStore = useUserStore();
 
 const mention_usr = computed(() => {
-  return props.messageContent?.includes(userStore.getCurrentUser().username + userStore.getCurrentUser().tag);
+  if (userStore.getCurrentUser()?.username) {
+    return props.messageContent?.includes(userStore.getCurrentUser()?.username + userStore.getCurrentUser().tag);
+  }
 });
 
 const props = defineProps({
@@ -16,10 +18,17 @@ const props = defineProps({
   icon: String,
   file: String,
 });
+function detectMention(text: string): string | null {
+  const mentionRegex = /@[\w#]+/g;
+  const match = mentionRegex.exec(text);
+  return match ? match[0] : null;
+}
 
 const messageContentFormated = computed(() => {
+  let message = sanitizeMessageContent(props.messageContent || "");
+  const mention = detectMention(message);
   // Replace *italics* or _italics_ with <em>italics</em>
-  let message = props.messageContent?.replace(/(\*|_)([^*]+)(\*|_)/g, "<em>$2</em>") || "";
+  message = message.replace(/(\*|_)([^*]+)(\*|_)/g, "<em>$2</em>");
 
   // Replace **bold** with <strong>bold</strong>
   message = message.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -33,11 +42,23 @@ const messageContentFormated = computed(() => {
   // Replace ~~Strikethrough~~ with <del>Strikethrough</del>
   message = message.replace(/~~(.*?)~~/g, "<del>$1</del>");
 
+  if (mention != null) {
+    message = message.replace(
+      mention,
+      '<span style="background-color: rgba(73, 175, 222, 0.7); border-radius: 5px; padding:4px;">$&</span>'
+    );
+  }
   return message;
 });
 
 //METHOD
 function onClickUserIconOrName() {}
+
+function sanitizeMessageContent(message: string) {
+  message = message.replace(/</g, "&lt;").replace(/>/g, "&gt;");
+
+  return message;
+}
 </script>
 
 <template>
@@ -75,7 +96,6 @@ function onClickUserIconOrName() {}
               <span
                 :class="['text-white-500', 'whitespace-break-spaces', 'overflow-x-hidden', 'break-words']"
                 v-html="messageContentFormated"
-                :style="mention_usr ? 'background-color: rgba(73, 175, 222, 0.7); border-radius: 5px; padding:4px' : ''"
               ></span>
             </div>
           </div>

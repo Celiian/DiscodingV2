@@ -22,9 +22,9 @@ onMounted(async () => {
     router.push("/login");
   } else {
     await messagestore.getMpChannels();
-    await notifStore.getNotifs();
-    await serverStore.getServerByUser();
+    serverStore.getServerByUser();
     await friendsStore.getFriends();
+    await notifStore.getNotifs();
     await connectToServer();
   }
 

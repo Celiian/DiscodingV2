@@ -14,12 +14,19 @@ import {
 } from "./utils/serverrequest";
 import { useUserStore } from "./userstore";
 
+interface Server {
+  _id: string;
+  name: String;
+  icon: string;
+  owner: String;
+}
+
 export const useServerStore = defineStore("server", {
   state: () => ({
-    serverList: [],
+    serverList: <Array<Server>>[],
   }),
   actions: {
-    async createServer({ serverName, icon }: { serverName: string; icon: ArrayBuffer }) {
+    async createServer({ serverName, icon }: { serverName: string; icon: string }) {
       const userStore = useUserStore();
       let user = userStore.getCurrentUser();
       await createServer({ serverName: serverName, icon: icon, owner: user._id });

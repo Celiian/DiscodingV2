@@ -23,15 +23,6 @@ const props = defineProps({
   friend: null,
 });
 
-interface Message {
-  _id: string;
-  channel: string;
-  sender: string;
-  content: string;
-  date: Date;
-  file: string;
-}
-
 const userList = ref(new Map<string, any>());
 const serverNotif = computed(() => {
   return notifStore.getServerNotifs();
@@ -65,7 +56,7 @@ watch(channelId, async () => {
   await deleteNotif();
 });
 
-const messages = computed<Message[]>(() => {
+const messages = computed(() => {
   return messagestore.getMessages();
 });
 
@@ -113,9 +104,8 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    selectedFile.value = event.target?.files;
+    selectedFile.value = (event.target as HTMLInputElement).files;
     selectedFileUrl.value = URL.createObjectURL(selectedFile.value[0]);
-    console.log(selectedFile.value);
   });
 }
 
