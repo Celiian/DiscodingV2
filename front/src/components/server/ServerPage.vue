@@ -10,6 +10,8 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
+import InvitePeopleModal from "../modal/InvitePeopleModal.vue"
+import QuitServerModal from "../modal/QuitServerModal.vue"
 import AddCategory from "../circle-components/addCategory.vue";
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue";
 import CreateChannelModal from "../modal/CreateChannel.vue";
@@ -84,44 +86,62 @@ onUnmounted(() => {
 
 const dropDownItem = {
   0: {
-    item: "Inviter des gens",
-    class: "blue",
+    index: 0,
+    item: 'Inviter des gens',
+    class: 'blue',
     svg: AddFriend,
     show: false,
   },
   1: {
-    item: "Paramètres du serveur",
-    class: "grey",
+    index: 1,
+    item: 'Paramètres du serveur',
+    class: 'grey',
+
     svg: Parameter,
     show: true,
   },
   2: {
-    item: "Créer un salon",
-    class: "grey",
+    index: 2,
+    item: 'Créer un salon',
+    class: 'grey',
     svg: AddChannel,
     show: true,
   },
   3: {
-    item: "Créer une catégorie",
-    class: "grey",
+    index: 3,
+    item: 'Créer une catégorie',
+    class: 'grey',
     svg: AddCategory,
     show: true,
   },
   4: {
-    item: "Quitter le serveur",
-    class: "red",
+    index: 4,
+    item: 'Quitter le serveur',
     svg: Modified,
     show: false,
   },
-};
+}
+
 
 function callModal(index: number) {
-  if (index === 2) {
-    openChannelModal();
+  switch (index) {
+    case 0:
+      openInvitePeopleModal()
+      break;
+    case 1:
+
+      break;
+    case 2:
+      openChannelModal();
+      break;
+    case 3:
+      openCategoryModal();
+      break;
+    case 4:
+      openQuitServerModal()
+      break;
   }
-  if (index === 3) {
-    openCategoryModal();
-  }
+
 }
 
 function openChannelModal() {
@@ -133,19 +153,28 @@ function openCategoryModal() {
   modalOpened.value = true;
   currentModal.value = "category";
 }
+
+function openInvitePeopleModal() {
+  modalOpened.value = true;
+  currentModal.value = 'invite';
+}
+
+function openQuitServerModal() {
+  modalOpened.value = true;
+  currentModal.value = 'quit';
+}
+
 </script>
 
 <template>
-  <CreateCategoryModal
-    v-if="modalOpened && currentModal === 'category'"
-    @open-modal="openModal"
-    @close-modal="closeModal"
-  />
-  <CreateChannelModal
-    v-if="modalOpened && currentModal === 'channel'"
-    @open-modal="openModal"
-    @close-modal="closeModal"
-  />
+
+  <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
+    @close-modal="closeModal" />
+  <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
+    @close-modal="closeModal" />
+  <InvitePeopleModal v-if="modalOpened && currentModal === 'invite'" @open-modal="openModal" @close-modal="closeModal" />
+  <QuitServerModal v-if="modalOpened && currentModal === 'quit'" @open-modal="openModal" @close-modal="closeModal" />
+
 
   <DetailNav>
     <template v-slot:header>
@@ -161,12 +190,8 @@ function openCategoryModal() {
         </div>
         <div ref="target" v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
           <div v-for="(menuItem, index) in dropDownItem">
-            <a
-              v-if="isCurrentUserIsAdmin === menuItem.show || isCurrentUserIsAdmin"
-              :key="index"
-              :class="menuItem.class"
-              @click="callModal(index)"
-            >
+            <a v-if="(isCurrentUserIsAdmin === menuItem.show) || isCurrentUserIsAdmin" :key="index"
+              :class='menuItem.class' @click="callModal(menuItem.index)">
               {{ menuItem.item }}
               <component :is="menuItem.svg" />
             </a>
