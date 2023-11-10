@@ -2,7 +2,7 @@ import { Channels } from "@/db/models/Channel";
 import { Friends } from "@/db/models/Friends";
 
 import { Users } from "@/db/models/User";
-import { FriendsAcceptBody, FriendsCreateBody } from "@/types/friends.types";
+import { Friend, FriendsAcceptBody, FriendsCreateBody } from "@/types/friends.types";
 
 export async function addFriend(body: FriendsCreateBody) {
   const receiver = await Users.findOne({
@@ -83,7 +83,7 @@ export async function rejectFriend(body: FriendsAcceptBody) {
 
 export async function getFriends(user_id: string) {
   try {
-    const friends: any[] = [];
+    const friends: Friend[] = [];
     const initiated = await Friends.find({
       initiator: user_id,
       status: "accepted",
@@ -97,7 +97,7 @@ export async function getFriends(user_id: string) {
     friends.push(...initiated);
     friends.push(...received);
 
-    const pending: any[] = [];
+    const pending: Friend[] = [];
     const initiated_pending = await Friends.find({
       initiator: user_id,
       status: "pending",
@@ -111,7 +111,7 @@ export async function getFriends(user_id: string) {
     pending.push(...initiated_pending);
     pending.push(...received_pending);
 
-    const rejected: any[] = [];
+    const rejected: Friend[] = [];
     const initiated_rejected = await Friends.find({
       initiator: user_id,
       status: "rejected",

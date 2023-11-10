@@ -12,7 +12,7 @@ const userStore = useUserStore();
 const currentUser = userStore.currentUser;
 const target = ref(null);
 
-const usernameInput = ref(currentUser.username);
+const usernameInput = ref(currentUser?.username);
 const passwordInput = ref("");
 const usernameInputIsDisabled = ref(true);
 const passwordInputIsDisabled = ref(true);
@@ -26,9 +26,9 @@ onClickOutside(target, () => closeModal());
 async function onClickEditPassword() {
   if (!passwordInputIsDisabled.value) {
     await userStore.editUser({
-      id: currentUser._id.toString(),
-      icon: currentUser.icon,
-      username: currentUser.username,
+      id: currentUser!._id.toString(),
+      icon: currentUser!.icon,
+      username: currentUser!.username,
       password: passwordInput.value,
     });
   }
@@ -39,9 +39,9 @@ async function onClickEditPassword() {
 async function onClickEditUsername() {
   if (!usernameInputIsDisabled.value) {
     await userStore.editUser({
-      id: currentUser._id.toString(),
-      icon: currentUser.icon,
-      username: usernameInput.value,
+      id: currentUser!._id.toString(),
+      icon: currentUser!.icon,
+      username: usernameInput.value || "",
       password: "no-change-&@#1%",
     });
   }
@@ -58,14 +58,14 @@ function openFileInput() {
   fileInput?.click();
 
   fileInput?.addEventListener("change", async (event) => {
-    const selectedFile = event.target?.files;
+    const selectedFile = (event.target as HTMLInputElement).files;
     if (selectedFile) {
       const res = await uploadImage(selectedFile);
 
       userStore.editUser({
-        id: currentUser._id.toString(),
+        id: currentUser!._id.toString(),
         icon: res[0].url,
-        username: currentUser.username,
+        username: currentUser!.username,
         password: "no-change-&@#1%",
       });
     }
@@ -89,16 +89,20 @@ function openFileInput() {
               {{ currentUser?.username }}
               {{ currentUser?.tag }}
             </div>
-            <div title="titi#4545"
-              class="cursor-pointer w-[18px] h-[18px] rounded-full bg-green-onlineCircle flex justify-center items-center font-semibold">
+            <div
+              title="titi#4545"
+              class="cursor-pointer w-[18px] h-[18px] rounded-full bg-green-onlineCircle flex justify-center items-center font-semibold"
+            >
               #
             </div>
           </div>
         </div>
         <div>
           <input type="file" id="fileInput" style="display: none" accept="image/*" />
-          <button @click="onClickEditImage"
-            class="py-[2px] px-4 min-h-[32px] bg-blue-200 rounded-[3px] leading-4 text-[14px] font-medium flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-blue-100 transition-all duration-300">
+          <button
+            @click="onClickEditImage"
+            class="py-[2px] px-4 min-h-[32px] bg-blue-200 rounded-[3px] leading-4 text-[14px] font-medium flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-blue-100 transition-all duration-300"
+          >
             Modifier photo de profil
           </button>
         </div>
@@ -109,15 +113,21 @@ function openFileInput() {
           <!-- ligne  modifiee-->
           <div class="mb-[24px] w-full flex justify-between">
             <div class="flex flex-col">
-              <span class="uppercase text-[12px] leading-4 font-bold tracking-wide text-white-200">nom
-                d'utilisateur</span>
+              <span class="uppercase text-[12px] leading-4 font-bold tracking-wide text-white-200"
+                >nom d'utilisateur</span
+              >
               <input
                 class="peer rounded px-1 text-[16px] leading-5 font-normal text-white-400 bg-black/0 outline-none disabled:ring-0 ring-1 ring-blue-200"
-                v-model="usernameInput" :disabled="usernameInputIsDisabled" />
+                v-model="usernameInput"
+                :disabled="usernameInputIsDisabled"
+              />
             </div>
 
-            <button @click="onClickEditUsername" :class="!usernameInputIsDisabled ? 'bg-blue-100' : ''"
-              class="py-[2px] px-4 max-h-[32px] min-h-[32px] bg-white-200/50 rounded-[3px] leading-4 text-[14px] font-normal flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-white-300/50 transition-all duration-300">
+            <button
+              @click="onClickEditUsername"
+              :class="!usernameInputIsDisabled ? 'bg-blue-100' : ''"
+              class="py-[2px] px-4 max-h-[32px] min-h-[32px] bg-white-200/50 rounded-[3px] leading-4 text-[14px] font-normal flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-white-300/50 transition-all duration-300"
+            >
               {{ usernameInputIsDisabled ? "Modifier" : "Valider" }}
             </button>
           </div>
@@ -125,13 +135,20 @@ function openFileInput() {
           <div class="mb-[24px] w-full flex justify-between">
             <div class="flex flex-col">
               <span class="uppercase text-[12px] leading-4 font-bold tracking-wide text-white-200">mot de passe</span>
-              <input type="password"
+              <input
+                type="password"
                 class="rounded text-[16px] leading-5 font-normal text-white-400 bg-black/0 outline-none disabled:ring-0 ring-1 ring-blue-200"
-                :placeholder="passwordInput" v-model="passwordInput" :disabled="passwordInputIsDisabled" />
+                :placeholder="passwordInput"
+                v-model="passwordInput"
+                :disabled="passwordInputIsDisabled"
+              />
             </div>
 
-            <button @click="onClickEditPassword" :class="!passwordInputIsDisabled ? 'bg-blue-100' : ''"
-              class="py-[2px] px-4 max-h-[32px] min-h-[32px] bg-white-200/50 rounded-[3px] leading-4 text-[14px] font-normal flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-white-300/50 transition-all duration-300">
+            <button
+              @click="onClickEditPassword"
+              :class="!passwordInputIsDisabled ? 'bg-blue-100' : ''"
+              class="py-[2px] px-4 max-h-[32px] min-h-[32px] bg-white-200/50 rounded-[3px] leading-4 text-[14px] font-normal flex justify-center items-center text-white-500 hover:text-white-400 hover:bg-white-300/50 transition-all duration-300"
+            >
               Modifier
             </button>
           </div>
@@ -140,7 +157,7 @@ function openFileInput() {
             <div class="flex flex-col">
               <span class="uppercase text-[12px] leading-4 font-bold tracking-wide text-white-200">email</span>
               <span class="text-[16px] leading-5 font-normal text-white-400 bg-black/0 outline-none">{{
-                currentUser.email
+                currentUser!.email
               }}</span>
             </div>
           </div>

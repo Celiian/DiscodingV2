@@ -21,6 +21,14 @@ const messages = computed(() => {
   return messageStore.getMessages();
 });
 
+interface Message {
+  channel: string;
+  sender: string;
+  content: string;
+  file: string;
+  date: Date;
+}
+
 async function getUserList() {
   for (const message of messages.value) {
     if (!userList.value.has(message.sender)) {
@@ -81,7 +89,7 @@ async function inputSearchValidation() {
     showModal.value = true;
     await getUserList();
 
-    result.value = messages.value.filter((message: any) => {
+    result.value = messages.value.filter((message: Message) => {
       return message.content.includes(input.value);
     });
 

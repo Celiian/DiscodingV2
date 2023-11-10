@@ -7,14 +7,16 @@ import { watchEffect, ref } from "vue";
 const userStore = useUserStore();
 
 const friendId = ref("");
-const friend = ref(null);
+const friend = ref();
 
 const props = defineProps({
   channel: null,
 });
 
 watchEffect(async () => {
-  friendId.value = props.channel.users.filter((id: any) => id !== userStore.getCurrentUser()._id)[0];
+  friendId.value = props.channel.users.filter(
+    (id: string) => id.toString() !== userStore.getCurrentUser()?._id.toString()
+  )[0];
   const res = await userStore.getUser({ id: friendId.value });
   if (res) {
     friend.value = res.data;
@@ -31,13 +33,18 @@ function onClickCloseButton() {
 </script>
 
 <template>
-  <div @click="onClickOnCard"
-    class="group relative max-w-[224px] ml-2 box-border block px-2 py-[1px] rounded hover:bg-white-100/10 transition-all duration-150">
-    <router-link :to="'/me/message/' + (channel as any)?._id + '/' + (friend as any)?._id"
-      class="flex items-center box-border w-full cursor-pointer">
+  <div
+    @click="onClickOnCard"
+    class="group relative max-w-[224px] ml-2 box-border block px-2 py-[1px] rounded hover:bg-white-100/10 transition-all duration-150"
+  >
+    <router-link
+      :to="'/me/message/' + channel?._id + '/' + friend?._id"
+      class="flex items-center box-border w-full cursor-pointer"
+    >
+
       <!--user logo-->
       <div class="w-8 h-8 relative rounded-full mr-3">
-        <RoundedLogoIcon :icon="(friend as any)?.icon" />
+        <RoundedLogoIcon :icon="friend?.icon" />
       </div>
 
       <!-- user info-->
@@ -45,8 +52,11 @@ function onClickCloseButton() {
         <!--name-->
         <div class="flex grow items-center justify-start whitespace-nowrap">
           <span
-            class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-200 group-hover:text-white-400 transition-all duration-150">
-            {{ (friend as any)?.username || "" }}
+
+            class="whitespace-nowrap text-ellipsis overflow-hidden font-semibold text-white-200 group-hover:text-white-400 transition-all duration-150"
+          >
+            {{ friend?.username || "" }}
+
           </span>
         </div>
         <!--subtitle-->

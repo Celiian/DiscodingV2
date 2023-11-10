@@ -2,6 +2,13 @@ const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 import axios from "axios";
 
+interface Server {
+  _id: string;
+  name: String;
+  icon: string;
+  owner: String;
+}
+
 export async function createServer({ serverName, icon, owner }: { serverName: string; icon: string; owner: String }) {
   try {
     await axios.post(
@@ -108,7 +115,7 @@ export async function createInvite({
 
 export async function acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${API_BASE_URL}/invite/accept`,
       {
         invite_id: invite_id,
@@ -116,7 +123,8 @@ export async function acceptInvite({ invite_id, member_id }: { invite_id: string
       },
       { withCredentials: true }
     );
-    return { success: true };
+
+    return res;
   } catch (error) {
     console.log(error);
     return { success: false, data: error };
@@ -142,8 +150,8 @@ export async function leaveServer({ member_id, server_id }: { member_id: string;
 
 export async function getServerByInviteId({ invite_id }: { invite_id: string }) {
   try {
-    const server = await axios.get(`${API_BASE_URL}/server/` + invite_id, { withCredentials: true });
-    return { success: true, data: server };
+    const res = await axios.get<Server>(`${API_BASE_URL}/server/` + invite_id, { withCredentials: true });
+    return { success: true, data: res.data };
   } catch (error) {
     console.log(error);
     return { success: false, data: error };

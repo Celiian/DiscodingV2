@@ -48,6 +48,14 @@ function cleanInputValue() {
   input.value = "";
 }
 
+interface Message {
+  channel: string;
+  sender: string;
+  content: string;
+  file: string;
+  date: Date;
+}
+
 const result = ref<Array<any>>([]);
 const displayed_result = ref<Array<any>>([]);
 const index = ref<number>(0);
@@ -57,7 +65,7 @@ async function inputSearchValidation() {
     showModal.value = true;
     await getUserList();
 
-    result.value = messages.value.filter((message: any) => {
+    result.value = messages.value.filter((message: Message) => {
       return message.content.includes(input.value);
     });
 

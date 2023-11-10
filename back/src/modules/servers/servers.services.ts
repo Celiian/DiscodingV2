@@ -1,4 +1,4 @@
-import { ServerCreateBody } from "@/types/servers.types";
+import { Server, ServerCreateBody } from "@/types/servers.types";
 import { Servers } from "@/db/models/Server";
 import { ObjectId } from "mongodb";
 import { Members } from "@/db/models/Members";
@@ -27,7 +27,7 @@ export async function getServersByUser(user_id: string): Promise<any[]> {
       return oid;
     });
 
-    const servers: any[] = [];
+    const servers: Server[] = [];
 
     const member_servers = await Servers.find({ _id: { $in: serverIds } }).toArray();
 
@@ -93,10 +93,11 @@ export async function getChannelsByServer(id: string) {
 
 export async function leaveServer(body: MemberCreateBody) {
   try {
-    await Members.findOneAndDelete({
+    const res = await Members.findOneAndDelete({
       member_id: body.member_id,
       server_id: body.server_id,
     });
+    console.log(res);
   } catch (error) {
     console.error("Error fetching server data:", error);
   }
@@ -106,7 +107,7 @@ export async function getServerByInviteId(invite_id: string) {
   try {
     var oid = new ObjectId(invite_id);
     const invitation = await Invitations.findOne({ _id: oid });
-    console.log(invitation)
+    console.log(invitation);
     var server_oid = new ObjectId(invitation?.server_id.toString());
     const server = await Servers.findOne({ _id: server_oid });
     return server;

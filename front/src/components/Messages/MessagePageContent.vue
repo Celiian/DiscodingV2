@@ -16,6 +16,25 @@ const messageInput = ref("");
 const routes = useRoute();
 const showModal = ref(false);
 
+interface User {
+  tag: String;
+  email: string;
+  username: string;
+  password: string;
+  token: string;
+  createdAt: Date;
+  icon: string;
+}
+
+interface Notification {
+  _id: string;
+  type: string;
+  destined_user: string;
+  source_id: string;
+  sender: string;
+  count: number;
+}
+
 import BinIcon from "../svg/BinIcon.vue";
 import { uploadImage } from "../../store/utils/imageupload";
 
@@ -70,7 +89,7 @@ watchEffect(async () => {
   if (props.friend) {
     const mp_notifs = notifStore.getCurrentMpNotifs();
 
-    const foundNotif: any = mp_notifs.find((notif: any) => {
+    const foundNotif = mp_notifs.find((notif: Notification) => {
       return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
     });
 
@@ -115,7 +134,7 @@ async function sendMessage() {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
       messagestore.mp({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         friend: props.friend?._id.toString(),
@@ -123,7 +142,7 @@ async function sendMessage() {
       });
     } else {
       messagestore.mp({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         friend: props.friend?._id.toString(),
@@ -134,7 +153,7 @@ async function sendMessage() {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
       messagestore.messageServer({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         file_url: res[0].url,
@@ -142,7 +161,7 @@ async function sendMessage() {
       });
     } else {
       messagestore.messageServer({
-        sender: userStore.getCurrentUser()._id.toString(),
+        sender: userStore.getCurrentUser()!._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
         file_url: "",
@@ -225,7 +244,7 @@ watch(messageInput, () => {
   }
 });
 
-function complete(user: any) {
+function complete(user: User) {
   messageInput.value = messageInput.value.split("@")[0] + "@" + user.username + user.tag;
 }
 </script>
@@ -233,13 +252,18 @@ function complete(user: any) {
 <template>
   <div class="relative w-full message_height flex flex-col">
     <div :class="'message-view overflow-y-scroll ' + (selectedFileUrl ? 'message_height_3' : 'message_height_2')">
-      <MessageComp v-for="(message, index) in messages" :key="index" v-bind="{
-        userName: userList.get(message.sender)?.username || '',
-        date: formatDateToFrench(message.date.toString()) || '',
-        messageContent: message.content || '',
-        file: message.file,
-        icon: userList.get(message.sender)?.icon || '',
-      }" :class="message._id.toString()" />
+      <MessageComp
+        v-for="(message, index) in messages"
+        :key="index"
+        v-bind="{
+          userName: userList.get(message.sender)?.username || '',
+          date: formatDateToFrench(message.date.toString()) || '',
+          messageContent: message.content || '',
+          file: message.file,
+          icon: userList.get(message.sender)?.icon || '',
+        }"
+        :class="message._id.toString()"
+      />
     </div>
 
     <!--input message-->
@@ -254,7 +278,10 @@ function complete(user: any) {
         </div>
       </div>
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">
-        <div class="absolute bottom-14 w-[99%] h-fit z-10 bg-grey-100" :class="{ block: showModal, hidden: !showModal }">
+        <div
+          class="absolute bottom-14 w-[99%] h-fit z-10 bg-grey-100"
+          :class="{ block: showModal, hidden: !showModal }"
+        >
           <div class="text-white-400 p-4 hover:bg-grey-500" v-for="user in resultMention" @click="complete(user)">
             {{ user.username + user.tag }}
           </div>
@@ -273,9 +300,13 @@ function complete(user: any) {
           <div class="h-fit flex-1 py-[11px] flex items-center w-full">
             <div class="w-full">
               <!-- Input Field -->
-              <input @keypress.enter="sendMessage" v-model="messageInput"
-                class="w-full bg-black/0 placeholder:text-white-100/50 outline-none text-white-400" type="text"
-                placeholder="Envoyer un message" />
+              <input
+                @keypress.enter="sendMessage"
+                v-model="messageInput"
+                class="w-full bg-black/0 placeholder:text-white-100/50 outline-none text-white-400"
+                type="text"
+                placeholder="Envoyer un message"
+              />
             </div>
           </div>
         </div>
@@ -318,7 +349,6 @@ function complete(user: any) {
 }
 
 @keyframes blink-blue {
-
   0%,
   100% {
     background-color: transparent;
