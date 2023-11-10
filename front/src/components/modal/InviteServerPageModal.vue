@@ -33,7 +33,7 @@ onClickOutside(target, () => closeModal());
 function acceptInvite() {
   console.log(inviteId.value)
   console.log(currentUserId.value)
-  serverStore.acceptInvite({ invite_id: inviteId.value.toString(), member_id: currentUserId.value.toString() })
+  serverStore.acceptInvite({ invite_id: inviteId.value, member_id: currentUserId.value })
   closeModal()
 }
 
@@ -41,7 +41,7 @@ function acceptInvite() {
 </script>
 
 <template>
-  <div class="absolute top-0 left-0 w-screen h-screen bg-grey-100/70 z-10 flex justify-center items-center">
+  <div class="absolute top-0 left-0 w-screen h-screen bg-grey-100/70 z-30 flex justify-center items-center">
     <div ref="target" class="relative w-[660px] bg-[#1e1f22] rounded flex flex-col items-center p-4">
       <div class="p-4">
         <h2 class="text-white-500 text-2xl font-bold">Voulez vous rejoindre le serveur "{{ serverName }}"</h2>

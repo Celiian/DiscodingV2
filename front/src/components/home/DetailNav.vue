@@ -27,7 +27,7 @@ function openSettingModal() {
 
 <template>
   <div
-    class="main z-50 -mt-0 w-[240px] h-full bg-grey-300 flex flex-col grow-0 shrink-0 basis-auto overflow-y-scroll overflow-x-hidden relative ">
+    class="main z-20 -mt-0 w-[240px] h-full bg-grey-300 flex flex-col grow-0 shrink-0 basis-auto overflow-y-scroll overflow-x-hidden relative ">
     <nav class="flex flex-col flex-1 ">
       <div class="flex grow-0 shrink-0 basis-auto px-2 h-12 items-center shadow-customOne fixed bg-grey-300 w-[240px]">
         <slot name="header">

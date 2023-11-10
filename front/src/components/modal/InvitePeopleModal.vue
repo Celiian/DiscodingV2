@@ -99,11 +99,11 @@ async function copyToClipboard() {
 </script>
 
 <template>
-  <div class="absolute top-0 left-0 w-screen h-screen bg-black/70 z-10 flex justify-center items-center">
+  <div class="absolute top-0 left-0 w-screen h-screen bg-black/70 z-30 flex justify-center items-center">
     <div v-if="!inviteCreationDone" ref="target"
       class="bg-grey-400 rounded min-w-[440px] sm:w-[440px] w-full h-full sm:h-auto relative p-4">
       <div class="p-4">
-        <h2 class="text-white-500 text-2xl font-bold">Créer une invitation pour "{{ currentServerName }}"</h2>
+        <h2 class="text-white-500 text-2xl font-bold">Créer une invitation pour {{ currentServerName }}</h2>
         <button @click="closeModal" class="absolute top-4 right-4 w-6 h-6">
           <div>
             <CloseIcon class="w-full h-full fill-white-200 hover:fill-white-500 transition-all duration-300" />
