@@ -31,7 +31,10 @@ const continueDisabled = computed(() => {
   );
 });
 
-async function signup() {
+const showError = ref(false);
+const errorMessage = ref('');
+
+const signup = async () => {
   const user = {
     email: email.value,
     username: username.value,
@@ -43,20 +46,27 @@ async function signup() {
   };
 
   try {
-    // Envoi des données au backend pour l'envoi de l'e-mail de vérification
-    await axios.post('http://localhost:3000/email', {
+    await axios.post('http://localhost:3000/envoyer-email-verification', {
       destinataire: user.email,
     });
 
-    // Enregistrement de l'utilisateur localement (vous devrez peut-être ajuster cette logique)
     await userStore.register({ username: user.username, password: password.value, email: user.email });
 
-    // Redirection vers la page de connexion
     router.push('/login');
   } catch (error) {
-    console.error('Inscription échouée :', error);
+    if ((error as any).response && (error as any).response.status === 404) {
+      // Le serveur a renvoyé le statut 404, ce qui signifie probablement que l'e-mail est déjà pris
+      showError.value = true;
+      errorMessage.value = "L'e-mail que vous essayez d'utiliser est déjà pris.";
+    } else {
+      // Gestion des autres erreurs
+      showError.value = true;
+      errorMessage.value = 'Une erreur s\'est produite lors de l\'inscription.';
+    }
   }
-}
+
+    
+};
 </script>
 
 <template>
@@ -69,7 +79,7 @@ async function signup() {
           <div class="input-position">
             <div class="form-group">
               <h5 class="input-placeholder" id="email-txt">
-                E-mail <span class="error-message" id="email-error">*</span>
+                E-mail <span class="error-message" v-if="showError" id="email-error">{{ errorMessage }}</span>
               </h5>
               <input
                 type="email"
