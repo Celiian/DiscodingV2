@@ -17,6 +17,7 @@ Bienvenue sur le projet DiscodingV3 ! Ce projet a été développé par Thibault
 - Envoi d'images en messages privés
 - Notifications en temps réel pour les messages privés
 - Formatage des messages
+- Recherche de messages avec fonction "jump"
 
 ### Messagerie Serveur
 
