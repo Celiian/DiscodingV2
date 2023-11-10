@@ -17,7 +17,9 @@ const infiniteCheckboxValue = ref(false);
 const todayDate = format(new Date());
 const dateInput = ref(todayDate);
 const routes = useRoute();
-const inviteCreationDone = ref(true)
+const inviteCreationDone = ref(false)
+const inviteLinkText = ref('')
+const isTextCopied = ref(false)
 const serverId = computed(() => {
   return routes.params.serverId as string;
 });
@@ -64,31 +66,35 @@ async function createInvite() {
         limit: limitNumber,
         creator: currentUserId.value,
       });
+      if (resp.success) {
+        inviteLinkText.value = resp.data.data.data.insertedId
+        inviteCreationDone.value = true
+      }
 
-      console.log('resp : ', resp);
-      console.log('respData : ', resp.data);
+
     } catch (error) {
       console.error("Erreur lors de la création de l'invitation : ", error);
     }
   }
-  closeModal()
 }
 
 function onCLickInfiniteCheckbox() {
   infiniteCheckboxValue.value = !infiniteCheckboxValue.value;
 }
 
-function copyToClipboard() {
+async function copyToClipboard() {
   const inviteLink = document.querySelector('.inviteLink')!.innerHTML;
 
-  const copyContent = async () => {
-    try {
-      await navigator.clipboard.writeText(inviteLink)
-    } catch (err) {
-      console.error("La copie n'a pas fonctionné : ", err)
-    }
+
+  try {
+    await navigator.clipboard.writeText(inviteLink)
+    isTextCopied.value = true
+
+  } catch (err) {
+    console.error("La copie n'a pas fonctionné : ", err)
   }
 }
+
 
 </script>
 
@@ -144,10 +150,20 @@ function copyToClipboard() {
       class="bg-grey-400 rounded min-w-[440px] sm:w-auto w-full h-full sm:h-auto relative p-4 flex flex-col justify-center items-center gap-4">
       <h1 class="salonName uppercase text-[14px]">Lien d'invitation : </h1>
       <div class="flex justify-between items-center gap-4">
-        <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/server/654a82f40cbcf520c0d31253</h1>
+        <h1 class="inviteLink p-2 rounded bg-white-400/50">http://localhost:5173/server/{{ inviteLinkText }}</h1>
         <div @click="copyToClipboard"
           class="w-5 h-5 fill-white-400/50 cursor-pointer hover:fill-white-400/90 duration-150 transition-all">
           <CopyIcon />
+        </div>
+      </div>
+
+      <div v-if="isTextCopied">
+        <h2 class="text-[12px] text-green-onlineCircle">Lien d'invitation copié !</h2>
+        <div class="pt-6 px-6 text-center">
+          <button @click="closeModal"
+            class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 ">
+            Quitter
+          </button>
         </div>
       </div>
 
