@@ -64,6 +64,8 @@ export const useServerStore = defineStore("server", {
 
     async leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
       const res = await leaveServer({ member_id, server_id });
+
+      this.getServerByUser();
       return res;
     },
 
@@ -74,6 +76,7 @@ export const useServerStore = defineStore("server", {
 
     async getServerByInviteId({ invite_id }: { invite_id: string }) {
       const res = await getServerByInviteId({ invite_id: invite_id });
+
       if (res.success) {
         return res.data;
       } else {
@@ -98,7 +101,10 @@ export const useServerStore = defineStore("server", {
 
     async acceptInvite({ invite_id, member_id }: { invite_id: string; member_id: String }) {
       const res = await acceptInvite({ invite_id, member_id });
-      return res;
+      if ((res as any).success) {
+        this.getServerByUser();
+        return res;
+      } else return res;
     },
   },
 });

@@ -30,10 +30,9 @@ export async function acceptInvite(body: InvitationsAcceptBody) {
         roles: [],
       });
 
-      console.log(res);
-      return res;
+      return { success: true, data: res };
     } else {
-      return { success: false };
+      return { success: false, data: null };
     }
   } catch (error) {
     console.error("Error accepting invite:", error);
