@@ -50,6 +50,8 @@ async function createServer() {
     const res = await uploadImage(selectedFile.value);
 
     serverStore.createServer({ serverName: serverName.value, icon: res[0].url });
+    serverStore.getServerByUser();
+    closeModal();
   } catch (error) {
     console.error("Error creating server:", error);
   }
