@@ -52,19 +52,21 @@ export const useMessageStore = defineStore("message", {
       return this.mp_channels;
     },
 
-    async messaage({
+    async messageServer({
       sender,
       content,
       channel,
+      file_url,
       server,
     }: {
       sender: string;
       content: string;
       channel: string;
+      file_url: string;
       server: string;
     }) {
       const notifStore = useNotifStore();
-      const res = await sendMessage(sender, content, channel);
+      const res = await sendMessage(sender, content, channel, file_url);
       emitEvent({ event: "msg-sent", data: { channel: channel, user: sender } });
       const members = await notifStore.notifyChannelUsers({
         type: "msg",
@@ -82,13 +84,15 @@ export const useMessageStore = defineStore("message", {
       content,
       channel,
       friend,
+      file_url,
     }: {
       sender: string;
       content: string;
       channel: string;
       friend: string;
+      file_url: string;
     }) {
-      const res = await sendMessage(sender, content, channel);
+      const res = await sendMessage(sender, content, channel, file_url);
       emitEvent({ event: "mp-sent", data: { channel: channel, user: sender, friend: friend } });
 
       return res;

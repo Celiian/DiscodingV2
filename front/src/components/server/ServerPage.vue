@@ -64,7 +64,6 @@ const handleClickOutside = (event: Event) => {
     isDropdownOpen.value = false;
   }
 };
-
 function closeModal() {
   modalOpened.value = false;
 }
@@ -252,6 +251,12 @@ function openQuitServerModal() {
 
 .blue {
   color: #959cf7;
+}
+.grey {
+  color: #b5bac1;
+}
+.red {
+  color: #f24042;
 }
 
 .grey {
