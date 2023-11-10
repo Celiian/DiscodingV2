@@ -8,7 +8,6 @@ export interface InvitationsCreateBody {
 export interface InvitationsAcceptBody {
   invite_id: string;
   member_id: String;
-  server_id: String;
 }
 
 export interface Invitation {

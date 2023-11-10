@@ -31,7 +31,9 @@ function closeModal() {
 onClickOutside(target, () => closeModal());
 
 function acceptInvite() {
-  serverStore.acceptInvite({ invite_id: inviteId.value, member_id: currentUserId.value })
+  console.log(inviteId.value)
+  console.log(currentUserId.value)
+  serverStore.acceptInvite({ invite_id: inviteId.value.toString(), member_id: currentUserId.value.toString() })
   closeModal()
 }
 
