@@ -62,7 +62,8 @@ const messages = computed(() => {
 
 watch(messages, async () => {
   await getUserList();
-  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 50);
+
+  setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), messages.value.length * 10);
 });
 
 watchEffect(async () => {
@@ -160,11 +161,12 @@ function formatDateToFrench(dateString: string) {
 }
 
 function scrollToElement(className: string, blink: boolean) {
+  console.log("scrolled");
   const el = document.getElementsByClassName(className.toString())[0];
 
   if (el) {
     el.scrollIntoView();
-
+    console.log("scrolled");
     if (blink) {
       el.classList.add("blink-blue");
 
@@ -177,8 +179,8 @@ function scrollToElement(className: string, blink: boolean) {
 
 async function getUserList() {
   for (const message of messages.value) {
-    const user = (await userStore.getUser({ id: message?.sender })).data;
-    if (!userList.value.has(user._id)) {
+    if (!userList.value.has(message?.sender)) {
+      const user = (await userStore.getUser({ id: message?.sender })).data;
       userList.value.set(user._id, user);
     }
   }
