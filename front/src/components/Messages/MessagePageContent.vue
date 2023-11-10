@@ -188,7 +188,7 @@ async function getUserList() {
               v-model="messageInput"
               class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
               type="text"
-              placeholder="Envoyer un message a Titi"
+              placeholder="Envoyer un message"
             />
           </div>
         </div>
