@@ -1,4 +1,5 @@
 <script setup lang="ts">
+
 const { number } = defineProps(["number"]);
 </script>
 
@@ -9,6 +10,7 @@ const { number } = defineProps(["number"]);
       {{ number }}
     </div>
   </div>
+
 </template>
 
 <style scoped></style>

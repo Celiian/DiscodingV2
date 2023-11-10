@@ -54,12 +54,8 @@ function onClickAddFriendsButton() {
       <div class="flex">
         <!--filtered buttons-->
         <div v-for="(button, index) in filteredButtons">
-          <FilterButton
-            :buttonTitle="button"
-            :isSelected="buttonSelectedIndex === index"
-            :key="index"
-            @click="onClickFilterButton(index)"
-          />
+          <FilterButton :notifIsShown="index === 2" :notifNumber="2" :buttonTitle="button"
+            :isSelected="buttonSelectedIndex === index" :key="index" @click="onClickFilterButton(index)" />
         </div>
         <AddFriendsButton @click="onClickAddFriendsButton" :isSelected="buttonSelectedIndex === -1" />
       </div>

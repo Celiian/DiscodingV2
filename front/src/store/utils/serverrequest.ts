@@ -106,7 +106,7 @@ export async function createInvite({
   creator: String;
 }) {
   try {
-    await axios.post(
+    const res = await axios.post(
       `${API_BASE_URL}/invite/create`,
       {
         server_id: server_id,
@@ -116,7 +116,7 @@ export async function createInvite({
       },
       { withCredentials: true }
     );
-    return { success: true };
+    return { success: true, data: res };
   } catch (error) {
     console.log(error);
     return { success: false, data: error };
@@ -137,6 +137,23 @@ export async function acceptInvite({
       `${API_BASE_URL}/invite/create`,
       {
         invite_id: invite_id,
+        member_id: member_id,
+        server_id: server_id,
+      },
+      { withCredentials: true }
+    );
+    return { success: true };
+  } catch (error) {
+    console.log(error);
+    return { success: false, data: error };
+  }
+}
+
+export async function leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+  try {
+    await axios.post(
+      `${API_BASE_URL}/server/leave`,
+      {
         member_id: member_id,
         server_id: server_id,
       },

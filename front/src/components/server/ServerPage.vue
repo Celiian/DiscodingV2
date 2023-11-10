@@ -10,18 +10,18 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import AddCategory from "../circle-components/addCategory.vue"
-import ServerDetailNavContent from "../server/ServerDetailNavContent.vue"
-import CreateChannelModal from "../modal/CreateChannel.vue"
-import CreateCategoryModal from "../modal/CreateCategory.vue"
 import InvitePeopleModal from "../modal/InvitePeopleModal.vue"
 import QuitServerModal from "../modal/QuitServerModal.vue"
+import AddCategory from "../circle-components/addCategory.vue";
+import ServerDetailNavContent from "../server/ServerDetailNavContent.vue";
+import CreateChannelModal from "../modal/CreateChannel.vue";
+import CreateCategoryModal from "../modal/CreateCategory.vue";
 import { useUserStore } from "../../store/userstore";
 
-const userStore = useUserStore()
+const userStore = useUserStore();
 const serverStore = useServerStore();
 const route = useRoute();
-const server = ref<Server | null>(null); // Initialize as null
+const server = ref<Server | null>(null);
 const dropdownRef = ref(null);
 
 const currentUser = computed(() => {
@@ -30,9 +30,7 @@ const currentUser = computed(() => {
 const serverId = computed(() => {
   return route.params.serverId as string;
 });
-const isCurrentUserIsAdmin = computed(() => {
-  return currentUser.value?._id.toString() === serverId
-})
+const isCurrentUserIsAdmin = ref(false);
 
 interface Server {
   name: string;
@@ -41,15 +39,16 @@ interface Server {
 }
 
 const isDropdownOpen = ref(false);
-const currentModal = ref('');
-const target = ref(null)
+const currentModal = ref("");
+const target = ref(null);
 
 const toggleDropdown = () => {
   isDropdownOpen.value = !isDropdownOpen.value;
 };
 const modalOpened = ref(false);
-watchEffect(() => {
-  console.log(isCurrentUserIsAdmin.value)
+watchEffect(async () => {
+  isCurrentUserIsAdmin.value =
+    currentUser.value?._id.toString() === (await serverStore.getServerById({ id: serverId.value })).owner;
   const newServerId = route.params.serverId as string;
   server.value = null;
   serverStore.getServerById({ id: newServerId }).then((data) => {
@@ -57,21 +56,23 @@ watchEffect(() => {
   });
 });
 const handleClickOutside = (event: Event) => {
-  if (dropdownRef.value && 'contains' in dropdownRef.value && !((dropdownRef.value as any).contains(event.target as Node))) {
+  if (
+    dropdownRef.value &&
+    "contains" in dropdownRef.value &&
+    !(dropdownRef.value as any).contains(event.target as Node)
+  ) {
     isDropdownOpen.value = false;
   }
 };
 
-
-
 function closeModal() {
-  modalOpened.value = false
+  modalOpened.value = false;
 }
 function openModal() {
   modalOpened.value = true;
 }
 
-onClickOutside(target, () => isDropdownOpen.value = false);
+onClickOutside(target, () => (isDropdownOpen.value = false));
 
 // Ajoute cet écouteur d'événements lorsque le composant est monté
 onMounted(() => {
@@ -89,35 +90,35 @@ const dropDownItem = {
     item: 'Inviter des gens',
     class: 'blue',
     svg: AddFriend,
-    show: false
+    show: false,
   },
   1: {
     index: 1,
     item: 'Paramètres du serveur',
     class: 'grey',
+
     svg: Parameter,
-    show: true
+    show: true,
   },
   2: {
     index: 2,
     item: 'Créer un salon',
     class: 'grey',
     svg: AddChannel,
-    show: true
+    show: true,
   },
   3: {
     index: 3,
     item: 'Créer une catégorie',
     class: 'grey',
     svg: AddCategory,
-    show: true
+    show: true,
   },
   4: {
     index: 4,
     item: 'Quitter le serveur',
-    class: 'red',
     svg: Modified,
-    show: false
+    show: false,
   },
 }
 
@@ -145,12 +146,12 @@ function callModal(index: number) {
 
 function openChannelModal() {
   modalOpened.value = true;
-  currentModal.value = 'channel';
+  currentModal.value = "channel";
 }
 
 function openCategoryModal() {
   modalOpened.value = true;
-  currentModal.value = 'category';
+  currentModal.value = "category";
 }
 
 function openInvitePeopleModal() {
@@ -165,8 +166,8 @@ function openQuitServerModal() {
 
 </script>
 
-
 <template>
+
   <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
     @close-modal="closeModal" />
   <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
@@ -174,13 +175,14 @@ function openQuitServerModal() {
   <InvitePeopleModal v-if="modalOpened && currentModal === 'invite'" @open-modal="openModal" @close-modal="closeModal" />
   <QuitServerModal v-if="modalOpened && currentModal === 'quit'" @open-modal="openModal" @close-modal="closeModal" />
 
+
   <DetailNav>
     <template v-slot:header>
       <div class="dropdown cursor-pointer" @click="toggleDropdown">
-        <p style="color:rgb(181 186 193);">
+        <p style="color: rgb(181 186 193)">
           {{ server?.name }}
         </p>
-        <div class="cursor-pointer" ref="dropdownRef" v-if="isDropdownOpen === false" style="align-self: center;">
+        <div class="cursor-pointer" ref="dropdownRef" v-if="isDropdownOpen === false" style="align-self: center">
           <DropdownMenu class="fill-white-500/80" />
         </div>
         <div v-else @click="toggleDropdown">
@@ -194,22 +196,17 @@ function openQuitServerModal() {
               <component :is="menuItem.svg" />
             </a>
           </div>
-
         </div>
       </div>
     </template>
 
-
     <template v-slot:content>
       <ServerDetailNavContent />
     </template>
-
   </DetailNav>
-
 
   <router-view></router-view>
 </template>
-
 
 <style scoped>
 .dropdown {
@@ -232,7 +229,6 @@ function openQuitServerModal() {
   width: 100%;
   background-color: #000000;
   border-radius: 4px;
-
 }
 
 .dropdown-content a {
@@ -263,5 +259,3 @@ function openQuitServerModal() {
   color: #ffffff;
 }
 </style>
-
-

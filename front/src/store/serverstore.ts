@@ -8,6 +8,7 @@ import {
   getChannelsByServer,
   editChannel,
   createCategory,
+  leaveServer,
   createInvite,
   acceptInvite,
 } from "./utils/serverrequest";
@@ -51,6 +52,11 @@ export const useServerStore = defineStore("server", {
 
     async editChannel({ id, name, source }: { id: string; name: string; source: string }) {
       await editChannel(id, name, source);
+    },
+
+    async leaveServer({ member_id, server_id }: { member_id: string; server_id: string }) {
+      const res = await leaveServer({ member_id, server_id });
+      return res;
     },
 
     async getChannelsServer(id: string) {

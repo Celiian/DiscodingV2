@@ -13,6 +13,7 @@ export const useFriendsStore = defineStore("friends", {
 
   actions: {
     getFriendsOnline(): any[] {
+      console.log(this.friends);
       return this.friends;
     },
     getPending(): any[] {
@@ -41,6 +42,7 @@ export const useFriendsStore = defineStore("friends", {
       const userstore = useUserStore();
       const user = userstore.getCurrentUser();
       await rejectFriendRequest({ receiver_id, initiator_id: user._id });
+      await this.getFriends();
     },
 
     async addNewFriend({ receiver_name }: { receiver_name: string }) {
