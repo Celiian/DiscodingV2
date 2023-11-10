@@ -81,9 +81,9 @@ export function registerServerRoutes(app: Express) {
     }
   });
 
-  app.get("/server/:invite_id/", async (req: Request<{ id: string }, unknown, unknown>, res: Response) => {
+  app.get("/server/:invite_id/", async (req: Request<{ invite_id: string }, unknown, unknown>, res: Response) => {
     try {
-      const id = req.params.id;
+      const id = req.params.invite_id;
       const server = await getServerByInviteId(id);
       if (!server) {
         res.status(404).json({ error: "Server not found" });

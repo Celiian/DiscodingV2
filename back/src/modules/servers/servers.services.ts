@@ -109,7 +109,8 @@ export async function getServerByInviteId(invite_id: string) {
   try {
     var oid = new ObjectId(invite_id);
     const invitation = await Invitations.findOne({ _id: oid });
-    var server_oid = new ObjectId(invitation?._id);
+    console.log(invitation)
+    var server_oid = new ObjectId(invitation?.server_id.toString());
     const server = await Servers.findOne({ _id: server_oid });
     return server;
   } catch (error) {
