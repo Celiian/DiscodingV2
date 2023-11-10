@@ -1,47 +1,23 @@
 <script setup lang="ts">
-import { computed, ref } from "vue";
-import { useUserStore } from "../../store/userstore";
-import { useRouter } from "vue-router";
+import { ref, computed } from 'vue';
+import axios from 'axios';
+import { useUserStore } from '../../store/userstore';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const email = ref("");
-const username = ref("");
-const password = ref("");
+const email = ref('');
+const username = ref('');
+const password = ref('');
+const selectedDay = ref('');
+const selectedMonth = ref('');
+const selectedYear = ref('');
+const tosCheckBox = ref(false);
 
-async function signup() {
-  const user = { email: email.value, username: username.value, password: password.value };
-  try {
-    await userStore.register(user);
-    router.push("/login");
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
-}
-
-const selectedDay = ref<string>("");
-const selectedMonth = ref<string>("");
-const selectedYear = ref<string>("");
-const tosCheckBox = ref<Boolean>(false);
-
-const days = [...Array(31).keys()].map((day) => (day + 1).toString());
-const months = [
-  "janvier",
-  "février",
-  "mars",
-  "avril",
-  "mai",
-  "juin",
-  "juillet",
-  "août",
-  "septembre",
-  "octobre",
-  "novembre",
-  "décembre",
-];
-
-const years = [...Array(100).keys()].map((year) => (new Date().getFullYear() - year).toString());
+const days = [...Array(31).keys()].map(day => (day + 1).toString());
+const months = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août", "septembre", "octobre", "novembre", "décembre"];
+const years = [...Array(100).keys()].map(year => (new Date().getFullYear() - year).toString());
 
 const continueDisabled = computed(() => {
   return !(
@@ -54,6 +30,43 @@ const continueDisabled = computed(() => {
     tosCheckBox.value
   );
 });
+
+const showError = ref(false);
+const errorMessage = ref('');
+
+const signup = async () => {
+  const user = {
+    email: email.value,
+    username: username.value,
+    password: password.value,
+    selectedDay: selectedDay.value,
+    selectedMonth: selectedMonth.value,
+    selectedYear: selectedYear.value,
+    tosCheckBox: tosCheckBox.value,
+  };
+
+  try {
+    await axios.post('http://localhost:3000/envoyer-email-verification', {
+      destinataire: user.email,
+    });
+
+    await userStore.register({ username: user.username, password: password.value, email: user.email });
+
+    router.push('/login');
+  } catch (error) {
+    if ((error as any).response && (error as any).response.status === 404) {
+      // Le serveur a renvoyé le statut 404, ce qui signifie probablement que l'e-mail est déjà pris
+      showError.value = true;
+      errorMessage.value = "L'e-mail que vous essayez d'utiliser est déjà pris.";
+    } else {
+      // Gestion des autres erreurs
+      showError.value = true;
+      errorMessage.value = 'Une erreur s\'est produite lors de l\'inscription.';
+    }
+  }
+
+    
+};
 </script>
 
 <template>
@@ -66,7 +79,7 @@ const continueDisabled = computed(() => {
           <div class="input-position">
             <div class="form-group">
               <h5 class="input-placeholder" id="email-txt">
-                E-mail <span class="error-message" id="email-error">*</span>
+                E-mail <span class="error-message" v-if="showError" id="email-error">{{ errorMessage }}</span>
               </h5>
               <input
                 type="email"
@@ -143,7 +156,7 @@ const continueDisabled = computed(() => {
             </label>
           </div>
           <div class="btn-position">
-            <button :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
+            <button type="button" :class="continueDisabled ? 'btn opacity-50' : 'btn'" @click="signup">Continuer</button>
           </div>
           <div class="checkbox-container">
             <input type="checkbox" v-model="tosCheckBox" />
