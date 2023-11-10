@@ -3,10 +3,12 @@ import { defineStore } from "pinia";
 import { useUserStore } from "./userstore";
 import { getChannelsByUser, getMessagesByChannel, sendMessage } from "./utils/messagerequest";
 import { emitEvent } from "../utils/ws";
+import { useNotifStore } from "./notifstore";
 
 export const useMessageStore = defineStore("message", {
   state: () => ({
     mp_channels: [],
+    current_channel: "",
     messages: [],
     searched_message: "",
   }),
@@ -28,9 +30,18 @@ export const useMessageStore = defineStore("message", {
     },
 
     async getMessagesByChannel(channel_id: string) {
+      this.current_channel = channel_id;
       const res = await getMessagesByChannel(channel_id);
       this.messages = res.data;
       return res;
+    },
+
+    getCurrentChannel() {
+      return this.current_channel;
+    },
+
+    leaveChannel() {
+      this.current_channel = "";
     },
 
     getMessages() {
@@ -41,8 +52,28 @@ export const useMessageStore = defineStore("message", {
       return this.mp_channels;
     },
 
-    async messageServer({ sender, content, channel }: { sender: string; content: string; channel: string }) {
+    async messaage({
+      sender,
+      content,
+      channel,
+      server,
+    }: {
+      sender: string;
+      content: string;
+      channel: string;
+      server: string;
+    }) {
+      const notifStore = useNotifStore();
       const res = await sendMessage(sender, content, channel);
+      emitEvent({ event: "msg-sent", data: { channel: channel, user: sender } });
+      const members = await notifStore.notifyChannelUsers({
+        type: "msg",
+        source_id: channel,
+        sender: sender,
+        server: server,
+      });
+      emitEvent({ event: "notif-group", data: { channel: channel, members: members, server: server } });
+
       return res;
     },
 

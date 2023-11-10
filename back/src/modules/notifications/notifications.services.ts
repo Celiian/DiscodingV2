@@ -1,5 +1,7 @@
+import { Members } from "@/db/models/Members";
 import { Notifications } from "@/db/models/Notifications";
-import { CreateNotificationBody } from "@/types/notifications.types";
+import { Servers } from "@/db/models/Server";
+import { CreateNotificationBody, CreateNotificationListBody } from "@/types/notifications.types";
 import { ObjectId } from "mongodb";
 
 export async function getNotifs(id: string) {
@@ -43,5 +45,31 @@ export async function createNotif(body: CreateNotificationBody) {
       count: 1,
     });
     return res;
+  }
+}
+
+export async function createNotifForChannelUsers(body: CreateNotificationListBody) {
+  try {
+    const server_oid = new ObjectId(body.server);
+    const server = await Servers.findOne({ _id: server_oid });
+
+    if (!server) {
+      return;
+    }
+
+    const membersData = await Members.find({ server_id: body.server }).toArray();
+    const memberIds = membersData.map((member) => member.member_id.toString());
+    memberIds.push(server.owner.toString());
+
+    await Promise.all(
+      memberIds.map((memberId) =>
+        createNotif({ type: body.type, destined_user: memberId, source_id: body.source_id, sender: body.sender })
+      )
+    );
+
+    return memberIds;
+  } catch (error) {
+    return error;
+    console.error("Error in createNotifForChannelUsers:", error);
   }
 }

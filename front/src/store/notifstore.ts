@@ -1,7 +1,7 @@
 // messagestore.ts
 import { defineStore } from "pinia";
 import { useUserStore } from "./userstore";
-import { getNotifForUser, createNewNotif, deleteNotif } from "./utils/notifrequest";
+import { getNotifForUser, createNewNotif, deleteNotif, createNewNotifList } from "./utils/notifrequest";
 
 export const useNotifStore = defineStore("notif", {
   state: () => ({
@@ -18,7 +18,7 @@ export const useNotifStore = defineStore("notif", {
       });
 
       this.server_notifs = res.data.filter((notif: any) => {
-        return notif.type == "server";
+        return notif.type !== "mp";
       });
       return res.data;
     },
@@ -34,6 +34,23 @@ export const useNotifStore = defineStore("notif", {
     },
     getCurrentMpNotifs() {
       return this.mp_notifs;
+    },
+    getServerNotifs() {
+      return this.server_notifs;
+    },
+    async notifyChannelUsers({
+      type,
+      source_id,
+      sender,
+      server,
+    }: {
+      type: string;
+      source_id: string;
+      sender: string;
+      server: string;
+    }) {
+      const res = await createNewNotifList(type, source_id, sender, server);
+      return res.data;
     },
   },
 });

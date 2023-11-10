@@ -8,6 +8,7 @@ import { useMessageStore } from "../../store/messagestore";
 import { useUserStore } from "../../store/userstore";
 import { useNotifStore } from "../../store/notifstore";
 import { defineProps } from "vue";
+import { deleteNotif } from "../../store/utils/notifrequest";
 
 const notifStore = useNotifStore();
 const userStore = useUserStore();
@@ -25,9 +26,16 @@ interface Message {
   content: string;
   date: Date;
 }
-
+const userList = ref(new Map<string, any>());
+const serverNotif = computed(() => {
+  return notifStore.getServerNotifs();
+});
 const searchedMessage = computed(() => {
   return messagestore.getSearchedMessage();
+});
+
+const channelId = computed(() => {
+  return routes.params.channelId as string;
 });
 
 watch(searchedMessage, () => {
@@ -36,35 +44,57 @@ watch(searchedMessage, () => {
   messagestore.setSearchedMessage("");
 });
 
+async function deleteNotif() {
+  for (let notif of serverNotif.value) {
+    if (notif.source_id == channelId.value.toString()) {
+      await notifStore.deleteNotif(notif._id.toString());
+    }
+  }
+}
+watch(serverNotif, async () => {
+  await deleteNotif();
+});
+
+watch(channelId, async () => {
+  await deleteNotif();
+});
+
 const messages = computed<Message[]>(() => {
   return messagestore.getMessages();
 });
 
-watch(messages, () => {
+watch(messages, async () => {
+  await getUserList();
   setTimeout(() => scrollToElement(messages.value[messages.value.length - 1]._id, false), 100);
 });
 
-const channelId = computed(() => {
-  return routes.params.channelId as string;
-});
-
 watchEffect(async () => {
-  const mp_notifs = notifStore.getCurrentMpNotifs();
+  if (props.friend) {
+    const mp_notifs = notifStore.getCurrentMpNotifs();
 
-  const foundNotif: any = mp_notifs.find((notif: any) => {
-    return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
-  });
+    const foundNotif: any = mp_notifs.find((notif: any) => {
+      return notif.sender === routes.params.friendId && notif.source_id === routes.params.channelId;
+    });
 
-  if (foundNotif) {
-    notifStore.deleteNotif(foundNotif._id.toString());
+    if (foundNotif) {
+      notifStore.deleteNotif(foundNotif._id.toString());
+    }
+
+    emitEvent({ event: "mp-join", data: { channel: channelId.value } });
+  } else {
+    emitEvent({ event: "chan-join", data: { channel: channelId.value } });
+    await deleteNotif();
   }
-
-  emitEvent({ event: "mp-join", data: { channel: channelId.value } });
   await messagestore.getMessagesByChannel(channelId.value);
 });
 
 onBeforeRouteLeave(() => {
-  emitEvent({ event: "mp-leave", data: { channel: channelId.value } });
+  if (props.friend) {
+    emitEvent({ event: "mp-leave", data: { channel: channelId.value } });
+  } else {
+    emitEvent({ event: "chan-leave", data: { channel: channelId.value } });
+  }
+  messagestore.leaveChannel();
 });
 
 //METHOD
@@ -73,12 +103,21 @@ function onClickUploadButton() {
 }
 
 function sendMessage() {
-  messagestore.mp({
-    sender: userStore.getCurrentUser()._id.toString(),
-    content: messageInput.value,
-    channel: channelId.value,
-    friend: props.friend?._id.toString(),
-  });
+  if (props.friend) {
+    messagestore.mp({
+      sender: userStore.getCurrentUser()._id.toString(),
+      content: messageInput.value,
+      channel: channelId.value,
+      friend: props.friend?._id.toString(),
+    });
+  } else {
+    messagestore.messaage({
+      sender: userStore.getCurrentUser()._id.toString(),
+      content: messageInput.value,
+      channel: channelId.value,
+      server: routes.params.serverId.toString(),
+    });
+  }
   messageInput.value = "";
 }
 
@@ -92,16 +131,23 @@ function scrollToElement(className: string, blink: boolean) {
   const el = document.getElementsByClassName(className.toString())[0];
 
   if (el) {
-    // Add the 'blink-blue' class to make it blink in blue
-
     el.scrollIntoView();
+
     if (blink) {
       el.classList.add("blink-blue");
 
-      // Remove the 'blink-blue' class after 2 seconds
       setTimeout(() => {
         el.classList.remove("blink-blue");
       }, 700);
+    }
+  }
+}
+
+async function getUserList() {
+  for (const message of messages.value) {
+    const user = (await userStore.getUser({ id: message?.sender })).data;
+    if (!userList.value.has(user._id)) {
+      userList.value.set(user._id, user);
     }
   }
 }
@@ -115,10 +161,10 @@ function scrollToElement(className: string, blink: boolean) {
         v-for="(message, index) in messages"
         :key="index"
         v-bind="{
-          userName: message.sender == props.friend?._id ? props.friend?.username : userStore.getCurrentUser().username,
+          userName: userList.get(message.sender)?.username,
           date: formatDateToFrench(message.date.toString()),
           messageContent: message.content,
-          icon: message.sender == props.friend?._id ? props.friend?.icon : userStore.getCurrentUser()?.icon,
+          icon: userList.get(message.sender)?.icon,
         }"
         :class="message._id.toString()"
       />
@@ -137,9 +183,13 @@ function scrollToElement(className: string, blink: boolean) {
 
           <!-- input message-->
           <div class="h-[44px] flex-1 py-[11px] pr-[10px] flex items-center">
-            <input @keypress.enter="sendMessage" v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400" type="text"
-              placeholder="Envoyer un message a Titi" />
+            <input
+              @keypress.enter="sendMessage"
+              v-model="messageInput"
+              class="bg-black/0 placeholder:text-white-100/50 w-full outline-none text-white-400"
+              type="text"
+              placeholder="Envoyer un message a Titi"
+            />
           </div>
         </div>
       </div>

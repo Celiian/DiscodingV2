@@ -10,8 +10,8 @@ import Parameter from "../svg/ParameterIcon.vue";
 import Modified from "../svg/ModifiedIcon.vue";
 import CloseIcon from "../svg/CloseIconDropdown.vue";
 import AddChannel from "../circle-components/AddChannel.vue";
-import InvitePeopleModal from "../modal/InvitePeopleModal.vue"
-import QuitServerModal from "../modal/QuitServerModal.vue"
+import InvitePeopleModal from "../modal/InvitePeopleModal.vue";
+import QuitServerModal from "../modal/QuitServerModal.vue";
 import AddCategory from "../circle-components/addCategory.vue";
 import ServerDetailNavContent from "../server/ServerDetailNavContent.vue";
 import CreateChannelModal from "../modal/CreateChannel.vue";
@@ -87,49 +87,47 @@ onUnmounted(() => {
 const dropDownItem = {
   0: {
     index: 0,
-    item: 'Inviter des gens',
-    class: 'blue',
+    item: "Inviter des gens",
+    class: "blue",
     svg: AddFriend,
     show: false,
   },
   1: {
     index: 1,
-    item: 'Paramètres du serveur',
-    class: 'grey',
+    item: "Paramètres du serveur",
+    class: "grey",
     svg: Parameter,
     show: true,
   },
   2: {
     index: 2,
-    item: 'Créer un salon',
-    class: 'grey',
+    item: "Créer un salon",
+    class: "grey",
     svg: AddChannel,
     show: true,
   },
   3: {
     index: 3,
-    item: 'Créer une catégorie',
-    class: 'grey',
+    item: "Créer une catégorie",
+    class: "grey",
     svg: AddCategory,
     show: true,
   },
   4: {
     index: 4,
-    item: 'Quitter le serveur',
-    class: 'red',
+    item: "Quitter le serveur",
+    class: "red",
     svg: Modified,
     show: false,
   },
-}
-
+};
 
 function callModal(index: number) {
   switch (index) {
     case 0:
-      openInvitePeopleModal()
+      openInvitePeopleModal();
       break;
     case 1:
-
       break;
     case 2:
       openChannelModal();
@@ -138,10 +136,9 @@ function callModal(index: number) {
       openCategoryModal();
       break;
     case 4:
-      openQuitServerModal()
+      openQuitServerModal();
       break;
   }
-
 }
 
 function openChannelModal() {
@@ -156,24 +153,32 @@ function openCategoryModal() {
 
 function openInvitePeopleModal() {
   modalOpened.value = true;
-  currentModal.value = 'invite';
+  currentModal.value = "invite";
 }
 
 function openQuitServerModal() {
   modalOpened.value = true;
-  currentModal.value = 'quit';
+  currentModal.value = "quit";
 }
-
 </script>
 
 <template>
-  <CreateCategoryModal v-if="modalOpened && currentModal === 'category'" @open-modal="openModal"
-    @close-modal="closeModal" />
-  <CreateChannelModal v-if="modalOpened && currentModal === 'channel'" @open-modal="openModal"
-    @close-modal="closeModal" />
-  <InvitePeopleModal v-if="modalOpened && currentModal === 'invite'" @open-modal="openModal" @close-modal="closeModal" />
+  <CreateCategoryModal
+    v-if="modalOpened && currentModal === 'category'"
+    @open-modal="openModal"
+    @close-modal="closeModal"
+  />
+  <CreateChannelModal
+    v-if="modalOpened && currentModal === 'channel'"
+    @open-modal="openModal"
+    @close-modal="closeModal"
+  />
+  <InvitePeopleModal
+    v-if="modalOpened && currentModal === 'invite'"
+    @open-modal="openModal"
+    @close-modal="closeModal"
+  />
   <QuitServerModal v-if="modalOpened && currentModal === 'quit'" @open-modal="openModal" @close-modal="closeModal" />
-
 
   <DetailNav>
     <template v-slot:header>
@@ -189,8 +194,12 @@ function openQuitServerModal() {
         </div>
         <div ref="target" v-show="isDropdownOpen" class="dropdown-content -top-10 right-0 absolute">
           <div v-for="(menuItem, index) in dropDownItem">
-            <a v-if="(isCurrentUserIsAdmin === menuItem.show) || isCurrentUserIsAdmin" :key="index"
-              :class='menuItem.class' @click="callModal(menuItem.index)">
+            <a
+              v-if="isCurrentUserIsAdmin === menuItem.show || isCurrentUserIsAdmin"
+              :key="index"
+              :class="menuItem.class"
+              @click="callModal(menuItem.index)"
+            >
               {{ menuItem.item }}
               <component :is="menuItem.svg" />
             </a>

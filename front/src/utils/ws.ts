@@ -31,10 +31,24 @@ socket.on("mp-ofline", (data) => {
   });
 });
 
+socket.on("notif-msg", (data) => {
+  const messagestore = useMessageStore();
+  const notifStore = useNotifStore();
+  if (data.channel != messagestore.getCurrentChannel()) {
+    notificationSound.play();
+  }
+  notifStore.getNotifs();
+});
+
 socket.on("mp-received", (data) => {
   const messagestore = useMessageStore();
   messagestore.getMessagesByChannel(data.channel);
   messagestore.getMpChannels();
+});
+
+socket.on("msg-received", (data) => {
+  const messagestore = useMessageStore();
+  messagestore.getMessagesByChannel(data.channel);
 });
 
 export async function connectToServer() {
