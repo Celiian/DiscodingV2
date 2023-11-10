@@ -1,23 +1,40 @@
-<script setup lang="ts">
-import { computed, ref } from "vue";
-import { useUserStore } from "../../store/userstore";
-import { useRouter } from "vue-router";
+<script setup lang="ts">import { ref, computed } from 'vue';
+import axios from 'axios';
+import { useUserStore } from '../../store/userstore';
+import { useRouter } from 'vue-router';
 
 const userStore = useUserStore();
 const router = useRouter();
 
-const email = ref("");
-const username = ref("");
-const password = ref("");
+const email = ref('');
+const username = ref('');
+const password = ref('');
 
 async function signup() {
-  const user = { email: email.value, username: username.value, password: password.value };
+  const user = {
+    email: email.value,
+    username: username.value,
+    password: password.value,
+    selectedDay: selectedDay.value,
+    selectedMonth: selectedMonth.value,
+    selectedYear: selectedYear.value,
+    tosCheckBox: tosCheckBox.value,
+  };
+
   try {
-    await userStore.register(user);
-    router.push("/login");
-  } catch (error) {
-    console.error("Login failed:", error);
-  }
+// Enregistrement de l'utilisateur localement (vous devrez peut-être ajuster cette logique)
+    
+    await userStore.register({username: user.username, password: password.value, email: user.email});
+
+    // Redirection vers la page de connexion
+    router.push('/login');
+    } catch (error) {
+    console.error('Inscription échouée :', error);
+    }
+    // Envoi des données au backend pour l'envoi de l'e-mail de vérification
+    await axios.post('http://localhost:3000/envoyer-email-verification', {
+      destinataire: user.email,
+    });
 }
 
 const selectedDay = ref<string>("");
