@@ -27,7 +27,6 @@ const currentUserId = computed(() => {
 
 watchEffect(async () => {
   const result = await serverStore.getServerById({ id: serverId.value });
-  console.log(result);
   currentServerName.value = result.name;
   currentServerId.value = result._id;
 });
