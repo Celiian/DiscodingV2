@@ -50,18 +50,27 @@ function closeModal() {
 
 onClickOutside(target, () => closeModal());
 
-function createInvite() {
+
+async function createInvite() {
   if (dateInput.value) {
     const invitDate = new Date(dateInput.value);
-    const limitNumber = inputPeopleNumber.value <= 0 || infiniteCheckboxValue ? -1 : inputPeopleNumber.value;
+    const limitNumber = inputPeopleNumber.value <= 0 || infiniteCheckboxValue.value ? -1 : inputPeopleNumber.value;
 
-    serverStore.createInvite({
-      server_id: currentServerId.value,
-      expiration: invitDate,
-      limit: limitNumber,
-      creator: currentUserId.value,
-    });
+    try {
+      const resp = await serverStore.createInvite({
+        server_id: currentServerId.value,
+        expiration: invitDate,
+        limit: limitNumber,
+        creator: currentUserId.value,
+      });
+
+      console.log('resp : ', resp);
+      console.log('respData : ', resp.data);
+    } catch (error) {
+      console.error("Erreur lors de la création de l'invitation : ", error);
+    }
   }
+  closeModal()
 }
 
 function onCLickInfiniteCheckbox() {
@@ -86,15 +95,9 @@ function onCLickInfiniteCheckbox() {
           <p class="salonName uppercase text-[14px]">personne qui pourront accepter :</p>
           <div class="flex gap-10 justify-start items-center">
             <div class="flex items-center w-1/5 px-1 rounded m-1 bg-white-300/80">
-              <input
-                :disabled="infiniteCheckboxValue"
-                type="number"
-                :value="inputPeopleNumber"
-                placeholder="10"
-                min="1"
+              <input :disabled="infiniteCheckboxValue" type="number" v-model="inputPeopleNumber" placeholder="10" min="1"
                 max="99"
-                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500 disabled:text-white-500/40 disabled:cursor-not-allowed"
-              />
+                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500 disabled:text-white-500/40 disabled:cursor-not-allowed" />
             </div>
             <div>
               <input @click="onCLickInfiniteCheckbox" id="infini" type="checkbox" class="mr-2" />
@@ -106,22 +109,15 @@ function onCLickInfiniteCheckbox() {
           <p class="salonName uppercase text-[14px]">Date d'expiration de l'invitation :</p>
           <div class="flex gap-10 justify-start items-center">
             <div class="flex items-center w-2/5 px-1 rounded m-1 bg-white-300/80">
-              <input
-                required
-                type="date"
-                v-model="dateInput"
-                :min="todayDate"
-                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500"
-              />
+              <input required type="date" v-model="dateInput" :min="todayDate"
+                class="placeholder:text-black bg-black/0 w-full overflow-hidden whitespace-nowrap text-ellipsis outline-0 text-white-500" />
             </div>
           </div>
         </div>
       </div>
       <div class="pt-6 px-6 text-center">
-        <button
-          @click="createInvite"
-          class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 disabled:bg-white-300/80"
-        >
+        <button @click="createInvite"
+          class="px-8 py-2 bg-blue-200 hover:bg-blue-100 rounded text-white-600 text-sm transition-all duration-300 disabled:bg-white-300/80">
           Créer
         </button>
       </div>
