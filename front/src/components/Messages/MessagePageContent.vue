@@ -14,9 +14,11 @@ const userStore = useUserStore();
 const messagestore = useMessageStore();
 const messageInput = ref("");
 const routes = useRoute();
+const showModal = ref(false);
 
 import BinIcon from "../svg/BinIcon.vue";
 import { uploadImage } from "../../store/utils/imageupload";
+import { DefineStoreOptionsInPlugin } from "pinia";
 
 const props = defineProps({
   friend: null,
@@ -30,6 +32,7 @@ interface Message {
   date: Date;
   file: string;
 }
+
 const userList = ref(new Map<string, any>());
 const serverNotif = computed(() => {
   return notifStore.getServerNotifs();
@@ -90,7 +93,6 @@ watchEffect(async () => {
     await deleteNotif();
   }
   await messagestore.getMessagesByChannel(channelId.value);
-  console.log(messages.value);
 });
 
 onBeforeRouteLeave(() => {
@@ -105,7 +107,7 @@ onBeforeRouteLeave(() => {
 //METHOD
 
 const selectedFile = ref();
-const selectedFileUrl = ref();
+const selectedFileUrl = ref("");
 
 function openFileInput() {
   const fileInput = document.getElementById("fileInput");
@@ -119,6 +121,7 @@ function openFileInput() {
 }
 
 async function sendMessage() {
+  console.log(selectedFile.value);
   if (props.friend) {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
@@ -141,20 +144,20 @@ async function sendMessage() {
   } else {
     if (selectedFileUrl.value != "") {
       const res = await uploadImage(selectedFile.value);
-      messagestore.mp({
+      messagestore.messageServer({
         sender: userStore.getCurrentUser()._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
-        friend: props.friend?._id.toString(),
         file_url: res[0].url,
+        server: routes.params.serverId.toString(),
       });
     } else {
-      messagestore.mp({
+      messagestore.messageServer({
         sender: userStore.getCurrentUser()._id.toString(),
         content: messageInput.value,
         channel: channelId.value,
-        friend: props.friend?._id.toString(),
         file_url: "",
+        server: routes.params.serverId.toString(),
       });
     }
     messageInput.value = "";
@@ -196,6 +199,45 @@ async function getUserList() {
 function removeFile() {
   selectedFileUrl.value = "";
 }
+
+const resultMention = ref<Array<any>>([]);
+
+watch(messageInput, () => {
+  const inputText = messageInput.value;
+  if (inputText.endsWith("@")) {
+    showModal.value = true;
+
+    const result: Array<any> = [];
+
+    userList.value.forEach((user) => {
+      if (result.length < 5) {
+        result.push(user);
+      }
+    });
+
+    resultMention.value = result;
+  } else if (inputText.endsWith(" ")) {
+    showModal.value = false;
+  } else if (!inputText.includes("@")) {
+    showModal.value = false;
+  } else if (inputText.includes("@")) {
+    const inputToCheck = inputText.split("@")[1];
+    const result: Array<any> = [];
+
+    userList.value.forEach((user) => {
+      const username = user?.username.toUpperCase() + user?.tag.toUpperCase();
+      if (username.includes(inputToCheck.toUpperCase())) {
+        result.push(user);
+      }
+    });
+
+    resultMention.value = result;
+  }
+});
+
+function complete(user: any) {
+  messageInput.value = messageInput.value.split("@")[0] + "@" + user.username + user.tag;
+}
 </script>
 
 <template>
@@ -227,6 +269,14 @@ function removeFile() {
         </div>
       </div>
       <div class="relative mb-[24px] w-full rounded-lg indent-0 bg-white-100/10">
+        <div
+          class="absolute bottom-14 w-[99%] h-fit z-10 bg-grey-100"
+          :class="{ block: showModal, hidden: !showModal }"
+        >
+          <div class="text-white-400 p-4 hover:bg-grey-500" v-for="user in resultMention" @click="complete(user)">
+            {{ user.username + user.tag }}
+          </div>
+        </div>
         <div class="flex overflow-x-hidden overflow-y-scroll max-h-[50vh] rounded-lg pl-4 items-center">
           <!--upload icon-->
           <div class="h-[44px] w-auto py-[10px] px-[16px] -ml-4">
@@ -239,13 +289,18 @@ function removeFile() {
 
           <!-- input message-->
           <div class="h-fit flex-1 py-[11px] flex items-center">
-            <input
-              @keypress.enter="sendMessage"
-              v-model="messageInput"
-              class="bg-black/0 placeholder:text-white-100/50 outline-none text-white-400"
-              type="text"
-              placeholder="Envoyer un message"
-            />
+            <div class="">
+              <!-- Input Field -->
+              <input
+                @keypress.enter="sendMessage"
+                v-model="messageInput"
+                class="bg-black/0 placeholder:text-white-100/50 outline-none text-white-400"
+                type="text"
+                placeholder="Envoyer un message"
+              />
+
+              <!-- Modal -->
+            </div>
           </div>
         </div>
       </div>

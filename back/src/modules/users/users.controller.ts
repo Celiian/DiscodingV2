@@ -1,5 +1,5 @@
 import { Express, Request, Response } from "express";
-import { getUserById, editUser } from "./users.services";
+import { getUserById, editUser, getUserByName } from "./users.services";
 import { EditUserBody } from "@/types/auth.types";
 
 export function registerUsersRoutes(app: Express) {
@@ -7,6 +7,20 @@ export function registerUsersRoutes(app: Express) {
     try {
       const id = req.params.id;
       const user = await getUserById(id);
+      if (!user) {
+        res.status(404).json({ error: "User not found" });
+      } else {
+        res.json(user);
+      }
+    } catch (error) {
+      res.status(500).json({ error: "Internal server error" });
+    }
+  });
+  app.get("/user/name/:name/", async (req: Request<{ name: string }, unknown, unknown>, res: Response) => {
+    try {
+      const name = req.params.name.split("+")[0];
+      const tag = "#" + req.params.name.split("+")[1];
+      const user = await getUserByName(name, tag);
       if (!user) {
         res.status(404).json({ error: "User not found" });
       } else {
